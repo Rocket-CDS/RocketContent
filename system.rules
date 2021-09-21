@@ -1,0 +1,86 @@
+  <genxml>
+    <systemkey>rocketcontent</systemkey>
+    <systemname>Rocket Content</systemname>
+    <databasetable>RocketContent</databasetable>
+    <logtracking>False</logtracking>
+    <active>True</active>
+    <icon>auto_awesome_motion</icon>
+
+    <groupsdata list="true">
+      <genxml>
+        <textbox>
+          <groupref>content</groupref>
+          <groupicon></groupicon>
+        </textbox>
+      </genxml>
+    </groupsdata>
+
+    <providerdata list="true">
+      
+
+
+    </providerdata>
+
+
+    <interfacedata list="true">
+
+      <genxml>
+        <textbox>
+          <interfacekey>rocketsystem</interfacekey>
+          <namespaceclass>RocketContent.API.StartConnect</namespaceclass>
+          <providernamespaceclass></providernamespaceclass>
+          <assembly>RocketContent</assembly>
+          <interfaceicon></interfaceicon>
+          <defaultcommand></defaultcommand>
+          <relpath>/DesktopModules/DNNrocketModules/RocketContent</relpath>
+        </textbox>
+        <providertype></providertype>
+        <dropdownlist>
+          <group></group>
+        </dropdownlist>
+        <checkbox>
+          <onmenu>false</onmenu>
+          <active>true</active>
+        </checkbox>
+        <radio>
+          <securityrolesadministrators>1</securityrolesadministrators>
+          <securityrolesmanager>1</securityrolesmanager>
+          <securityroleseditor>0</securityroleseditor>
+          <securityrolesclienteditor>0</securityrolesclienteditor>
+          <securityrolesregisteredusers>1</securityrolesregisteredusers>
+          <securityrolessubscribers>0</securityrolessubscribers>
+          <securityrolesall>0</securityrolesall>
+        </radio>
+      </genxml>
+
+      <genxml>        
+        <textbox>
+          <interfacekey>rocketcontent</interfacekey>
+          <namespaceclass>RocketContent.API.StartConnect</namespaceclass>
+          <assembly>RocketContent</assembly>
+          <interfaceicon></interfaceicon>
+          <defaultcommand>rocketcontent_get</defaultcommand>
+          <relpath>/DesktopModules/DNNrocketModules/RocketContent</relpath>
+        </textbox>
+        <providertype></providertype>
+        <dropdownlist>
+          <group></group>
+        </dropdownlist>
+        <checkbox>
+          <onmenu>false</onmenu>
+          <active>true</active>
+        </checkbox>
+        <radio>
+          <securityrolesadministrators>1</securityrolesadministrators>
+          <securityrolesmanager>1</securityrolesmanager>
+          <securityroleseditor>1</securityroleseditor>
+          <securityrolesclienteditor>0</securityrolesclienteditor>
+          <securityrolesregisteredusers>0</securityrolesregisteredusers>
+          <securityrolessubscribers>0</securityrolessubscribers>
+          <securityrolesall>0</securityrolesall>
+        </radio>
+      </genxml>
+
+
+    </interfacedata>
+  </genxml>
