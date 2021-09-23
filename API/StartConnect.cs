@@ -42,6 +42,24 @@ namespace RocketContent.API
                 case "rocketsystem_valid":
                     strOut = RocketSystemValid();
                     break;
+                case "rocketsystem_adminpanel":
+                    strOut = AdminPanel();
+                    break;
+                case "rocketsystem_save":
+                    strOut = RocketSystemSave();
+                    break;
+                case "rocketsystem_login":
+                    _userParams.TrackClear(_systemData.SystemKey);
+                    strOut = ReloadPage();
+                    break;
+
+
+
+                case "rocketcontent_admin":
+                    strOut = "rocketcontent_admin";
+                    break;
+
+
 
 
                 case "invalidcommand":
@@ -55,7 +73,19 @@ namespace RocketContent.API
 
         }
 
-
+        private string RocketSystemSave()
+        {
+            var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid"); // we may have passed selection
+            if (portalId >= 0)
+            {
+                var portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit);
+                if (portalContent.PortalId >= 0) portalContent.Save(_postInfo);
+                _portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit); // reload portal data after save (for langauge change)
+                var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+            }
+            return "Invalid PortalId";
+        }
         private String RocketSystem()
             {
                 try
@@ -125,7 +155,34 @@ namespace RocketContent.API
                     return ex.ToString();
                 }
             }
+        private string AdminPanel()
+        {
+            try
+            {
+                var razorTempl = _appThemeSystem.GetTemplate("AdminPanel.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string ReloadPage()
+        {
+            try
+            {
+                // user does not have access, logoff
+                UserUtils.SignOut();
 
+                var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
+                var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, null, _passSettings, _sessionParams, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
         public string InitCmd(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
             _postInfo = postInfo;
@@ -157,7 +214,7 @@ namespace RocketContent.API
             // [TODO]: Public facing API should allow access for all users.
 
             var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
-            paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketcatalog_login");
+            paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
 
             return paramCmd;
         }

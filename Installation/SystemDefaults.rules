@@ -23,6 +23,21 @@
       <cmd>rocketsystem_valid</cmd>
       <action>true</action>
     </command>
+    <command>
+      <cmd>rocketsystem_save</cmd>
+      <action>true</action>
+    </command>
+    <command>
+      <cmd>rocketsystem_login</cmd>
+      <action>false</action>
+    </command>
+    
+
+
+    <command>
+      <cmd>rocketcontent_admin</cmd>
+      <action>true</action>
+    </command>    
 
   </commands>
   

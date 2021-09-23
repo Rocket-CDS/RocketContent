@@ -133,6 +133,7 @@ namespace RocketContent.Components
         public bool Active { get { return Record.GetXmlPropertyBool("genxml/active"); } set { Record.SetXmlProperty("genxml/active", value.ToString()); } }
         public bool Valid { get { if (Record.GetXmlProperty("genxml/active") != "") return true; else return false; } }
         public string SystemKey { get { return "rocketcontent"; } }
+        public string SecurityKey { get { return Record.GetXmlProperty("genxml/securitykey"); } }
         public string EntityTypeCode { get { return "PortalContent"; } }
 
 

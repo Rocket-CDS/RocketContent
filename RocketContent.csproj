@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\DNNrocket\Simplisity\Simplisity.csproj" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="&#xD;&#xA;DNNpackager.exe $(ProjectDir) $(ProjectDir)$(OutDir) $(ConfigurationName)" />
+  </Target>
+
 </Project>
