@@ -42,6 +42,10 @@
       <action>true</action>
     </command>
     <command>
+      <cmd>article_selectapptheme</cmd>
+      <action>true</action>
+    </command>    
+    <command>
       <cmd>article_admindetail</cmd>
       <action>true</action>
     </command>

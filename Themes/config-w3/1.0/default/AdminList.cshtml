@@ -21,7 +21,7 @@
 
         @HiddenField(new SimplisityInfo(), "genxml/hidden/page", " class='simplisity_sessionfield' s-update='ignore'", "1")
 
-        <button type="button" class="w3-button w3-theme-action" onclick="$('#portallist').hide();$('#portaldetail').show();">@ButtonText(ButtonTypes.add)</button>
+        <button type="button" class="w3-button w3-theme-action simplisity_click" s-cmd="article_selectapptheme">@ButtonText(ButtonTypes.add)</button>
         <button class="w3-button simplisity_click" title="Clear All Cache" s-cmd="dashboard_clearallcache" s-post="" s-reload="true">@ButtonIcon(ButtonTypes.refresh)</button>
 
         <div class="w3-right w3-hide-small w3-margin-left" style="width: 100px">

@@ -120,4 +120,7 @@
   <data name="invalidcatalog.Text" xml:space="preserve">
     <value>Setup has not been completed.  </value>
   </data>
+  <data name="selectapptheme.Text" xml:space="preserve">
+    <value>Select AppTheme</value>
+  </data>
 </root>

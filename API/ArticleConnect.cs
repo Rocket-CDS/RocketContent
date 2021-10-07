@@ -1,4 +1,5 @@
 ﻿using DNNrocketAPI.Components;
+using Rocket.AppThemes.Components;
 using RocketContent.Components;
 using Simplisity;
 using System;
@@ -177,6 +178,13 @@ namespace RocketContent.API
 
             var razorTempl = _appThemeSystem.GetTemplate("adminlist.cshtml");
             var strOut = RenderRazorUtils.RazorDetail(razorTempl, articleDataList, _passSettings, _sessionParams, true);
+            return strOut;
+        }
+        public String GetAdminSelectAppTheme()
+        {
+            var appThemeDataList = new AppThemeDataList();
+            var razorTempl = _appThemeSystem.GetTemplate("SelectAppTheme.cshtml");
+            var strOut = RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
             return strOut;
         }
         public string ArticleDocumentList()
