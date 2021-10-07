@@ -54,13 +54,24 @@ namespace RocketContent.API
                     break;
 
 
-
-                case "rocketcontent_admin":
-                    strOut = "rocketcontent_admin";
+                case "dashboard_get":
+                    strOut = GetDashboard();
                     break;
 
 
 
+                case "article_adminlist":
+                    strOut = GetAdminArticleList();
+                    break;
+                case "article_admindetail":
+                    strOut = GetAdminArticle();
+                    break;
+                case "article_viewheader":
+                    strOut = GetPublicArticleHeader();
+                    break;
+                case "article_view":
+                    strOut = GetPublicArticle();
+                    break;
 
                 case "invalidcommand":
                     strOut = "INVALID COMMAND: " + storeParamCmd;
@@ -183,6 +194,19 @@ namespace RocketContent.API
                 return ex.ToString();
             }
         }
+        private string GetDashboard()
+        {
+            try
+            {
+                var razorTempl = _appThemeSystem.GetTemplate("Dashboard.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
         public string InitCmd(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
             _postInfo = postInfo;

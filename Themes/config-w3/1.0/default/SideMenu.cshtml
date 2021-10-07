@@ -5,7 +5,7 @@
 @using RazorEngine.Text;
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/RocketPortal/App_LocalResources")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/RocketContent/App_LocalResources")
 
 @{
     var systemGloablData = new SystemGlobalData();
@@ -48,8 +48,7 @@
     <div class="w3-container w3-large" style="height:56px;">&nbsp;</div>
     <div class="w3-bar-block ">
         @{
-            var groupList = systemData.GetGroups();
-            groupList.Add("", ""); // add empty for root level.
+            var groupList = systemData.GetGroups(true);
         }
 
         @foreach (var g in groupList)

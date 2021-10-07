@@ -10,6 +10,21 @@
     <ProjectReference Include="..\..\DNNrocket\Simplisity\Simplisity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="App_LocalResources\SideMenu.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SideMenu.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="App_LocalResources\SideMenu.resx">
+      <LastGenOutput>SideMenu.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="&#xD;&#xA;DNNpackager.exe $(ProjectDir) $(ProjectDir)$(OutDir) $(ConfigurationName)" />
   </Target>

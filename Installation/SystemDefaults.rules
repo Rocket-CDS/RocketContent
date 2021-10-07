@@ -31,13 +31,31 @@
       <cmd>rocketsystem_login</cmd>
       <action>false</action>
     </command>
+
+    <command>
+      <cmd>dashboard_get</cmd>
+      <action>true</action>
+    </command>
+
+    <command>
+      <cmd>article_adminlist</cmd>
+      <action>true</action>
+    </command>
+    <command>
+      <cmd>article_admindetail</cmd>
+      <action>true</action>
+    </command>
+    <command>
+      <cmd>article_view</cmd>
+      <action>false</action>
+    </command>
+    <command>
+      <cmd>article_viewheader</cmd>
+      <action>false</action>
+    </command>
     
 
 
-    <command>
-      <cmd>rocketcontent_admin</cmd>
-      <action>true</action>
-    </command>    
 
   </commands>
   

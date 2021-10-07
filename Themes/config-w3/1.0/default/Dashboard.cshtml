@@ -1,0 +1,45 @@
+@inherits RocketContent.Components.RocketContentTokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI.Components;
+@using RocketContent.Components;
+@using Simplisity;
+@using RazorEngine.Text;
+
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/SystemData/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketCatalog/App_LocalResources/")
+
+
+@{
+    var systemData = new SystemLimpet("rocketcatalog");
+    var portalCatalog = (PortalContentLimpet)Model.List.First();
+    var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+}
+
+@RenderLanguageSelector("dashboard_get", "", appThemeSystem, Model)
+
+
+<div class="w3-row-padding w3-margin-bottom w3-margin-top w3-animate-opacity">
+
+    <div class="w3-row w3-margin">
+        <label>@ResourceKey("RCP.securitykey")</label>
+        <div id="secretkey" class="w3-margin-bottom w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(portalCatalog.SecurityKey)</div>
+        <i>@ResourceKey("RCP.securitycode", "", "Help")</i>
+        <br />
+        <div class="w3-button" onclick="docopyclipboard($('#secretcode'))"><b>@ResourceKey("RCP.securitycode")</b>&nbsp;<span id="iconsecretcode" class=" action-clipboardicon">@ButtonIcon(ButtonTypes.copy)</span></div>
+        <div id="secretcode" class="w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(portalCatalog.RemoteBase64Params())</div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+    });
+
+    function docopyclipboard(element) {
+        rcadmin.CopyTextToClipboard(element);
+    }
+
+</script>
+

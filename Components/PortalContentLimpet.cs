@@ -135,7 +135,8 @@ namespace RocketContent.Components
         public string SystemKey { get { return "rocketcontent"; } }
         public string SecurityKey { get { return Record.GetXmlProperty("genxml/securitykey"); } }
         public string EntityTypeCode { get { return "PortalContent"; } }
-
+        public bool DebugMode { get { return Record.GetXmlPropertyBool("genxml/debugmode"); } }
+        public bool EmailOn { get { return Record.GetXmlPropertyBool("genxml/emailon"); } }
 
         #endregion
 

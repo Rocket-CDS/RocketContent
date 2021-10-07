@@ -18,7 +18,7 @@
     <!-- Main -->
     <div style="padding-top:48px;">
         <!-- Content -->
-        <div id="simplisity_startpanel" class="w3-row simplisity_panel" s-cmd="rocketcontent_admin" s-fields=''>
+        <div id="simplisity_startpanel" class="w3-row simplisity_panel" s-cmd="dashboard_get" s-fields=''>
             <div class="w3-display-container">
 
                 <div class="w3-light-grey">
@@ -54,8 +54,6 @@
 
         $('#sidebarplaceholder').getSimplisity('/Desktopmodules/dnnrocket/api/rocket/action', 'getsidemenu', '{"systemkey":"rocketcontent"}', '')
         $(document).simplisityStartUp('/Desktopmodules/dnnrocket/api/rocket/action', { systemkey: 'rocketcontent', debug: false });
-
-        $('#sidebarplaceholder').activateSimplisityPanel();
 
         simplisity_setParamField("reload", true);  // This will flag that a reload is done.  The Server side code will get the last command tracked.
         simplisity_sessionremove(); // clear the sessions vars on load.  These needs to be reset for the admin panel to work and not use any front office selections.

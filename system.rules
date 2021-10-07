@@ -23,7 +23,7 @@
 
 
     <interfacedata list="true">
-
+      
       <genxml>
         <textbox>
           <interfacekey>rocketsystem</interfacekey>
@@ -53,13 +53,13 @@
         </radio>
       </genxml>
 
-      <genxml>        
+      <genxml>
         <textbox>
-          <interfacekey>rocketcontent</interfacekey>
+          <interfacekey>dashboard</interfacekey>
           <namespaceclass>RocketContent.API.StartConnect</namespaceclass>
           <assembly>RocketContent</assembly>
-          <interfaceicon></interfaceicon>
-          <defaultcommand>rocketcontent_get</defaultcommand>
+          <interfaceicon>dashboard</interfaceicon>
+          <defaultcommand>dashboard_get</defaultcommand>
           <relpath>/DesktopModules/DNNrocketModules/RocketContent</relpath>
         </textbox>
         <providertype></providertype>
@@ -67,7 +67,35 @@
           <group></group>
         </dropdownlist>
         <checkbox>
-          <onmenu>false</onmenu>
+          <onmenu>true</onmenu>
+          <active>true</active>
+        </checkbox>
+        <radio>
+          <securityrolesadministrators>1</securityrolesadministrators>
+          <securityrolesmanager>1</securityrolesmanager>
+          <securityroleseditor>1</securityroleseditor>
+          <securityrolesclienteditor>0</securityrolesclienteditor>
+          <securityrolesregisteredusers>0</securityrolesregisteredusers>
+          <securityrolessubscribers>0</securityrolessubscribers>
+          <securityrolesall>0</securityrolesall>
+        </radio>
+      </genxml>
+
+      <genxml>
+        <textbox>
+          <interfacekey>article</interfacekey>
+          <namespaceclass>RocketContent.API.StartConnect</namespaceclass>
+          <assembly>RocketContent</assembly>
+          <interfaceicon>chrome_reader_mode</interfaceicon>
+          <defaultcommand>article_adminlist</defaultcommand>
+          <relpath>/DesktopModules/DNNrocketModules/RocketContent</relpath>
+        </textbox>
+        <providertype></providertype>
+        <dropdownlist>
+          <group></group>
+        </dropdownlist>
+        <checkbox>
+          <onmenu>true</onmenu>
           <active>true</active>
         </checkbox>
         <radio>
