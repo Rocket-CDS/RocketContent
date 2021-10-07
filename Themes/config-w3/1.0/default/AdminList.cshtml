@@ -9,9 +9,13 @@
 
 @{
     var articleList = (ArticleLimpetList)Model.List.First();
+    var systemData = new SystemLimpet("rocketcontent");
+    var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
 }
 
-<div id="artclelist" class="">
+@RenderLanguageSelector("article_adminlist", "", appThemeSystem, Model)
+
+<div id="artclelist" class=" w3-padding">
 
     <div class="w3-bar searchdata">
 

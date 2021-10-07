@@ -45,6 +45,9 @@ namespace RocketContent.API
                 case "rocketsystem_adminpanel":
                     strOut = AdminPanel();
                     break;
+                case "rocketsystem_adminpanelheader":
+                    strOut = AdminPanelHeader();
+                    break;
                 case "rocketsystem_save":
                     strOut = RocketSystemSave();
                     break;
@@ -171,6 +174,18 @@ namespace RocketContent.API
             try
             {
                 var razorTempl = _appThemeSystem.GetTemplate("AdminPanel.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string AdminPanelHeader()
+        {
+            try
+            {
+                var razorTempl = _appThemeSystem.GetTemplate("AdminPanelHeader.cshtml");
                 return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
             }
             catch (Exception ex)

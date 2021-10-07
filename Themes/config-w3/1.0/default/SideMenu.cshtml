@@ -45,7 +45,11 @@
 }
 
 <nav class="w3-sidebar w3-collapse w3-card w3-theme-l4" style="width:280px;" id="mySidebar">
-    <div class="w3-container w3-large" style="height:56px;">&nbsp;</div>
+
+    <div class="w3-display-container w3-large w3-theme-l3 w3-border-bottom " style="height:48px;">
+        <span class="w3-button w3-hide-large w3-right" style="height:48px;" onclick="w3_open();"><span class="material-icons">close</span></span>
+    </div>
+
     <div class="w3-bar-block ">
         @{
             var groupList = systemData.GetGroups(true);

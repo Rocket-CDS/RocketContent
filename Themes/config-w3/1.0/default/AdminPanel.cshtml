@@ -7,6 +7,13 @@
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources")
 
+@{
+    var systemData = new SystemLimpet("rocketcontent");
+    var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+}
+
+@RenderTemplate("AdminPanelHeader.cshtml", appThemeSystem, Model)
+
 <!-- Sidebar/Menu -->
 <div id="sidebarplaceholder"></div>
 
@@ -16,7 +23,7 @@
 <div class="w3-main" style="margin-left:280px;">
 
     <!-- Main -->
-    <div style="padding-top:48px;">
+    <div style="">
         <!-- Content -->
         <div id="simplisity_startpanel" class="w3-row simplisity_panel" s-cmd="dashboard_get" s-fields=''>
             <div class="w3-display-container">
@@ -62,29 +69,3 @@
 
 </script>
 
-<!-- Load CSS in body, not ideal but is easier to implement and reduces 1 API call. -->
-
-<link rel="stylesheet" href="/DesktopModules/DNNrocketModules/rocketcontent/Themes/config-w3/1.0/css/theme.css">
-<link rel="stylesheet" href="/DesktopModules/DNNrocket/css/jquery.tag-editor.css" charset="utf-8">
-<script src="/DesktopModules/DNNrocketModules/RocketCatalog/Themes/config-w3/1.0/js/RC_Admin.js"></script>
-
-<link rel="stylesheet" href="/DesktopModules/DNNrocket/css/w3.css">
-<script src="/DesktopModules/DNNrocket/js/jquery-3.3.1.min.js"></script>
-<script src="/DesktopModules/DNNrocket/js/jquery-ui.min.js"></script>
-
-<script type="text/javascript" src="/DesktopModules/DNNrocket/Simplisity/js/simplisity.js"></script>
-<script type="text/javascript" src="/DesktopModules/DNNrocket/Simplisity/js/jquery.fileupload.js"></script>
-
-
-<script src="https://cdn.jsdelivr.net/gh/leedavi/CKEditorBuilds@1.0.0/ckeditorbase1.js"></script>
-
-
-<script src="/DesktopModules/DNNrocket/js/jquery.selectlistactions.js"></script>
-
-<script type="text/javascript" src="/DesktopModules/DNNrocket/js/jquery.caret.min.js"></script>
-<script type="text/javascript" src="/DesktopModules/DNNrocket/js/jquery.tag-editor.min.js"></script>
-
-
-<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium">
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
