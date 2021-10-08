@@ -25,9 +25,29 @@
 
     <div id="adminpanel" style="display:none;">
         <div class="w3-container w3-center w3-padding-64">
-            <span class="material-icons w3-jumbo w3-spin ">
-                motion_photos_on
-            </span>
+				<div class="w3-light-grey">
+				  <div id="myBar" class="w3-container w3-grey" style="height:24px;width:1%"></div>
+				</div>  
+			  
+                <script>
+                    $(document).ready(function () {
+                        move();
+                    });
+
+                    function move() {
+                        var elem = document.getElementById("myBar");
+                        var width = 1;
+                        var id = setInterval(frame, 200);
+                        function frame() {
+                            if (width >= 100) {
+                                clearInterval(id);
+                            } else {
+                                width++;
+                                elem.style.width = width + '%';
+                            }
+                        }
+                    }
+                </script>
         </div>
 
     </div>

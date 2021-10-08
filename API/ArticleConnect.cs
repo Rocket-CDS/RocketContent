@@ -182,7 +182,7 @@ namespace RocketContent.API
         }
         public String GetAdminSelectAppTheme()
         {
-            var appThemeDataList = new AppThemeDataList();
+            var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
             var razorTempl = _appThemeSystem.GetTemplate("SelectAppTheme.cshtml");
             var strOut = RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
             return strOut;

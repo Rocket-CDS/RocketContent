@@ -22,37 +22,10 @@
 
 <div class="w3-main" style="margin-left:280px;">
 
-    <!-- Main -->
-    <div style="">
         <!-- Content -->
         <div id="simplisity_startpanel" class="w3-row simplisity_panel" s-cmd="dashboard_get" s-fields=''>
-            <div class="w3-display-container">
-
-                <div class="w3-light-grey">
-                    <div id="myBar" class="w3-container w3-theme" style="height:6px;width:1%"></div>
-                </div>
-                <script>
-                    $(document).ready(function () {
-                        move();
-                    });
-
-                    function move() {
-                        var elem = document.getElementById("myBar");
-                        var width = 1;
-                        var id = setInterval(frame, 20);
-                        function frame() {
-                            if (width >= 100) {
-                                clearInterval(id);
-                            } else {
-                                width++;
-                                elem.style.width = width + '%';
-                            }
-                        }
-                    }
-                </script>
-            </div>
+            <span class="w3-display-middle"><span class="material-icons w3-spin w3-jumbo">autorenew</span></span>
         </div>
-    </div>
 </div>
 
 <script>
