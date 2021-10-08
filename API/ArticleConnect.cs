@@ -167,9 +167,24 @@ namespace RocketContent.API
             var articleData = GetActiveArticle(articleId);
             return GetAdminArticle(articleData);
         }
+        public String GetAdminCreateArticle()
+        {
+            var appthemeFolder = _postInfo.GetXmlProperty("genxml/radio/apptheme");
+            var articleData = GetActiveArticle(-1);
+            articleData.AppThemeFolder = appthemeFolder;
+            articleData.Update();
+            return GetAdminArticle(articleData);
+        }
+        public String GetAdminSaveArticle()
+        {
+            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
+            var articleData = GetActiveArticle(articleId);
+            articleData.Save(_postInfo);
+            return GetAdminArticle(articleData);
+        }        
         public String GetAdminArticle(ArticleLimpet articleData)
         {
-            var razorTempl = articleData.AppTheme.GetTemplate("admindetail.cshtml");
+            var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
             return RenderRazorUtils.RazorDetail(razorTempl, articleData, _passSettings, _sessionParams, true);
         }
         public String GetAdminArticleList()

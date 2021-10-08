@@ -50,6 +50,16 @@
       <action>true</action>
     </command>
     <command>
+      <cmd>article_admincreate</cmd>
+      <action>true</action>
+    </command>
+    <command>
+      <cmd>article_adminsave</cmd>
+      <action>true</action>
+    </command>    
+
+
+    <command>
       <cmd>article_view</cmd>
       <action>false</action>
     </command>

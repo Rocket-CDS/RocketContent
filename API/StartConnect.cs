@@ -72,6 +72,14 @@ namespace RocketContent.API
                 case "article_admindetail":
                     strOut = GetAdminArticle();
                     break;
+                case "article_admincreate":
+                    strOut = GetAdminCreateArticle();
+                    break;
+                case "article_adminsave":
+                    strOut = GetAdminSaveArticle();
+                    break;
+
+
                 case "article_viewheader":
                     strOut = GetPublicArticleHeader();
                     break;

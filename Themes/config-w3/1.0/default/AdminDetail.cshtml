@@ -1,0 +1,49 @@
+@inherits RocketContent.Components.RocketContentTokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI.Components;
+@using RocketContent.Components;
+@using Simplisity;
+@using RazorEngine.Text;
+
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/RocketPortal/App_LocalResources/")
+
+@{
+    var articleData = (ArticleLimpet)Model.List.First();
+    var systemData = new SystemLimpet("rocketcontent");
+    var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+}
+
+@RenderLanguageSelector("article_adminlist", "", appThemeSystem, Model)
+
+<div id="artcledata" class=" w3-padding">
+
+    <div class="w3-bar">
+        <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
+        <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_save" s-post=".a-portaldata" s-list=".systemlist" s-fields='{"portalid":"@portalData.PortalId"}'>@ButtonText(ButtonTypes.save)</span>
+        @if (info.GetXmlProperty("genxml/radio/systemkey") != "")
+        {
+            <span class="w3-padding w3-button simplisity_click" s-cmd="rocketsystem_edit" s-fields='{"portalid":"@portalData.PortalId","systemkey":"@info.GetXmlProperty("genxml/radio/systemkey")"}'>@ButtonText(ButtonTypes.setup)</span>
+            if (portalData.Protocol != "")
+            {
+                <a href="@(portalData.EngineUrlWithProtocol)/@(portalData.SystemKey)" target="_blank" class="w3-button" style="color: black; text-decoration: none; ">@ButtonText(ButtonTypes.admin)</a>
+            }
+        }
+        <span class="w3-padding w3-button w3-red w3-right" onclick="$('#portaltab').hide();$('#deleteportaltab').show();">@ButtonText(ButtonTypes.delete)</span>
+    </div>
+
+
+    <h1>@articleData.Info.ItemID</h1>
+
+    @*
+        RenderTemplate("ArticleDetail.cshtml", articleData.AppTheme, Model)
+    *@
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+    });
+</script>
+
+

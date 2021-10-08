@@ -32,7 +32,7 @@
             <div class="w3-bar">
                 @TextBox(new SimplisityInfo(), "genxml/textbox/searchtext", "class='w3-bar-item w3-input w3-border w3-light-grey simplisity_sessionfield actionentrykey' autocomplete='off' ")
                 <span class="w3-bar-item w3-button w3-theme-d3 clearsearch " style="display:none;" s-fields=''>@ButtonText(ButtonTypes.cancelsearch)</span>
-                <span class="w3-bar-item w3-button w3-theme langchangesave simplisity_click dosearch" s-sessionfield='#searchtext,#pagesize,#orderbyref,#page' s-cmd="portal_list" s-post=".searchdata" s-fields='{"track":"true"}'>@ButtonText(ButtonTypes.search)</span>
+                <span class="w3-bar-item w3-button w3-theme langchangesave simplisity_click dosearch" s-sessionfield='#searchtext,#pagesize,#orderbyref,#page' s-cmd="article_adminlist" s-post=".searchdata">@ButtonText(ButtonTypes.search)</span>
             </div>
         </div>
     </div>
@@ -42,12 +42,14 @@
         <table class="w3-table w3-bordered w3-hoverable">
             <thead>
                 <tr>
+                    <th></th>
                     <th>@ResourceKey("RP.name")</th>
                 </tr>
             </thead>
             @foreach (ArticleLimpet artcileData in articleList.GetArticleList())
             {
-                <tr class="simplisity_click" s-cmd="portal_detail" s-fields='{"portalid":"@artcileData.PortalId","track":"false"}' style="cursor:pointer;">
+                <tr class="simplisity_click" s-cmd="article_admindetail" s-fields='{"articleid":"@artcileData.ArticleId"}' style="cursor:pointer;">
+                    <td>@artcileData.ArticleId</td>
                     <td><b>@artcileData.Name</b></td>
                 </tr>
             }

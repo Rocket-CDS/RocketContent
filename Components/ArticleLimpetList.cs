@@ -53,11 +53,15 @@ namespace RocketContent.Components
         }
         public void Populate()
         {
-            _searchFilter = "      and ( ";
-            _searchFilter += "      isnull([XMLData].value('(genxml/lang/genxml/textbox/articlename)[1]','nvarchar(max)'),'') like '%{searchtext}%' ";
-            _searchFilter += "      or isnull([XMLData].value('(genxml/textbox/articleref)[1]','nvarchar(max)'),'') like '%{searchtext}%' ";
-            _searchFilter += "      or isnull([XMLData].value('(genxml/lang/genxml/textbox/articlekeywords)[1]','nvarchar(max)'),'') like '%{searchtext}%' ";
-            _searchFilter += "      ) ";
+            _searchFilter = "";
+            if (SessionParamData.SearchText != "")
+            {
+                _searchFilter = "      and ( ";
+                _searchFilter += "      isnull([XMLData].value('(genxml/lang/genxml/textbox/articlename)[1]','nvarchar(max)'),'') like '%" + SessionParamData.SearchText + "%' ";
+                _searchFilter += "      or isnull([XMLData].value('(genxml/textbox/articleref)[1]','nvarchar(max)'),'') like '%" + SessionParamData.SearchText + "%' ";
+                _searchFilter += "      or isnull([XMLData].value('(genxml/lang/genxml/textbox/articlekeywords)[1]','nvarchar(max)'),'') like '%" + SessionParamData.SearchText + "%' ";
+                _searchFilter += "      ) ";
+            }
 
             SessionParamData.RowCount = _objCtrl.GetListCount(PortalContent.PortalId, -1, _entityTypeCode, _searchFilter, _langRequired, _tableName);
             RecordCount = SessionParamData.RowCount;
