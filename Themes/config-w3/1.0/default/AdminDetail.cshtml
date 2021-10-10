@@ -11,35 +11,41 @@
     var articleData = (ArticleLimpet)Model.List.First();
     var systemData = new SystemLimpet("rocketcontent");
     var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+    var info = articleData.Info;
 }
 
-@RenderLanguageSelector("article_adminlist", "", appThemeSystem, Model)
+@RenderLanguageSelector("article_admindetail", "{\"articleid\":\"" + articleData.ArticleId + "\"}", appThemeSystem, Model)
 
-<div id="artcledata" class=" w3-padding">
+<div id="a-articledata" class=" w3-padding">
 
     <div class="w3-bar">
         <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
-        <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_save" s-post=".a-portaldata" s-list=".systemlist" s-fields='{"portalid":"@portalData.PortalId"}'>@ButtonText(ButtonTypes.save)</span>
-        @if (info.GetXmlProperty("genxml/radio/systemkey") != "")
-        {
-            <span class="w3-padding w3-button simplisity_click" s-cmd="rocketsystem_edit" s-fields='{"portalid":"@portalData.PortalId","systemkey":"@info.GetXmlProperty("genxml/radio/systemkey")"}'>@ButtonText(ButtonTypes.setup)</span>
-            if (portalData.Protocol != "")
-            {
-                <a href="@(portalData.EngineUrlWithProtocol)/@(portalData.SystemKey)" target="_blank" class="w3-button" style="color: black; text-decoration: none; ">@ButtonText(ButtonTypes.admin)</a>
-            }
-        }
-        <span class="w3-padding w3-button w3-red w3-right" onclick="$('#portaltab').hide();$('#deleteportaltab').show();">@ButtonText(ButtonTypes.delete)</span>
+        <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-fields='{"articleid":"@articleData.ArticleId"}'>@ButtonText(ButtonTypes.save)</span>
+        <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick"  s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?"  s-fields='{"articleid":"@articleData.ArticleId"}' >@ButtonText(ButtonTypes.delete)</span>
     </div>
 
+    <div class="w3-row w3-padding">
+        <div class="w3-quarter w3-padding">
+            <label>@ResourceKey("DNNrocket.name")</label>
+            @TextBox(info, articleData.NameXPath, " class='w3-input w3-border ' ", articleData.AppTheme.Name)
+        </div>
+        <div class="w3-quarter w3-padding">
+            <label>@ResourceKey("DNNrocket.ref")</label>
+            <div class="w3-margin-bottom w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(articleData.Ref)</div>
+        </div>
+        <div class="w3-quarter w3-padding">
+            <label>AppTheme</label>
+            <div class="w3-margin-bottom w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(articleData.AppTheme.Name)</div>
+        </div>
+    </div>
 
-    <h1>@articleData.Info.ItemID</h1>
-
-    @*
-        RenderTemplate("ArticleDetail.cshtml", articleData.AppTheme, Model)
-    *@
+     @RenderTemplate("AdminDetail.cshtml", articleData.AppTheme, Model)
 
 </div>
 
+<div class="w3-row w3-tiny w3-padding">
+    <span>Id: @articleData.ArticleId</span>
+</div>
 
 <script>
     $(document).ready(function () {

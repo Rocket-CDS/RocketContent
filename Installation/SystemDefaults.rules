@@ -56,8 +56,12 @@
     <command>
       <cmd>article_adminsave</cmd>
       <action>true</action>
-    </command>    
-
+    </command>
+    <command>
+      <cmd>article_admindelete</cmd>
+      <action>true</action>
+    </command>
+    
 
     <command>
       <cmd>article_view</cmd>

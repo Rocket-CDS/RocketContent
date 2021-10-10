@@ -78,6 +78,9 @@ namespace RocketContent.API
                 case "article_adminsave":
                     strOut = GetAdminSaveArticle();
                     break;
+                case "article_admindelete":
+                    strOut = GetAdminDeleteArticle();
+                    break;
 
 
                 case "article_viewheader":

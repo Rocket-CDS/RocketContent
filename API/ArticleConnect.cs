@@ -51,7 +51,7 @@ namespace RocketContent.API
             var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
             var articleData = GetActiveArticle(articleId);
             articleData.Save(_postInfo);
-            var imgList = ImgUtils.MoveImageToFolder(_postInfo, articleData.PortalContent.ImageFolderMapPath);
+            var imgList = ImgUtils.MoveImageToFolder(_postInfo, _portalContent.ImageFolderMapPath);
             foreach (var nam in imgList)
             {
                 articleData.AddImage(nam);
@@ -84,7 +84,7 @@ namespace RocketContent.API
                         imageFile.Flush();
                     }
 
-                    var imgList = ImgUtils.MoveImageToFolder(sInfo, articleData.PortalContent.ImageFolderMapPath);
+                    var imgList = ImgUtils.MoveImageToFolder(sInfo, _portalContent.ImageFolderMapPath);
                     foreach (var nam in imgList)
                     {
                         articleData.AddImage(nam);
@@ -99,7 +99,7 @@ namespace RocketContent.API
             var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
             var articleData = GetActiveArticle(articleId);
             articleData.Save(_postInfo);
-            var docList = MoveDocumentToFolder(_postInfo, articleData.PortalContent.DocFolderMapPath);
+            var docList = MoveDocumentToFolder(_postInfo, _portalContent.DocFolderMapPath);
             foreach (var nam in docList)
             {
                 articleData.AddDoc(nam);
@@ -181,7 +181,14 @@ namespace RocketContent.API
             var articleData = GetActiveArticle(articleId);
             articleData.Save(_postInfo);
             return GetAdminArticle(articleData);
-        }        
+        }
+        public String GetAdminDeleteArticle()
+        {
+            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
+            var articleData = GetActiveArticle(articleId);
+            articleData.Delete();
+            return GetAdminArticleList();
+        }
         public String GetAdminArticle(ArticleLimpet articleData)
         {
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
