@@ -1,0 +1,56 @@
+@inherits RocketContent.Components.RocketContentTokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI.Components;
+@using RocketContent.Components;
+@using Simplisity;
+@using RazorEngine.Text;
+@using Rocket.AppThemes.Components;
+
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/RocketPortal/App_LocalResources/")
+
+@{
+    var appThemeList = (AppThemeDataList)Model.List.First();
+    var appThemeSystem = new AppThemeSystemLimpet("rocketcontent");
+}
+
+@RenderLanguageSelector("article_selectapptheme", "", appThemeSystem, Model)
+
+
+<div id="selectapptheme" class="">
+    <div class="w3-row w3-padding">
+        <div class="w3-button simplisity_click " s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</div>
+        <div id="createbutton" class="w3-button w3-theme-action simplisity_click" s-cmd="article_admincreate" s-post="#selectapptheme" style="display:none;">@ButtonText(ButtonTypes.create)</div>
+    </div>
+    <div class="w3-container w3-xlarge">
+        @ResourceKey("RC.selectapptheme")
+    </div>
+    <div class="w3-container" style="">
+
+        @{
+            var lp = 0;
+        }
+
+        @foreach (var appTheme in appThemeList.List)
+        {
+            <p>
+                <input class="w3-radio" id="appthemekey_@(lp)" s-xpath="genxml/radio/apptheme" s-update="save" name="appthemekeyradio" type="radio" value="@appTheme.AppThemeFolder">
+                <label class="w3-large">@appTheme.Name</label>
+            </p>
+            lp += 1;
+        }
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('.w3-radio').unbind("click");
+        $('.w3-radio').click(function () {
+            $('#createbutton').show();
+        });
+
+    });
+</script>
+
+

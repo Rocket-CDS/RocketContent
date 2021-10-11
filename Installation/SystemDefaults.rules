@@ -33,6 +33,11 @@
     </command>
 
     <command>
+      <cmd>services_getappthemes</cmd>
+      <action>false</action>
+    </command>    
+
+    <command>
       <cmd>dashboard_get</cmd>
       <action>true</action>
     </command>

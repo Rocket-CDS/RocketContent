@@ -57,6 +57,12 @@ namespace RocketContent.API
                     break;
 
 
+                case "services_getappthemes":
+                    strOut = SelectAppTheme();
+                    break;
+                    
+
+
                 case "dashboard_get":
                     strOut = GetDashboard();
                     break;
@@ -228,6 +234,18 @@ namespace RocketContent.API
             try
             {
                 var razorTempl = _appThemeSystem.GetTemplate("Dashboard.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string SelectAppTheme()
+        {
+            try
+            {
+                var razorTempl = _appThemeSystem.GetTemplate("SelectAppThemeRemote.cshtml");
                 return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
             }
             catch (Exception ex)
