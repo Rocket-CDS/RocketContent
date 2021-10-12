@@ -274,7 +274,8 @@ namespace RocketContent.API
         }
         public String GetPublicArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
+            var articleId = _paramInfo.GetXmlProperty("genxml/settings/moduleref");
+
             var articleData = GetActiveArticle(articleId);
             var razorTempl = articleData.AppTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";

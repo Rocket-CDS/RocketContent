@@ -89,11 +89,14 @@ namespace RocketContent.API
                     break;
 
 
-                case "article_viewheader":
+                case "rocketcontent_public":
+                    strOut = GetPublicArticle();
+                    break;
+                case "rocketcontent_publicheader":
                     strOut = GetPublicArticleHeader();
                     break;
-                case "article_view":
-                    strOut = GetPublicArticle();
+                case "rocketcontent_publicseo":
+                    strOut = "";
                     break;
 
                 case "invalidcommand":

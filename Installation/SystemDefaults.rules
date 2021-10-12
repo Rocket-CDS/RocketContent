@@ -69,14 +69,17 @@
     
 
     <command>
-      <cmd>article_view</cmd>
+      <cmd>rocketcontent_public</cmd>
       <action>false</action>
     </command>
     <command>
-      <cmd>article_viewheader</cmd>
+      <cmd>rocketcontent_publicheader</cmd>
       <action>false</action>
     </command>
-    
+    <command>
+      <cmd>rocketcontent_publicseo</cmd>
+      <action>false</action>
+    </command>
 
 
 

@@ -121,6 +121,9 @@
     <value>Setup has not been completed.  </value>
   </data>
   <data name="selectapptheme.Text" xml:space="preserve">
-    <value>Select AppTheme</value>
+    <value>Select View AppTheme</value>
+  </data>
+  <data name="selectdataitem.Text" xml:space="preserve">
+    <value>Select DataItem</value>
   </data>
 </root>
