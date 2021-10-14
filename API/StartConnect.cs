@@ -55,12 +55,7 @@ namespace RocketContent.API
                     _userParams.TrackClear(_systemData.SystemKey);
                     strOut = ReloadPage();
                     break;
-
-
-                case "services_getappthemes":
-                    strOut = SelectAppTheme();
-                    break;
-                    
+                
 
 
                 case "dashboard_get":
@@ -78,6 +73,9 @@ namespace RocketContent.API
                 case "article_admindetail":
                     strOut = GetAdminArticle();
                     break;
+                case "article_adminheader":
+                    strOut = GetPublicArticleHeader();
+                    break;
                 case "article_admincreate":
                     strOut = GetAdminCreateArticle();
                     break;
@@ -86,6 +84,11 @@ namespace RocketContent.API
                     break;
                 case "article_admindelete":
                     strOut = GetAdminDeleteArticle();
+                    break;
+
+
+                case "rocketcontent_appthemelist":
+                    strOut = SelectAppTheme();
                     break;
 
 

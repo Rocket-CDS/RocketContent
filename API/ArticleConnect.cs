@@ -271,11 +271,14 @@ namespace RocketContent.API
                 }
             }
 
+        }        
+        public String GetAppThemeList()
+        {
+            return "GetAppThemeList()";
         }
         public String GetPublicArticle()
         {
-            var articleId = _paramInfo.GetXmlProperty("genxml/settings/moduleref");
-
+            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
             var articleData = GetActiveArticle(articleId);
             var razorTempl = articleData.AppTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";

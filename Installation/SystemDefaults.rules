@@ -33,11 +33,6 @@
     </command>
 
     <command>
-      <cmd>services_getappthemes</cmd>
-      <action>false</action>
-    </command>    
-
-    <command>
       <cmd>dashboard_get</cmd>
       <action>true</action>
     </command>
@@ -66,7 +61,13 @@
       <cmd>article_admindelete</cmd>
       <action>true</action>
     </command>
-    
+
+
+    <command>
+      <cmd>rocketcontent_appthemelist</cmd>
+      <action>false</action>
+    </command>
+
 
     <command>
       <cmd>rocketcontent_public</cmd>
