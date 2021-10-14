@@ -1,4 +1,5 @@
 ﻿using DNNrocketAPI.Components;
+using Rocket.AppThemes.Components;
 using RocketContent.Components;
 using Simplisity;
 using System;
@@ -251,8 +252,9 @@ namespace RocketContent.API
         {
             try
             {
+                var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
                 var razorTempl = _appThemeSystem.GetTemplate("SelectAppThemeRemote.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+                return RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
             }
             catch (Exception ex)
             {

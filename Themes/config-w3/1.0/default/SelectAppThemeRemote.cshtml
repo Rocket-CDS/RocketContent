@@ -10,20 +10,10 @@
 
 @{
     var appThemeList = (AppThemeDataList)Model.List.First();
-    var appThemeSystem = new AppThemeSystemLimpet("rocketcontent");
 }
 
-@RenderLanguageSelector("article_selectapptheme", "", appThemeSystem, Model)
-
-
 <div id="selectapptheme" class="">
-    <div class="w3-row w3-padding">
-        <div class="w3-button simplisity_click " s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</div>
-        <div id="createbutton" class="w3-button w3-theme-action simplisity_click" s-cmd="article_admincreate" s-post="#selectapptheme" style="display:none;">@ButtonText(ButtonTypes.create)</div>
-    </div>
-    <div class="w3-container w3-xlarge">
-        @ResourceKey("RC.selectapptheme")
-    </div>
+
     <div class="w3-container" style="">
 
         @{
@@ -39,6 +29,7 @@
             lp += 1;
         }
     </div>
+
 </div>
 
 
