@@ -6,41 +6,45 @@
 @using Rocket.AppThemes.Components;
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/RocketPortal/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
 
 @{
     var appThemeList = (AppThemeDataList)Model.List.First();
 }
 
-<div id="selectapptheme" class="">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <div class="w3-container" style="">
+<div id="selectapptheme" class="w3-container w3-margin w3-padding">
 
-        @{
-            var lp = 0;
-        }
-
-        @foreach (var appTheme in appThemeList.List)
-        {
-            <p>
-                <input class="w3-radio" id="appthemekey_@(lp)" s-xpath="genxml/radio/apptheme" s-update="save" name="appthemekeyradio" type="radio" value="@appTheme.AppThemeFolder">
-                <label class="w3-large">@appTheme.Name</label>
-            </p>
-            lp += 1;
-        }
+    <div class="w3-half w3-padding">
+        <div class="w3-large">@ResourceKey("RC.apptheme")</div>
+        <select id="apptheme" s-xpath="genxml/select/apptheme" s-update="save" class="w3-input  ">
+            @foreach (var appTheme in appThemeList.List)
+            {
+                <option value="@appTheme.AppThemeFolder">@appTheme.Name</option>
+            }
+        </select>
+    </div>
+    <div class="w3-half w3-padding">
+        <div class="w3-large">@ResourceKey("RC.viewapptheme")</div>
+        <select id="appthemeview" s-xpath="genxml/select/appthemeview" s-update="save" class="w3-input ">
+            <option value="useappthemeedit"></option>
+            @foreach (var appTheme in appThemeList.List)
+            {
+                <option value="@appTheme.AppThemeFolder">@appTheme.Name</option>
+            }
+        </select>
     </div>
 
 </div>
 
 
 <script>
+
     $(document).ready(function () {
-
-        $('.w3-radio').unbind("click");
-        $('.w3-radio').click(function () {
-            $('#createbutton').show();
-        });
-
+        $('#apptheme').select2();
+        $('#appthemeview').select2();
     });
 </script>
 

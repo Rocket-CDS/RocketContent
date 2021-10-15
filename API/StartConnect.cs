@@ -74,9 +74,6 @@ namespace RocketContent.API
                 case "article_admindetail":
                     strOut = GetAdminArticle();
                     break;
-                case "article_adminheader":
-                    strOut = GetPublicArticleHeader();
-                    break;
                 case "article_admincreate":
                     strOut = GetAdminCreateArticle();
                     break;
@@ -88,7 +85,10 @@ namespace RocketContent.API
                     break;
 
 
-                case "rocketcontent_appthemelist":
+                case "rocketcontent_edit":
+                    strOut = EditContent();
+                    break;
+                case "rocketcontent_apptheme":
                     strOut = SelectAppTheme();
                     break;
 
@@ -249,6 +249,19 @@ namespace RocketContent.API
             }
         }
         private string SelectAppTheme()
+        {
+            try
+            {
+                var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
+                var razorTempl = _appThemeSystem.GetTemplate("SelectAppThemeRemote.cshtml");
+                return RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string EditContent()
         {
             try
             {
