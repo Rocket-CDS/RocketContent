@@ -12,99 +12,74 @@ namespace RocketContent.API
 {
     public partial class StartConnect
     {
-        private ArticleLimpet GetActiveArticle(int articleid)
+        private ArticleLimpet GetActiveArticle(string moduleRef)
         {
-            return new ArticleLimpet(_portalContent.PortalId, articleid, _sessionParams.CultureCodeEdit);
+            return new ArticleLimpet(_portalContent.PortalId, moduleRef, _sessionParams.CultureCodeEdit);
         }
 
         public int SaveArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
             _passSettings.Add("saved", "true");
-            var articleData = new ArticleLimpet(_portalContent.PortalId, articleId, _sessionParams.CultureCodeEdit);
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _moduleRef, _sessionParams.CultureCodeEdit);
             return articleData.Save(_postInfo);
         }
         public void DeleteArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            GetActiveArticle(articleId).Delete();
-        }
-        public void CopyArticle()
-        {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
-            articleData.ArticleId = -1;
-            var newarticleId = articleData.Copy();
-            // create all languages
-            var l = DNNrocketUtils.GetCultureCodeList();
-            foreach (var c in l)
-            {
-                articleData = new ArticleLimpet(_portalContent.PortalId, articleId, c);
-                var newarticleData = new ArticleLimpet(_portalContent.PortalId, newarticleId, c);
-                newarticleData.Save(articleData.Info);
-                newarticleData.Name += " - " + LocalUtils.ResourceKey("RC.copy", "Text", c);
-                newarticleData.Update();
-            }
+            GetActiveArticle(_moduleRef).Delete();
         }
         public string AddArticleImage()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.Save(_postInfo);
             var imgList = ImgUtils.MoveImageToFolder(_postInfo, _portalContent.ImageFolderMapPath);
             foreach (var nam in imgList)
             {
                 articleData.AddImage(nam);
             }
-            return GetAdminArticle(articleData.ArticleId);
+            return GetAdminArticle();
         }
         public string AddArticleImage64()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            if (articleId > 0)
+            var articleData = GetActiveArticle(_moduleRef);
+            articleData.Save(_postInfo);
+
+            var userfilename = UserUtils.GetCurrentUserId() + "_base64image.jpg";
+            var baseFileMapPath = PortalUtils.TempDirectoryMapPath() + "\\" + userfilename;
+
+            var base64image = _postInfo.GetXmlProperty("genxml/base64image");
+            var baseArray = base64image.Split(',');
+            if (baseArray.Length >= 2)
             {
-                var articleData = GetActiveArticle(articleId);
-                articleData.Save(_postInfo);
+                base64image = baseArray[1];
+                var sInfo = new SimplisityInfo();
+                sInfo.SetXmlProperty("genxml/hidden/fileuploadlist", "base64image.jpg");
 
-                var userfilename = UserUtils.GetCurrentUserId() + "_base64image.jpg";
-                var baseFileMapPath = PortalUtils.TempDirectoryMapPath() + "\\" + userfilename;
-
-                var base64image = _postInfo.GetXmlProperty("genxml/base64image");
-                var baseArray = base64image.Split(',');
-                if (baseArray.Length >= 2)
+                var bytes = Convert.FromBase64String(base64image);
+                using (var imageFile = new FileStream(baseFileMapPath, FileMode.Create))
                 {
-                    base64image = baseArray[1];
-                    var sInfo = new SimplisityInfo();
-                    sInfo.SetXmlProperty("genxml/hidden/fileuploadlist", "base64image.jpg");
-
-                    var bytes = Convert.FromBase64String(base64image);
-                    using (var imageFile = new FileStream(baseFileMapPath, FileMode.Create))
-                    {
-                        imageFile.Write(bytes, 0, bytes.Length);
-                        imageFile.Flush();
-                    }
-
-                    var imgList = ImgUtils.MoveImageToFolder(sInfo, _portalContent.ImageFolderMapPath);
-                    foreach (var nam in imgList)
-                    {
-                        articleData.AddImage(nam);
-                    }
-                    return GetAdminArticle(articleData.ArticleId);
+                    imageFile.Write(bytes, 0, bytes.Length);
+                    imageFile.Flush();
                 }
+
+                var imgList = ImgUtils.MoveImageToFolder(sInfo, _portalContent.ImageFolderMapPath);
+                foreach (var nam in imgList)
+                {
+                    articleData.AddImage(nam);
+                }
+                return GetAdminArticle();
             }
-            return "ERROR: Invalid ItemId or base64 string";
+            return "";
         }
         public string AddArticleDoc()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.Save(_postInfo);
             var docList = MoveDocumentToFolder(_postInfo, _portalContent.DocFolderMapPath);
             foreach (var nam in docList)
             {
                 articleData.AddDoc(nam);
             }
-            return GetAdminArticle(articleData.ArticleId);
+            return GetAdminArticle();
         }
         private List<string> MoveDocumentToFolder(SimplisityInfo postInfo, string destinationFolder, int maxDocuments = 50)
         {
@@ -141,51 +116,25 @@ namespace RocketContent.API
         }
         public string AddArticleLink()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            if (articleId > 0)
-            {
-                var articleData = GetActiveArticle(articleId);
-                articleData.Save(_postInfo);
-                articleData.AddLink();
-                return GetAdminArticle(articleData.ArticleId);
-            }
-            return "ERROR: Invalid ItemId";
-        }
-
-        public String AddArticle()
-        {
-            return GetAdminArticle(-1);
+            var articleData = GetActiveArticle(_moduleRef);
+            articleData.Save(_postInfo);
+            articleData.AddLink();
+            return GetAdminArticle();
         }
         public String GetAdminArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
-            return GetAdminArticle(articleData);
-        }
-        public String GetAdminArticle(int articleId)
-        {
-            var articleData = GetActiveArticle(articleId);
-            return GetAdminArticle(articleData);
-        }
-        public String GetAdminCreateArticle()
-        {
-            var appthemeFolder = _postInfo.GetXmlProperty("genxml/radio/apptheme");
-            var articleData = GetActiveArticle(-1);
-            articleData.AppThemeFolder = appthemeFolder;
-            articleData.Update();
+            var articleData = GetActiveArticle(_moduleRef);
             return GetAdminArticle(articleData);
         }
         public String GetAdminSaveArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.Save(_postInfo);
             return GetAdminArticle(articleData);
         }
         public String GetAdminDeleteArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.Delete();
             return GetAdminArticleList();
         }
@@ -278,8 +227,7 @@ namespace RocketContent.API
         }
         public String GetPublicArticle()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
+            var articleData = GetActiveArticle(_moduleRef);
             var razorTempl = articleData.AppTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
@@ -288,8 +236,7 @@ namespace RocketContent.API
         }
         public String GetPublicArticleHeader()
         {
-            var articleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/articleid");
-            var articleData = GetActiveArticle(articleId);
+            var articleData = GetActiveArticle(_moduleRef);
             var razorTempl = articleData.AppTheme.GetTemplate("ViewHeader.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();

@@ -20,37 +20,21 @@ namespace RocketContent.Components
         private DNNrocketController _objCtrl;
         private int _articleId;
 
-        public ArticleLimpet()
-        {
-            Info = new SimplisityInfo();
-        }
-        /// <summary>
-        /// Read an existing article, if it does not exist the "Exists" property will be false. 
-        /// </summary>
-        /// <param name="articleId"></param>
-        /// <param name="langRequired"></param>
-        public ArticleLimpet(int articleId, string langRequired)
-        {
-            Info = new SimplisityInfo();
-            _articleId = articleId;
-            Populate(langRequired);
-        }
         /// <summary>
         /// Should be used to create an article, the portalId is required on creation
         /// </summary>
         /// <param name="portalId"></param>
-        /// <param name="articleId"></param>
+        /// <param name="moduleRef"></param>
         /// <param name="langRequired"></param>
-        public ArticleLimpet(int portalId, int articleId, string langRequired)
+        public ArticleLimpet(int portalId, string moduleRef, string langRequired)
         {
-            if (articleId <= 0) articleId = -1;  // create new record.
-            _articleId = articleId;
             PortalId = portalId;
             Info = new SimplisityInfo();
-            Info.ItemID = articleId;
+            Info.ItemID = -1;
             Info.TypeCode = _entityTypeCode;
             Info.ModuleId = -1;
             Info.UserId = -1;
+            Info.GUIDKey = moduleRef;
             Info.PortalId = PortalId;
 
             Populate(langRequired);
@@ -71,11 +55,11 @@ namespace RocketContent.Components
             _objCtrl = new DNNrocketController();
             CultureCode = cultureCode;
 
-            var info = _objCtrl.GetData(_entityTypeCode, _articleId, CultureCode, ModuleId, _tableName); // get existing record.
+            var info = _objCtrl.GetByGuidKey(PortalId, -1, _entityTypeCode, ModuleRef, "", _tableName, cultureCode);
             if (info != null && info.ItemID > 0) Info = info; // check if we have a real record, or a dummy being created and not saved yet.
             Info.Lang = CultureCode;
             PortalId = Info.PortalId;
-            if (Ref == "") Ref = GeneralUtils.GetGuidKey();
+            if (ModuleRef == "") ModuleRef = GeneralUtils.GetGuidKey();
         }
         public void Delete()
         {
@@ -294,7 +278,7 @@ namespace RocketContent.Components
         public int XrefItemId { get { return Info.XrefItemId; } set { Info.XrefItemId = value; } }
         public int ParentItemId { get { return Info.ParentItemId; } set { Info.ParentItemId = value; } }
         public int ArticleId { get { return Info.ItemID; } set { Info.ItemID = value; } }
-        public string Ref { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
+        public string ModuleRef { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
         public string GUIDKey { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
         public int SortOrder { get { return Info.SortOrder; } set { Info.SortOrder = value; } }
         public bool DebugMode { get; set; }

@@ -19,6 +19,7 @@ namespace RocketContent.API
         private UserParams _userParams;
         private AppThemeSystemLimpet _appThemeSystem;
         private PortalContentLimpet _portalContent;
+        private String _moduleRef;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -74,9 +75,6 @@ namespace RocketContent.API
                 case "article_admindetail":
                     strOut = GetAdminArticle();
                     break;
-                case "article_admincreate":
-                    strOut = GetAdminCreateArticle();
-                    break;
                 case "article_adminsave":
                     strOut = GetAdminSaveArticle();
                     break;
@@ -85,22 +83,31 @@ namespace RocketContent.API
                     break;
 
 
-                case "rocketcontent_edit":
+                case "remote_edit":
                     strOut = EditContent();
                     break;
-                case "rocketcontent_apptheme":
-                    strOut = SelectAppTheme();
+                case "remote_editsave":
+                    strOut = "SAVE";
+                    break;
+                case "remote_settings":
+                    strOut = RemoteSettings();
+                    break;
+                case "remote_settingssave":
+                    strOut = "SAVE SETTINGS";
                     break;
 
 
-                case "rocketcontent_public":
+                case "remote_publiclist":
+                    strOut = ""; // not used for rocketcontent
+                    break;
+                case "remote_publicview":
                     strOut = GetPublicArticle();
                     break;
-                case "rocketcontent_publicheader":
+                case "remote_publicviewheader":
                     strOut = GetPublicArticleHeader();
                     break;
-                case "rocketcontent_publicseo":
-                    strOut = "";
+                case "remote_publicseo":
+                    strOut = ""; // not used for rocketcontent
                     break;
 
                 case "invalidcommand":
@@ -248,13 +255,18 @@ namespace RocketContent.API
                 return ex.ToString();
             }
         }
-        private string SelectAppTheme()
+        private string RemoteSettings()
         {
             try
             {
                 var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
-                var razorTempl = _appThemeSystem.GetTemplate("SelectAppThemeRemote.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
+                var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
+
+                var nbRazor = new SimplisityRazor(appThemeDataList, _passSettings);
+                nbRazor.SessionParamsData = _sessionParams;
+                nbRazor.ModuleRef = _moduleRef;
+                nbRazor.ModuleId = _paramInfo.ModuleId;
+                return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
             }
             catch (Exception ex)
             {
@@ -265,9 +277,20 @@ namespace RocketContent.API
         {
             try
             {
-                var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
-                var razorTempl = _appThemeSystem.GetTemplate("SelectAppThemeRemote.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
+                var appThemeFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
+                var versionFolder = _paramInfo.GetXmlProperty("genxml/hidden/versionfolder");
+
+                if (appThemeFolder == "") return "No AppTheme";
+
+                var appTheme = new AppThemeLimpet(appThemeFolder, versionFolder);
+                var razorTempl = appTheme.GetTemplate("edit.cshtml");
+                var articleData = GetAdminArticle();
+
+                var nbRazor = new SimplisityRazor(articleData, _passSettings);
+                nbRazor.SessionParamsData = _sessionParams;
+                nbRazor.ModuleRef = _moduleRef;
+
+                return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
             }
             catch (Exception ex)
             {
@@ -285,6 +308,7 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
+            _moduleRef = _paramInfo.GetXmlProperty("genxml/settings/moduleref");
 
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();

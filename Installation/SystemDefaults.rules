@@ -62,30 +62,44 @@
       <action>true</action>
     </command>
 
+
     
     <command>
-      <cmd>rocketcontent_edit</cmd>
+      <cmd>remote_edit</cmd>
       <action>false</action>
     </command>
     <command>
-      <cmd>rocketcontent_apptheme</cmd>
-      <action>false</action>
-    </command>    
-
-
-    <command>
-      <cmd>rocketcontent_public</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>rocketcontent_publicheader</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>rocketcontent_publicseo</cmd>
+      <cmd>remote_editsave</cmd>
       <action>false</action>
     </command>
 
+    <command>
+      <cmd>remote_settings</cmd>
+      <action>false</action>
+    </command>
+    <command>
+      <cmd>remote_settingssave</cmd>
+      <action>false</action>
+    </command>
+
+    <command>
+      <cmd>remote_publiclist</cmd>
+      <action>false</action>
+    </command>
+    <command>
+      <cmd>remote_publicview</cmd>
+      <action>false</action>
+    </command>
+    <command>
+      <cmd>remote_publicviewheader</cmd>
+      <action>false</action>
+    </command>
+    <command>
+      <cmd>remote_publicseo</cmd>
+      <action>false</action>
+    </command>
+
+    
 
 
   </commands>

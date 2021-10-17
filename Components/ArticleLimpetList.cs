@@ -100,42 +100,21 @@ namespace RocketContent.Components
             _articleList = new List<ArticleLimpet>();
             foreach (var o in DataList)
             {
-                var articleData = new ArticleLimpet(PortalContent.PortalId, o.ItemID, _langRequired);
+                var articleData = new ArticleLimpet(PortalContent.PortalId, o.GUIDKey, _langRequired);
                 _articleList.Add(articleData);
             }
             return _articleList;
         }
-        public void SortOrderMove(int toItemId)
-        {
-            SortOrderMove(SessionParamData.SortActivate, toItemId);
-        }
-        public void SortOrderMove(int fromItemId, int toItemId)
-        {
-            if (fromItemId > 0 && toItemId > 0)
-            {
-                var moveData = new ArticleLimpet(PortalContent.PortalId, fromItemId, _langRequired);
-                var toData = new ArticleLimpet(PortalContent.PortalId, toItemId, _langRequired);
-
-                var newSortOrder = toData.SortOrder - 1;
-                if (moveData.SortOrder < toData.SortOrder) newSortOrder = toData.SortOrder + 1;
-
-                moveData.SortOrder = newSortOrder;
-                moveData.Update();
-                SessionParamData.CancelItemSort();
-            }
-        }
-
         public List<SimplisityInfo> GetAllArticles()
         {
             return _objCtrl.GetList(PortalContent.PortalId, -1, _entityTypeCode, "", _langRequired, "", 0, 0, 0, 0, _tableName);
         }
-
         public void Validate()
         {
             var list = GetAllArticles();
             foreach (var pInfo in list)
             {
-                var articleData = new ArticleLimpet(PortalContent.PortalId, pInfo.ItemID, _langRequired);
+                var articleData = new ArticleLimpet(PortalContent.PortalId, pInfo.GUIDKey, _langRequired);
                 articleData.ValidateAndUpdate();
             }
         }
