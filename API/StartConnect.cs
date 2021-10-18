@@ -262,7 +262,10 @@ namespace RocketContent.API
                 var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
 
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+
                 var nbRazor = new SimplisityRazor(appThemeDataList, _passSettings);
+                nbRazor.DataObjects.Add("remotemodule", remoteModule);
                 nbRazor.SessionParamsData = _sessionParams;
                 nbRazor.ModuleRef = _moduleRef;
                 nbRazor.ModuleId = _paramInfo.ModuleId;
@@ -277,9 +280,11 @@ namespace RocketContent.API
         {
             try
             {
-                var articleData = new SettingsLimpet(_portalContent.PortalId, _paramInfo.GetXmlProperty("genxml/hidden/moduleref"), _sessionParams.CultureCodeEdit);
-
-
+                if (_moduleRef != "")
+                {
+                    var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+                    remoteModule.Save(_postInfo);
+                }
                 return RemoteSettings();
             }
             catch (Exception ex)
@@ -322,7 +327,7 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
-            _moduleRef = _paramInfo.GetXmlProperty("genxml/settings/moduleref");
+            _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
 
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();

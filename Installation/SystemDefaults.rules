@@ -71,7 +71,7 @@
     <command>
       <cmd>remote_editsave</cmd>
       <action>false</action>
-    </command>
+    </command>   
 
     <command>
       <cmd>remote_settings</cmd>

@@ -10,6 +10,7 @@
 
 @{
     var appThemeList = (AppThemeDataList)Model.List.First();
+    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
 }
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -24,7 +25,12 @@
             <option value="" versionfolder=""></option>
             @foreach (var appTheme in appThemeList.List)
             {
-                <option value="@appTheme.AppThemeFolder" versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
+                var selectedvalue = "";
+                if (remoteModule.Record.GetXmlProperty("genxml/select/apptheme") == appTheme.AppThemeFolder)
+                {
+                    selectedvalue = "selected";
+                }
+                <option value="@appTheme.AppThemeFolder" @selectedvalue versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
             }
         </select>        
     </div>
@@ -34,7 +40,12 @@
             <option value="" versionfolder=""></option>
             @foreach (var appTheme in appThemeList.List)
             {
-                <option value="@appTheme.AppThemeFolder"  versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
+                var selectedvalue2 = "";
+                if (remoteModule.Record.GetXmlProperty("genxml/select/appthemeview") == appTheme.AppThemeFolder)
+                {
+                    selectedvalue2 = "selected";
+                }
+                <option value="@appTheme.AppThemeFolder" @selectedvalue2 versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
             }
         </select>
     </div>
@@ -42,7 +53,7 @@
 </div>
 
 <div class="w3-row w3-padding w3-center">
-    <div class="w3-button w3-green simplisity_click" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleid":"@Model.ModuleId"}'>@ButtonText(ButtonTypes.save)</div>
+    <div class="w3-button w3-green simplisity_click" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleid":"@Model.ModuleId","moduleref":"@Model.ModuleRef"}'>@ButtonText(ButtonTypes.save)</div>
 </div>
 
 
