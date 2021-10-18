@@ -93,7 +93,7 @@ namespace RocketContent.API
                     strOut = RemoteSettings();
                     break;
                 case "remote_settingssave":
-                    strOut = "SAVE SETTINGS";
+                    strOut = SaveSettings();
                     break;
 
 
@@ -267,6 +267,20 @@ namespace RocketContent.API
                 nbRazor.ModuleRef = _moduleRef;
                 nbRazor.ModuleId = _paramInfo.ModuleId;
                 return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string SaveSettings()
+        {
+            try
+            {
+                var articleData = new SettingsLimpet(_portalContent.PortalId, _paramInfo.GetXmlProperty("genxml/hidden/moduleref"), _sessionParams.CultureCodeEdit);
+
+
+                return RemoteSettings();
             }
             catch (Exception ex)
             {
