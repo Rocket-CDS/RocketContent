@@ -123,6 +123,9 @@
   <data name="invalidcatalog.Text" xml:space="preserve">
     <value>Setup has not been completed.  </value>
   </data>
+  <data name="noapptheme.Text" xml:space="preserve">
+    <value>No AppTheme Selected.  Edit module settings.</value>
+  </data>
   <data name="selectapptheme.Text" xml:space="preserve">
     <value>Select View AppTheme</value>
   </data>

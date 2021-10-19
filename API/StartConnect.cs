@@ -19,7 +19,7 @@ namespace RocketContent.API
         private UserParams _userParams;
         private AppThemeSystemLimpet _appThemeSystem;
         private PortalContentLimpet _portalContent;
-        private String _moduleRef;
+        private string _moduleRef;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -67,10 +67,10 @@ namespace RocketContent.API
 
 
                 case "article_adminlist":
-                    strOut = GetAdminArticleList();
+                    strOut = AdminListDisplay();
                     break;
                 case "article_selectapptheme":
-                    strOut = GetAdminSelectAppTheme();
+                    strOut = AdminSelectAppThemeDisplay();
                     break;
                 case "article_admindetail":
                     strOut = GetAdminArticle();
@@ -87,7 +87,7 @@ namespace RocketContent.API
                     strOut = EditContent();
                     break;
                 case "remote_editsave":
-                    strOut = "SAVE";
+                    strOut = "SAVE: " + _paramInfo.ModuleId + " - " + _moduleRef;
                     break;
                 case "remote_settings":
                     strOut = RemoteSettings();
@@ -296,14 +296,13 @@ namespace RocketContent.API
         {
             try
             {
-                var appThemeFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
-                var versionFolder = _paramInfo.GetXmlProperty("genxml/hidden/versionfolder");
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
 
-                if (appThemeFolder == "") return "No AppTheme";
+                if (remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
 
-                var appTheme = new AppThemeLimpet(appThemeFolder, versionFolder);
-                var razorTempl = appTheme.GetTemplate("edit.cshtml");
-                var articleData = GetAdminArticle();
+                var appTheme = new AppThemeLimpet(remoteModule.AppThemeFolder, remoteModule.AppThemeVersion);
+                var razorTempl = appTheme.GetTemplate("AdminDetail.cshtml");
+                var articleData = GetActiveArticle(_moduleRef);
 
                 var nbRazor = new SimplisityRazor(articleData, _passSettings);
                 nbRazor.SessionParamsData = _sessionParams;

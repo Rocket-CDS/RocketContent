@@ -124,26 +124,26 @@ namespace RocketContent.API
         public String GetAdminArticle()
         {
             var articleData = GetActiveArticle(_moduleRef);
-            return GetAdminArticle(articleData);
+            return AdminDetailDisplay(articleData);
         }
         public String GetAdminSaveArticle()
         {
             var articleData = GetActiveArticle(_moduleRef);
             articleData.Save(_postInfo);
-            return GetAdminArticle(articleData);
+            return AdminDetailDisplay(articleData);
         }
         public String GetAdminDeleteArticle()
         {
             var articleData = GetActiveArticle(_moduleRef);
             articleData.Delete();
-            return GetAdminArticleList();
+            return AdminListDisplay();
         }
-        public String GetAdminArticle(ArticleLimpet articleData)
+        public String AdminDetailDisplay(ArticleLimpet articleData)
         {
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
             return RenderRazorUtils.RazorDetail(razorTempl, articleData, _passSettings, _sessionParams, true);
         }
-        public String GetAdminArticleList()
+        public String AdminListDisplay()
         {
             var articleDataList = new ArticleLimpetList(_paramInfo, _portalContent, _sessionParams.CultureCodeEdit, true);
 
@@ -151,7 +151,7 @@ namespace RocketContent.API
             var strOut = RenderRazorUtils.RazorDetail(razorTempl, articleDataList, _passSettings, _sessionParams, true);
             return strOut;
         }
-        public String GetAdminSelectAppTheme()
+        public String AdminSelectAppThemeDisplay()
         {
             var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
             var razorTempl = _appThemeSystem.GetTemplate("SelectAppTheme.cshtml");
