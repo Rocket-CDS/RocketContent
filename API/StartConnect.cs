@@ -327,6 +327,7 @@ namespace RocketContent.API
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
+            if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
 
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();
