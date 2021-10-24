@@ -20,6 +20,8 @@ namespace RocketContent.API
         private AppThemeSystemLimpet _appThemeSystem;
         private PortalContentLimpet _portalContent;
         private string _moduleRef;
+        private AppThemeLimpet _appTheme;
+        private RemoteModule _remoteModule;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -347,6 +349,9 @@ namespace RocketContent.API
             // [TODO]: Users should only have access to their own services for setup on portal 0.
             // [TODO]: Private admin needs to allow access for managers.
             // [TODO]: Public facing API should allow access for all users.
+
+            _remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+            _appTheme = new AppThemeLimpet(_remoteModule.Record.GetXmlProperty("genxml/remote/apptheme"));
 
             var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
             paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");

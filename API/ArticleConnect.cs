@@ -228,11 +228,12 @@ namespace RocketContent.API
         public String GetPublicArticle()
         {
             var articleData = GetActiveArticle(_moduleRef);
-            var razorTempl = articleData.AppTheme.GetTemplate("View.cshtml");
+            var razorTempl = _appTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
-            dataObjects.Add("paraminfo", _paramInfo); // we need this so we can check if a detail key has been passed.  if so, we need to do the SEO for the detail.            
-            return RenderRazorUtils.RazorObjectRender(razorTempl, _portalContent, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            dataObjects.Add("paraminfo", _paramInfo);
+            dataObjects.Add("portalcontent", _portalContent);
+            return RenderRazorUtils.RazorObjectRender(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
         }
         public String GetPublicArticleHeader()
         {
