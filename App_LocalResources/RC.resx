@@ -120,6 +120,9 @@
   <data name="apptheme.Text" xml:space="preserve">
     <value>AppTheme</value>
   </data>
+  <data name="datasourceref.Text" xml:space="preserve">
+    <value>Data Source ModuleRef</value>
+  </data>
   <data name="invalidcatalog.Text" xml:space="preserve">
     <value>Setup has not been completed.  </value>
   </data>
@@ -138,7 +141,7 @@
   <data name="viewapptheme.Text" xml:space="preserve">
     <value>View AppTheme</value>
   </data>
-  <data name="viewcmd.Text" xml:space="preserve">
-    <value>View Command</value>
+  <data name="viewtype.Text" xml:space="preserve">
+    <value>View Type</value>
   </data>
 </root>

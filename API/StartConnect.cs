@@ -89,7 +89,7 @@ namespace RocketContent.API
                     strOut = EditContent();
                     break;
                 case "remote_editsave":
-                    strOut = "SAVE: " + _paramInfo.ModuleId + " - " + _moduleRef;
+                    strOut = SaveContent();
                     break;
                 case "remote_settings":
                     strOut = RemoteSettings();
@@ -303,7 +303,7 @@ namespace RocketContent.API
                 if (remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
 
                 var appTheme = new AppThemeLimpet(remoteModule.AppThemeFolder, remoteModule.AppThemeVersion);
-                var razorTempl = appTheme.GetTemplate("AdminDetail.cshtml");
+                var razorTempl = appTheme.GetTemplate("EditDetail.cshtml");
                 var articleData = GetActiveArticle(_moduleRef);
 
                 var nbRazor = new SimplisityRazor(articleData, _passSettings);
@@ -311,6 +311,19 @@ namespace RocketContent.API
                 nbRazor.ModuleRef = _moduleRef;
 
                 return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string SaveContent()
+        {
+            try
+            {
+                var articleData = new ArticleLimpet(_portalContent.PortalId, _moduleRef, _sessionParams.CultureCodeEdit);
+                articleData.Save(_postInfo);
+                return EditContent();
             }
             catch (Exception ex)
             {

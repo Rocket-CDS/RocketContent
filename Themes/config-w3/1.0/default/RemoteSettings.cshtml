@@ -26,15 +26,14 @@
             @TextBox(info, "genxml/remote/name", " class='w3-input w3-border ' ", remoteModule.ModuleRef)
         </div>
         <div class="w3-half w3-padding">
-            <div class="w3-large">@ResourceKey("RC.viewcmd")</div>
-            @DropDownList(info, "genxml/remote/cmd", "remote_publicview", "remote_publicview", " class='w3-input w3-border '", "remote_publicview")
+            <div class="w3-large">ModuleRef</div>
+            <div class="w3-input w3-border w3-light-grey">@remoteModule.ModuleRef</div>
         </div>
-
     </div>
     <div class="w3-row">
         <div class="w3-half w3-padding">
             <div class="w3-large">@ResourceKey("RC.apptheme")</div>
-            <select id="apptheme" s-xpath="genxml/remote/apptheme" s-update="save" class="w3-input">
+            <select id="apptheme" s-xpath="genxml/remote/apptheme" s-update="save" class="w3-input" style="width:100%">
                 <option value="" versionfolder=""></option>
                 @foreach (var appTheme in appThemeList.List)
                 {
@@ -48,23 +47,52 @@
             </select>
         </div>
         <div class="w3-half w3-padding">
-            <div class="w3-large">@ResourceKey("RC.viewapptheme")</div>
-            <select id="appthemeview" s-xpath="genxml/remote/appthemeview" s-update="save" class="w3-input ">
-                <option value="" versionfolder=""></option>
-                @foreach (var appTheme in appThemeList.List)
-                {
-                    var selectedvalue2 = "";
-                    if (remoteModule.Record.GetXmlProperty("genxml/select/appthemeview") == appTheme.AppThemeFolder)
-                    {
-                        selectedvalue2 = "selected";
-                    }
-                    <option value="@appTheme.AppThemeFolder" @selectedvalue2 versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
-                }
-            </select>
+            &nbsp;
         </div>
     </div>
 
+    <div class="w3-row">
+        <div class="w3-half w3-padding">
+            <div class="w3-button" onclick="$('#advancedsettings').toggle();">Advanced</div>
+        </div>
+        <div class="w3-half w3-padding">
+            &nbsp;
+        </div>
+
     </div>
+
+    <div id="advancedsettings" class="w3-row" style="display:none;">
+        <div class="w3-row">
+            <div class="w3-half w3-padding">
+                <div class="w3-large">@ResourceKey("RC.datasourceref")</div>
+                @TextBox(info, "genxml/remote/datasourceref", " class='w3-input w3-border ' placeholder='" + remoteModule.ModuleRef + "' ", "")
+            </div>
+            <div class="w3-half w3-padding">
+            </div>
+        </div>
+        <div class="w3-row">
+            <div class="w3-half w3-padding">
+                <div class="w3-large">@ResourceKey("RC.viewapptheme")</div>
+                <select id="appthemeview" s-xpath="genxml/remote/appthemeview" s-update="save" class="w3-input " style="width:100%">
+                    <option value="" versionfolder=""></option>
+                    @foreach (var appTheme in appThemeList.List)
+                    {
+                        var selectedvalue2 = "";
+                        if (remoteModule.Record.GetXmlProperty("genxml/select/appthemeview") == appTheme.AppThemeFolder)
+                        {
+                            selectedvalue2 = "selected";
+                        }
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue2 versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="w3-half w3-padding">
+            </div>
+        </div>
+    </div>
+
+
+</div>
 
 <div class="w3-row w3-padding w3-center">
     <div class="w3-button w3-green simplisity_click" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleref":"@Model.ModuleRef"}'>@ButtonText(ButtonTypes.save)</div>
