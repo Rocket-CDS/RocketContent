@@ -19,7 +19,7 @@ namespace RocketContent.API
         private UserParams _userParams;
         private AppThemeSystemLimpet _appThemeSystem;
         private PortalContentLimpet _portalContent;
-        private string _moduleRef;
+        private string _dataRef;
         private AppThemeLimpet _appTheme;
         private RemoteModule _remoteModule;
 
@@ -264,12 +264,12 @@ namespace RocketContent.API
                 var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
 
-                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
 
                 var nbRazor = new SimplisityRazor(appThemeDataList, _passSettings);
                 nbRazor.DataObjects.Add("remotemodule", remoteModule);
                 nbRazor.SessionParamsData = _sessionParams;
-                nbRazor.ModuleRef = _moduleRef;
+                nbRazor.DataRef = _dataRef;
                 nbRazor.ModuleId = _paramInfo.ModuleId;
                 return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
             }
@@ -282,9 +282,9 @@ namespace RocketContent.API
         {
             try
             {
-                if (_moduleRef != "")
+                if (_dataRef != "")
                 {
-                    var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+                    var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
                     remoteModule.Save(_postInfo);
                 }
                 return RemoteSettings();
@@ -298,19 +298,14 @@ namespace RocketContent.API
         {
             try
             {
-                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
-
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
                 if (remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
-
-                var appTheme = new AppThemeLimpet(remoteModule.AppThemeFolder, remoteModule.AppThemeVersion);
-                var razorTempl = appTheme.GetTemplate("AdminDetail.cshtml");
-                var articleData = GetActiveArticle(_moduleRef);
-
-                var nbRazor = new SimplisityRazor(articleData, _passSettings);
-                nbRazor.SessionParamsData = _sessionParams;
-                nbRazor.ModuleRef = _moduleRef;
-
-                return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
+                var articleData = GetActiveArticle(_dataRef);
+                var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
+                var dataObjects = new Dictionary<string, object>();
+                dataObjects.Add("apptheme", _appTheme);
+                dataObjects.Add("remotemodule", _remoteModule);
+                return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
             }
             catch (Exception ex)
             {
@@ -321,7 +316,7 @@ namespace RocketContent.API
         {
             try
             {
-                var articleData = new ArticleLimpet(_portalContent.PortalId, _moduleRef, _sessionParams.CultureCodeEdit);
+                var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
                 articleData.Save(_postInfo);
                 return EditContent();
             }
@@ -341,8 +336,8 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
-            _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
-            if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
+            _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
+            if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
 
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();
@@ -363,7 +358,7 @@ namespace RocketContent.API
             // [TODO]: Private admin needs to allow access for managers.
             // [TODO]: Public facing API should allow access for all users.
 
-            _remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+            _remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
             _appTheme = new AppThemeLimpet(_remoteModule.Record.GetXmlProperty("genxml/remote/apptheme"));
 
             var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);

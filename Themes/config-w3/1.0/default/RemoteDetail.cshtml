@@ -17,21 +17,19 @@
     var sessionParams = Model.SessionParamsData;
 }
 
-@RenderLanguageSelector("article_admindetail", "{\"dataref\":\"" + articleData.DataRef + "\"}", appThemeSystem, Model)
+@RenderRemoteLanguageSelector("remote_edit", "{\"dataref\":\"" + articleData.DataRef + "\"}", appThemeSystem, Model)
 
 <div id="a-articledata" class=" w3-padding">
 
-    <div class="w3-bar w3-padding">
-        <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
-        <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
-        <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
-    </div>
-
     <div class="w3-row">
-        <div class="w3-half">
-            @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border ' ", @remoteModule.AppThemeFolder)
+        <div class="w3-third">
+            <span class="w3-padding w3-button w3-teal simplisity_click" s-cmd="remote_editsave" s-post="#a-articledata" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
         </div>
-        <div class="w3-half">
+        <div class="w3-third">
+            @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border w3-hide ' ", @remoteModule.AppThemeFolder)
+            &nbsp;
+        </div>
+        <div class="w3-third">
             <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
         </div>
     </div>

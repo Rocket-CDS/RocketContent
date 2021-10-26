@@ -12,23 +12,23 @@ namespace RocketContent.API
 {
     public partial class StartConnect
     {
-        private ArticleLimpet GetActiveArticle(string moduleRef)
+        private ArticleLimpet GetActiveArticle(string dataRef)
         {
-            return new ArticleLimpet(_portalContent.PortalId, moduleRef, _sessionParams.CultureCodeEdit);
+            return new ArticleLimpet(_portalContent.PortalId, dataRef, _sessionParams.CultureCodeEdit);
         }
         public int SaveArticle()
         {
             _passSettings.Add("saved", "true");
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _moduleRef, _sessionParams.CultureCodeEdit);
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
             return articleData.Save(_postInfo);
         }
         public void DeleteArticle()
         {
-            GetActiveArticle(_moduleRef).Delete();
+            GetActiveArticle(_dataRef).Delete();
         }
         public string AddArticleImage()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
             var imgList = ImgUtils.MoveImageToFolder(_postInfo, _portalContent.ImageFolderMapPath);
             foreach (var nam in imgList)
@@ -39,7 +39,7 @@ namespace RocketContent.API
         }
         public string AddArticleImage64()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
 
             var userfilename = UserUtils.GetCurrentUserId() + "_base64image.jpg";
@@ -71,7 +71,7 @@ namespace RocketContent.API
         }
         public string AddArticleDoc()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
             var docList = MoveDocumentToFolder(_postInfo, _portalContent.DocFolderMapPath);
             foreach (var nam in docList)
@@ -115,25 +115,25 @@ namespace RocketContent.API
         }
         public string AddArticleLink()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
             articleData.AddLink();
             return GetAdminArticle();
         }
         public String GetAdminArticle()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             return AdminDetailDisplay(articleData);
         }
         public String GetAdminSaveArticle()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
             return AdminDetailDisplay(articleData);
         }
         public String GetAdminDeleteArticle()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.Delete();
             return AdminListDisplay();
         }
@@ -230,7 +230,7 @@ namespace RocketContent.API
         }
         public String GetPublicArticle()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             var razorTempl = _appTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
@@ -240,7 +240,7 @@ namespace RocketContent.API
         }
         public String GetPublicArticleHeader()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = GetActiveArticle(_dataRef);
             var razorTempl = _appTheme.GetTemplate("ViewHeader.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();

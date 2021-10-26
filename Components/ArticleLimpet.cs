@@ -24,9 +24,9 @@ namespace RocketContent.Components
         /// Should be used to create an article, the portalId is required on creation
         /// </summary>
         /// <param name="portalId"></param>
-        /// <param name="moduleRef"></param>
+        /// <param name="dataRef"></param>
         /// <param name="langRequired"></param>
-        public ArticleLimpet(int portalId, string moduleRef, string langRequired)
+        public ArticleLimpet(int portalId, string dataRef, string langRequired)
         {
             PortalId = portalId;
             Info = new SimplisityInfo();
@@ -34,7 +34,7 @@ namespace RocketContent.Components
             Info.TypeCode = _entityTypeCode;
             Info.ModuleId = -1;
             Info.UserId = -1;
-            Info.GUIDKey = moduleRef;
+            Info.GUIDKey = dataRef;
             Info.PortalId = PortalId;
 
             Populate(langRequired);
@@ -55,11 +55,11 @@ namespace RocketContent.Components
             _objCtrl = new DNNrocketController();
             CultureCode = cultureCode;
 
-            var info = _objCtrl.GetByGuidKey(PortalId, -1, _entityTypeCode, ModuleRef, "", _tableName, cultureCode);
+            var info = _objCtrl.GetByGuidKey(PortalId, -1, _entityTypeCode, DataRef, "", _tableName, cultureCode);
             if (info != null && info.ItemID > 0) Info = info; // check if we have a real record, or a dummy being created and not saved yet.
             Info.Lang = CultureCode;
             PortalId = Info.PortalId;
-            if (ModuleRef == "") ModuleRef = GeneralUtils.GetGuidKey();
+            if (DataRef == "") DataRef = GeneralUtils.GetGuidKey();
         }
         public void Delete()
         {
@@ -278,12 +278,13 @@ namespace RocketContent.Components
         public int XrefItemId { get { return Info.XrefItemId; } set { Info.XrefItemId = value; } }
         public int ParentItemId { get { return Info.ParentItemId; } set { Info.ParentItemId = value; } }
         public int ArticleId { get { return Info.ItemID; } set { Info.ItemID = value; } }
-        public string ModuleRef { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
+        public string DataRef { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
         public string GUIDKey { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
         public int SortOrder { get { return Info.SortOrder; } set { Info.SortOrder = value; } }
         public bool DebugMode { get; set; }
         public int PortalId { get; set; }
         public bool Exists { get {if (Info.ItemID  <= 0) { return false; } else { return true; }; } }
+        public string Name { get { return Info.GetXmlProperty("genxml/textbox/name"); } set { Info.SetXmlProperty("genxml/textbox/name", value); } }
         #endregion
 
     }
