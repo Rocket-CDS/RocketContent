@@ -14,14 +14,14 @@
     var info = articleData.Info;
 }
 
-@RenderLanguageSelector("article_admindetail", "{\"articleid\":\"" + articleData.ArticleId + "\"}", appThemeSystem, Model)
+@RenderLanguageSelector("article_admindetail", "{\"moduleref\":\"" + articleData.ModuleRef + "\"}", appThemeSystem, Model)
 
 <div id="a-articledata" class=" w3-padding">
 
     <div class="w3-bar">
         <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
-        <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-fields='{"articleid":"@articleData.ArticleId"}'>@ButtonText(ButtonTypes.save)</span>
-        <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick"  s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?"  s-fields='{"articleid":"@articleData.ArticleId"}' >@ButtonText(ButtonTypes.delete)</span>
+        <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-fields='{"moduleref":"@(articleData.ModuleRef)"}'>@ButtonText(ButtonTypes.save)</span>
+        <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick"  s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?"  s-fields='{"moduleref":"@(articleData.ModuleRef)"}' >@ButtonText(ButtonTypes.delete)</span>
     </div>
 
     <div class="w3-row w3-padding">
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-     @RenderTemplate("EditDetail.cshtml", articleData.AppTheme, Model)
+     @RenderTemplate("AdminDetail.cshtml", articleData.AppTheme, Model)
 
 </div>
 

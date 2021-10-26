@@ -16,7 +16,6 @@ namespace RocketContent.API
         {
             return new ArticleLimpet(_portalContent.PortalId, moduleRef, _sessionParams.CultureCodeEdit);
         }
-
         public int SaveArticle()
         {
             _passSettings.Add("saved", "true");

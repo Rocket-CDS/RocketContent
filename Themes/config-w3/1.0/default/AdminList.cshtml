@@ -49,7 +49,7 @@
             </thead>
             @foreach (ArticleLimpet artcileData in articleList.GetArticleList())
             {
-                <tr class="simplisity_click" s-cmd="article_admindetail" s-fields='{"articleid":"@artcileData.ArticleId"}' style="cursor:pointer;">
+                <tr class="simplisity_click" s-cmd="article_admindetail" s-fields='{"moduleref":"@artcileData.ModuleRef"}' style="cursor:pointer;">
                     <td><b>@artcileData.Name</b></td>
                     <td>@artcileData.AppTheme.Name</td>
                     <td>@artcileData.ModuleRef</td>
