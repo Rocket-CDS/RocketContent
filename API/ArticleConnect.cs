@@ -140,15 +140,19 @@ namespace RocketContent.API
         public String AdminDetailDisplay(ArticleLimpet articleData)
         {
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
-            return RenderRazorUtils.RazorDetail(razorTempl, articleData, _passSettings, _sessionParams, true);
+            var dataObjects = new Dictionary<string, object>();
+            dataObjects.Add("apptheme", _appTheme);
+            dataObjects.Add("remotemodule", _remoteModule);  
+            return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
         }
         public String AdminListDisplay()
         {
             var articleDataList = new ArticleLimpetList(_paramInfo, _portalContent, _sessionParams.CultureCodeEdit, true);
-
+            var dataObjects = new Dictionary<string, object>();
+            dataObjects.Add("apptheme", _appTheme);
+            dataObjects.Add("remotemodule", _remoteModule);
             var razorTempl = _appThemeSystem.GetTemplate("adminlist.cshtml");
-            var strOut = RenderRazorUtils.RazorDetail(razorTempl, articleDataList, _passSettings, _sessionParams, true);
-            return strOut;
+            return RenderRazorUtils.RazorDetail(razorTempl, articleDataList, dataObjects, _sessionParams, _passSettings, true);
         }
         public String AdminSelectAppThemeDisplay()
         {
@@ -237,7 +241,7 @@ namespace RocketContent.API
         public String GetPublicArticleHeader()
         {
             var articleData = GetActiveArticle(_moduleRef);
-            var razorTempl = articleData.AppTheme.GetTemplate("ViewHeader.cshtml");
+            var razorTempl = _appTheme.GetTemplate("ViewHeader.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("paraminfo", _paramInfo); // we need this so we can check if a detail key has been passed.  if so, we need to do the SEO for the detail.            

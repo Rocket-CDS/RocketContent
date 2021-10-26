@@ -12,6 +12,9 @@
     var systemData = new SystemLimpet("rocketcontent");
     var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
     var info = articleData.Info;
+    var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
+    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
+    var sessionParams = Model.SessionParamsData;
 }
 
 @RenderLanguageSelector("article_admindetail", "{\"moduleref\":\"" + articleData.ModuleRef + "\"}", appThemeSystem, Model)
@@ -26,8 +29,8 @@
 
     <div class="w3-row w3-padding">
         <div class="w3-quarter w3-padding">
-            <label>@ResourceKey("DNNrocket.name")</label>
-            @TextBox(info, articleData.NameXPath, " class='w3-input w3-border ' ", articleData.AppTheme.Name)
+            <label>@ResourceKey("DNNrocket.name")</label>&nbsp;@EditFlag(sessionParams)
+            @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border ' ", @remoteModule.AppThemeFolder)            
         </div>
         <div class="w3-quarter w3-padding">
             <label>@ResourceKey("DNNrocket.ref")</label>
@@ -35,11 +38,11 @@
         </div>
         <div class="w3-quarter w3-padding">
             <label>AppTheme</label>
-            <div class="w3-margin-bottom w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(articleData.AppTheme.Name)</div>
+            <div class="w3-margin-bottom w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(appTheme.Name)</div>
         </div>
     </div>
 
-     @RenderTemplate("AdminDetail.cshtml", articleData.AppTheme, Model)
+     @RenderTemplate("AdminDetail.cshtml", appTheme, Model)
 
 </div>
 
@@ -49,6 +52,7 @@
 
 <script>
     $(document).ready(function () {
+        $('[s-cmd=remote_editsave]').hide(); // hide the remote_editsave button.
     });
 </script>
 

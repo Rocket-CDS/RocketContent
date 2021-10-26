@@ -284,13 +284,6 @@ namespace RocketContent.Components
         public bool DebugMode { get; set; }
         public int PortalId { get; set; }
         public bool Exists { get {if (Info.ItemID  <= 0) { return false; } else { return true; }; } }
-        public string Name { get { return Info.GetXmlProperty(NameXPath); } set { Info.SetXmlProperty(NameXPath, value); } }
-        public string NameXPath { get { return "genxml/lang/genxml/textbox/articlename"; } }
-        public bool IsHidden { get { return Info.GetXmlPropertyBool("genxml/checkbox/hidden"); } }
-        public string AppThemeFolder { get { return Info.GetXmlProperty("genxml/config/appthemefolder"); } set { Info.SetXmlProperty("genxml/config/appthemefolder", value); } }
-        public string AppThemeVersion { get { return Info.GetXmlProperty("genxml/config/appthemeversion"); } set { Info.SetXmlProperty("genxml/config/appthemeversion", value); } }
-        public AppThemeLimpet AppTheme { get { return new AppThemeLimpet(AppThemeFolder, AppThemeVersion); } }
-
         #endregion
 
     }

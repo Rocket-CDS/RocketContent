@@ -11,6 +11,7 @@
     var articleList = (ArticleLimpetList)Model.List.First();
     var systemData = new SystemLimpet("rocketcontent");
     var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
 }
 
 @RenderLanguageSelector("article_adminlist", "", appThemeSystem, Model)
@@ -43,15 +44,13 @@
             <thead>
                 <tr>
                     <th>@ResourceKey("RP.name")</th>
-                    <th>AppTheme</th>
                     <th>Ref</th>
                 </tr>
             </thead>
             @foreach (ArticleLimpet artcileData in articleList.GetArticleList())
             {
                 <tr class="simplisity_click" s-cmd="article_admindetail" s-fields='{"moduleref":"@artcileData.ModuleRef"}' style="cursor:pointer;">
-                    <td><b>@artcileData.Name</b></td>
-                    <td>@artcileData.AppTheme.Name</td>
+                    <td><b>@remoteModule.Record.GetXmlProperty("genxml/textbox/name")</b></td>
                     <td>@artcileData.ModuleRef</td>
                 </tr>
             }
