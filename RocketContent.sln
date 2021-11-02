@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppThemes", "..\..\DNNrocke
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rocketcontent.RichText", "..\..\RocketThemes\rocketcontent.RichText\rocketcontent.RichText.csproj", "{055DC2B9-1F70-4CCE-B65B-68889119303E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rocketcontent.HtmlContent", "..\..\RocketThemes\rocketcontent.HtmlContent\rocketcontent.HtmlContent.csproj", "{42B50344-24C1-43BF-8BC6-44363C6AEB7A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Comp All|Any CPU = Comp All|Any CPU
@@ -74,6 +76,16 @@ Global
 		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Razor|Any CPU.Build.0 = Release|Any CPU
 		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Comp All|Any CPU.ActiveCfg = Comp All|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Comp All|Any CPU.Build.0 = Comp All|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.CompAll|Any CPU.ActiveCfg = CompAll|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.CompAll|Any CPU.Build.0 = CompAll|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Razor|Any CPU.ActiveCfg = Release|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Razor|Any CPU.Build.0 = Release|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B50344-24C1-43BF-8BC6-44363C6AEB7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

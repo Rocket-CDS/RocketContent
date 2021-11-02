@@ -31,12 +31,26 @@ namespace RocketContent.API
         {
             var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
-            var imgList = ImgUtils.MoveImageToFolder(_postInfo, _portalContent.ImageFolderMapPath);
-            foreach (var nam in imgList)
+
+            // Add new image if found in postInfo
+            var fileuploadlist = _postInfo.GetXmlProperty("genxml/hidden/fileuploadlist");
+            var fileuploadbase64 = _postInfo.GetXmlProperty("genxml/hidden/fileuploadbase64");
+            if (fileuploadbase64 != "")
             {
-                articleData.AddImage(nam);
+                var filenameList = fileuploadlist.Split('*');
+                var filebase64List = fileuploadbase64.Split('*');
+                var baseFileMapPath = PortalUtils.TempDirectoryMapPath() + "\\" + GeneralUtils.GetGuidKey();
+                var imgsize = _postInfo.GetXmlPropertyInt("genxml/hidden/imageresize");
+                if (imgsize == 0) imgsize = 640;
+                var imgList = ImgUtils.UploadBase64Image(filenameList, filebase64List, baseFileMapPath, _portalContent.ImageFolderMapPath, imgsize);
+                foreach (var imgFileMapPath in imgList)
+                {
+                    articleData.AddImage(Path.GetFileName(imgFileMapPath));
+                }
             }
-            return GetAdminArticle();
+
+            return EditContent(); // remote display
+            //return GetAdminArticle();
         }
         public string AddArticleImage64()
         {

@@ -85,6 +85,10 @@ namespace RocketContent.API
                     break;
 
 
+
+                case "remote_addimage":
+                    strOut = AddArticleImage();
+                    break;
                 case "remote_editoption":
                     strOut = "true";
                     break;

@@ -63,6 +63,12 @@
     </command>
 
 
+
+
+    <command>
+      <cmd>remote_addimage</cmd>
+      <action>false</action>
+    </command>
     <command>
       <cmd>remote_editoption</cmd>
       <action>false</action>
