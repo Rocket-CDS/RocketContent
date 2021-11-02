@@ -85,6 +85,9 @@ namespace RocketContent.API
                     break;
 
 
+                case "remote_editoption":
+                    strOut = "true";
+                    break;
                 case "remote_edit":
                     strOut = EditContent();
                     break;
@@ -300,7 +303,7 @@ namespace RocketContent.API
             {
                 var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
                 if (remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
-                var articleData = GetActiveArticle(_dataRef);
+                var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
                 var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
                 var dataObjects = new Dictionary<string, object>();
                 dataObjects.Add("apptheme", _appTheme);

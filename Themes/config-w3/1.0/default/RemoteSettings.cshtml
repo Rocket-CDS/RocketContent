@@ -22,7 +22,7 @@
 
     <div class="w3-row">
         <div class="w3-large">ModuleRef</div>
-        <div class="w3-input w3-border w3-light-grey">@remoteModule.ModuleRef</div>
+        <div class="w3-input w3-border w3-light-grey">@remoteModule.DataRef</div>
     </div>
     <div class="w3-row">
         <div class="w3-large">@ResourceKey("RC.apptheme")</div>
@@ -53,7 +53,7 @@
     <div id="advancedsettings" class="w3-row" style="display:none;">
         <div class="w3-row">
             <div class="w3-large">@ResourceKey("RC.datasourceref")</div>
-            @TextBox(info, "genxml/remote/datasourceref", " class='w3-input w3-border ' placeholder='" + remoteModule.ModuleRef + "' ", "")
+            @TextBox(info, "genxml/remote/datasourceref", " class='w3-input w3-border ' placeholder='" + remoteModule.DataRef + "' ", "")
         </div>
         <div class="w3-row">
             <div class="w3-large">@ResourceKey("RC.viewapptheme")</div>

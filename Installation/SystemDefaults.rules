@@ -63,7 +63,10 @@
     </command>
 
 
-    
+    <command>
+      <cmd>remote_editoption</cmd>
+      <action>false</action>
+    </command>    
     <command>
       <cmd>remote_edit</cmd>
       <action>false</action>

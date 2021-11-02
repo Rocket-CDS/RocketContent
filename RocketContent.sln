@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketPortal", "..\..\DNNro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppThemes", "..\..\DNNrocket\RocketAppTheme\AppThemes.csproj", "{382F2096-209A-49F7-A5C5-B7CFB2B67A17}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rocketcontent.RichText", "..\..\RocketThemes\rocketcontent.RichText\rocketcontent.RichText.csproj", "{055DC2B9-1F70-4CCE-B65B-68889119303E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Comp All|Any CPU = Comp All|Any CPU
@@ -62,6 +64,16 @@ Global
 		{382F2096-209A-49F7-A5C5-B7CFB2B67A17}.Razor|Any CPU.Build.0 = Razor|Any CPU
 		{382F2096-209A-49F7-A5C5-B7CFB2B67A17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{382F2096-209A-49F7-A5C5-B7CFB2B67A17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Comp All|Any CPU.ActiveCfg = Comp All|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Comp All|Any CPU.Build.0 = Comp All|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.CompAll|Any CPU.ActiveCfg = CompAll|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.CompAll|Any CPU.Build.0 = CompAll|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Razor|Any CPU.ActiveCfg = Release|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Razor|Any CPU.Build.0 = Release|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055DC2B9-1F70-4CCE-B65B-68889119303E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

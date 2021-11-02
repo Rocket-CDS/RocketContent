@@ -12,9 +12,10 @@ namespace RocketContent.API
 {
     public partial class StartConnect
     {
-        private ArticleLimpet GetActiveArticle(string dataRef)
+        private ArticleLimpet GetActiveArticle(string dataRef, string culturecode = "")
         {
-            return new ArticleLimpet(_portalContent.PortalId, dataRef, _sessionParams.CultureCodeEdit);
+            if (culturecode == "") culturecode = _sessionParams.CultureCodeEdit;
+            return new ArticleLimpet(_portalContent.PortalId, dataRef, culturecode);
         }
         public int SaveArticle()
         {
@@ -230,7 +231,7 @@ namespace RocketContent.API
         }
         public String GetPublicArticle()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCode);
             var razorTempl = _appTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
