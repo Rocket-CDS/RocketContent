@@ -49,8 +49,8 @@ namespace RocketContent.API
                 }
             }
 
-            return EditContent(); // remote display
-            //return GetAdminArticle();
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
         }
         public string AddArticleDoc()
         {
@@ -73,14 +73,16 @@ namespace RocketContent.API
                 }
             }
 
-            return EditContent();
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
         }
         public string AddArticleLink()
         {
             var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
             articleData.AddLink();
-            return EditContent();
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
         }
         public String GetAdminArticle()
         {
