@@ -10,9 +10,10 @@
 
 @{
     var articleData = (ArticleLimpet)Model.List.First();
+    var articleRowData = (ArticleRowLimpet)Model.GetDataObject("articlerow");
     var docLP = 1;
 
-    var datalist = articleData.GetDocList();
+    var datalist = articleRowData.GetDocList();
     var globalSettings = new SystemGlobalData();
     var sessionParams = Model.SessionParamsData;
 }

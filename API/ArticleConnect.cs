@@ -17,11 +17,22 @@ namespace RocketContent.API
             if (culturecode == "") culturecode = _sessionParams.CultureCodeEdit;
             return new ArticleLimpet(_portalContent.PortalId, dataRef, culturecode);
         }
-        public int SaveArticle()
+        public string AddRow()
         {
             _passSettings.Add("saved", "true");
             var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
-            return articleData.Save(_postInfo);
+            articleData.AddRow();
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
+        }
+        public string SaveArticleRow()
+        {
+            
+            _passSettings.Add("saved", "true");
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            articleData.UpdateRow(_rowKey, _postInfo);
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
         }
         public void DeleteArticle()
         {
@@ -30,7 +41,7 @@ namespace RocketContent.API
         public string AddArticleImage()
         {
             var articleData = GetActiveArticle(_dataRef);
-            articleData.Save(_postInfo);
+            articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
             var fileuploadlist = _postInfo.GetXmlProperty("genxml/hidden/fileuploadlist");
@@ -45,7 +56,8 @@ namespace RocketContent.API
                 var imgList = ImgUtils.UploadBase64Image(filenameList, filebase64List, baseFileMapPath, _portalContent.ImageFolderMapPath, imgsize);
                 foreach (var imgFileMapPath in imgList)
                 {
-                    articleData.AddImage(Path.GetFileName(imgFileMapPath));
+                    var articleRow = articleData.GetRow(_rowKey);
+                    if (articleRow != null) articleRow.AddImage(Path.GetFileName(imgFileMapPath));
                 }
             }
 
@@ -55,8 +67,7 @@ namespace RocketContent.API
         public string AddArticleDoc()
         {
             var articleData = GetActiveArticle(_dataRef);
-            articleData.Save(_postInfo);
-
+            articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
             var fileuploadlist = _postInfo.GetXmlProperty("genxml/hidden/fileuploadlist");
@@ -69,7 +80,8 @@ namespace RocketContent.API
                 if (fileList.Count == 0) return MessageDisplay("RC.invalidfile");
                 foreach (var imgFileMapPath in fileList)
                 {
-                    articleData.AddDoc(Path.GetFileName(imgFileMapPath));
+                    var articleRow = articleData.GetRow(_rowKey);
+                    if (articleRow != null) articleRow.AddDoc(Path.GetFileName(imgFileMapPath));
                 }
             }
 
@@ -79,20 +91,16 @@ namespace RocketContent.API
         public string AddArticleLink()
         {
             var articleData = GetActiveArticle(_dataRef);
-            articleData.Save(_postInfo);
-            articleData.AddLink();
+            articleData.UpdateRow(_rowKey, _postInfo);
+
+            var articleRow = articleData.GetRow(_rowKey);
+            if (articleRow != null) articleRow.AddLink();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
         public String GetAdminArticle()
         {
             var articleData = GetActiveArticle(_dataRef);
-            return AdminDetailDisplay(articleData);
-        }
-        public String GetAdminSaveArticle()
-        {
-            var articleData = GetActiveArticle(_dataRef);
-            articleData.Save(_postInfo);
             return AdminDetailDisplay(articleData);
         }
         public String GetAdminDeleteArticle()

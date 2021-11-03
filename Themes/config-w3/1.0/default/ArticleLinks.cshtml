@@ -10,9 +10,10 @@
 
 @{
     var articleData = (ArticleLimpet)Model.List.First();
+    var articleRowData = (ArticleRowLimpet)Model.GetDataObject("articlerow");
     var linkLP = 0;
 
-    var datalist = articleData.GetLinkList();
+    var datalist = articleRowData.GetLinkList();
     var globalSettings = new SystemGlobalData();
     var sessionParams = Model.SessionParamsData;
     var fieldId = "articlelink";

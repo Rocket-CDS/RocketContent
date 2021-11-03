@@ -22,6 +22,7 @@ namespace RocketContent.API
         private string _dataRef;
         private AppThemeLimpet _appTheme;
         private RemoteModule _remoteModule;
+        private string _rowKey;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -78,14 +79,17 @@ namespace RocketContent.API
                     strOut = GetAdminArticle();
                     break;
                 case "article_adminsave":
-                    strOut = GetAdminSaveArticle();
+                    strOut = SaveArticleRow();
                     break;
                 case "article_admindelete":
                     strOut = GetAdminDeleteArticle();
                     break;
 
 
-                    
+
+                case "remote_addrow":
+                    strOut = AddRow();
+                    break;
                 case "remote_addlink":
                     strOut = AddArticleLink();
                     break;
@@ -102,7 +106,7 @@ namespace RocketContent.API
                     strOut = EditContent();
                     break;
                 case "remote_editsave":
-                    strOut = SaveContent();
+                    strOut = SaveArticleRow();
                     break;
                 case "remote_settings":
                     strOut = RemoteSettings();
@@ -314,10 +318,13 @@ namespace RocketContent.API
                 var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
                 if (remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
                 var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+                var articleRow = articleData.GetRow(0);
+                if (_rowKey != "")articleRow = articleData.GetRow(_rowKey);
                 var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
                 var dataObjects = new Dictionary<string, object>();
                 dataObjects.Add("apptheme", _appTheme);
                 dataObjects.Add("remotemodule", _remoteModule);
+                dataObjects.Add("articlerow", articleRow);
                 return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
             }
             catch (Exception ex)
@@ -343,20 +350,6 @@ namespace RocketContent.API
                 return ex.ToString();
             }
         }
-        private string SaveContent()
-        {
-            try
-            {
-                var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
-                articleData.Save(_postInfo);
-                return EditContent();
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
-        }
-
         public string InitCmd(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
             _postInfo = postInfo;
@@ -369,6 +362,8 @@ namespace RocketContent.API
             _passSettings = new Dictionary<string, string>();
             _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
             if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
+            _rowKey = _postInfo.GetXmlProperty("genxml/config/key");
+            if (_rowKey == "") _rowKey = _paramInfo.GetXmlProperty("genxml/hidden/key");
 
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();

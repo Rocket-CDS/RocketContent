@@ -63,7 +63,11 @@
     </command>
 
 
-
+    
+    <command>
+      <cmd>remote_addrow</cmd>
+      <action>false</action>
+    </command>
     <command>
       <cmd>remote_addlink</cmd>
       <action>false</action>

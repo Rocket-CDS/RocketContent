@@ -60,47 +60,25 @@ namespace RocketContent.Components
             Info.Lang = CultureCode;
             PortalId = Info.PortalId;
             if (DataRef == "") DataRef = GeneralUtils.GetGuidKey();
+
+            if (GetRowList().Count  == 0) AddRow(); // create first row automatically
         }
         public void Delete()
         {
             _objCtrl.Delete(Info.ItemID, _tableName);
         }
 
-        private void ReplaceInfoFields(SimplisityInfo postInfo, string xpathListSelect)
+        private SimplisityInfo ReplaceInfoFields(SimplisityInfo newInfo, SimplisityInfo postInfo, string xpathListSelect)
         {
-            var textList = Info.XMLDoc.SelectNodes(xpathListSelect);
+            var textList = postInfo.XMLDoc.SelectNodes(xpathListSelect);
             if (textList != null)
             {
                 foreach (XmlNode nod in textList)
                 {
-                    Info.RemoveXmlNode(xpathListSelect.Replace("*","") + nod.Name);
+                    newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, nod.InnerText);
                 }
             }
-            textList = postInfo.XMLDoc.SelectNodes(xpathListSelect);
-            if (textList != null)
-            {
-                foreach (XmlNode nod in textList)
-                {
-                    Info.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, nod.InnerText);
-                }
-            }
-        }
-        public int Save(SimplisityInfo postInfo)
-        {
-            ReplaceInfoFields(postInfo, "genxml/textbox/*");
-            ReplaceInfoFields(postInfo, "genxml/lang/genxml/textbox/*");
-            ReplaceInfoFields(postInfo, "genxml/checkbox/*");
-            ReplaceInfoFields(postInfo, "genxml/select/*");
-            ReplaceInfoFields(postInfo, "genxml/radio/*");
-
-            // Always use the same AppTheme. (It can be changed, but can lead to unexpected results)
-            //ReplaceInfoFields(postInfo, "genxml/config/*");
-
-            UpdateImages(postInfo.GetList("imagelist"));
-            UpdateDocs(postInfo.GetList("documentlist"));
-            UpdateLinks(postInfo.GetList("linklist"));
-
-            return ValidateAndUpdate();
+            return newInfo;
         }
         public int Update()
         {
@@ -134,136 +112,64 @@ namespace RocketContent.Components
         {
         }
 
-        #region "images"
-
-        public string ImageListName { get { return "imagelist";  } }
-        public void UpdateImages(List<SimplisityInfo> imageList)
+        #region "rows"
+        public void UpdateRow(string rowKey, SimplisityInfo postInfo)
         {
-            Info.RemoveList(ImageListName);
-            foreach (var sInfo in imageList)
+            var newArticleRows = new List<SimplisityInfo>();
+            var articleRows = GetRowList();
+            foreach (var sInfo in articleRows)
             {
-                var imgData = new ArticleImage(sInfo, "articleimage");
-                UpdateImage(imgData);
+                if (sInfo.GetXmlProperty("genxml/config/key") == rowKey)
+                {
+                    var newInfo = ReplaceInfoFields(new SimplisityInfo(), postInfo, "genxml/textbox/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/textbox/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/checkbox/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/select/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/radio/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/config/*");
+                    newArticleRows.Add(newInfo);
+                }
+                else
+                {
+                    newArticleRows.Add(sInfo);
+                }
             }
-        }
-        public List<SimplisityInfo> GetImageList()
-        {
-            return Info.GetList(ImageListName);
-        }
-        public ArticleImage AddImage(string uniqueName)
-        {
-            var articleImage = new ArticleImage(new SimplisityInfo(), "articleimage");
-            if (Info.ItemID < 0) Update(); // blank record, not on DB.  Create now.
-            var portalContent = new PortalContentLimpet(PortalId, CultureCode);
-            articleImage.RelPath = portalContent.ImageFolderRel.TrimEnd('/') + "/" + uniqueName;
-            Info.AddListItem(ImageListName, articleImage.Info);
+            Info.RemoveList("rows");
+            foreach (var sInfo in newArticleRows)
+            {
+                Info.AddRecordListItem("rows", sInfo);
+            }
             Update();
-            return articleImage;
         }
-        public void UpdateImage(ArticleImage articleImage)
+        public void AddRow()
         {
-            Info.RemoveListItem(ImageListName, "genxml/hidden/imagekey", articleImage.ImageKey);
-            Info.AddListItem(ImageListName, articleImage.Info);
-        }
-        public ArticleImage GetImage(int idx)
-        {
-            return new ArticleImage(Info.GetListItem(ImageListName, idx), "articleimage");
-        }
-        public List<ArticleImage> GetImages()
-        {
-            var rtn = new List<ArticleImage>();
-            foreach (var i in Info.GetList(ImageListName))
-            {
-                rtn.Add(new ArticleImage(i, "articleimage"));
-            }
-            return rtn;
-        }
-        #endregion
-
-        #region "docs"
-        public string DocumentListName { get { return "documentlist"; } }
-        public void UpdateDocs(List<SimplisityInfo> docList)
-        {
-            Info.RemoveList(DocumentListName);
-            foreach (var sInfo in docList)
-            {
-                var docData = new ArticleDoc(sInfo, "articledoc");
-                UpdateDoc(docData);
-            }
-        }
-        public List<SimplisityInfo> GetDocList()
-        {
-            return Info.GetList(DocumentListName);
-        }
-        public ArticleDoc AddDoc(string uniqueName)
-        {
-            var articleDoc = new ArticleDoc(new SimplisityInfo(), "articledoc");
-            if (Info.ItemID < 0) Update(); // blank record, not on DB.  Create now.
-            var portalContent = new PortalContentLimpet(PortalId, CultureCode);
-            articleDoc.RelPath = portalContent.DocFolderRel.TrimEnd('/') + "/" + uniqueName;
-            articleDoc.Name = uniqueName;
-            Info.AddListItem(DocumentListName, articleDoc.Info);
+            var newInfo = new SimplisityInfo();
+            newInfo.SetXmlProperty("genxml/config/key", GeneralUtils.GetGuidKey());
+            Info.AddListItem("rows", newInfo);
             Update();
-            return articleDoc;
         }
-        public void UpdateDoc(ArticleDoc articleDoc)
+        public ArticleRowLimpet GetRow(string rowKey)
         {
-            Info.RemoveListItem(DocumentListName, "genxml/hidden/dockey", articleDoc.DocKey);
-            Info.AddListItem(DocumentListName, articleDoc.Info);
+            var articleRow = Info.GetListItem("rows", "genxml/config/key", rowKey);
+            if (articleRow == null) return null;
+            return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
         }
-        public ArticleDoc GetDoc(int idx)
+        public ArticleRowLimpet GetRow(int idx)
         {
-            return new ArticleDoc(Info.GetListItem(DocumentListName, idx), "articledoc");
+            var articleRow = Info.GetListItem("rows", idx);
+            if (articleRow == null) return null;
+            return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
         }
-        public List<ArticleDoc> GetDocs()
+        public List<SimplisityInfo> GetRowList()
         {
-            var rtn = new List<ArticleDoc>();
-            foreach (var i in Info.GetList(DocumentListName))
+            return Info.GetList("rows");
+        }
+        public List<ArticleRowLimpet> GetRows()
+        {
+            var rtn = new List<ArticleRowLimpet>();
+            foreach (var i in Info.GetList("rows"))
             {
-                rtn.Add(new ArticleDoc(i, "articledoc"));
-            }
-            return rtn;
-        }
-        #endregion
-
-        #region "links"
-        public string LinkListName { get { return "linklist"; } }
-        public void UpdateLinks(List<SimplisityInfo> linkList)
-        {
-            Info.RemoveList(LinkListName);
-            foreach (var sInfo in linkList)
-            {
-                var linkData = new ArticleLink(sInfo, "articlelink");
-                UpdateLink(linkData);
-            }
-        }
-        public List<SimplisityInfo> GetLinkList()
-        {
-            return Info.GetList(LinkListName);
-        }
-        public ArticleLink AddLink()
-        {
-            var articleLink = new ArticleLink(new SimplisityInfo(), "articlelink");
-            if (Info.ItemID < 0) Update(); // blank record, not on DB.  Create now.
-            Info.AddListItem(LinkListName, articleLink.Info);
-            Update();
-            return articleLink;
-        }
-        public void UpdateLink(ArticleLink articleLink)
-        {
-            Info.RemoveListItem(LinkListName, "genxml/hidden/linkkey", articleLink.LinkKey);
-            Info.AddListItem(LinkListName, articleLink.Info);
-        }
-        public ArticleLink Getlink(int idx)
-        {
-            return new ArticleLink(Info.GetListItem(LinkListName, idx), "articlelink");
-        }
-        public List<ArticleLink> Getlinks()
-        {
-            var rtn = new List<ArticleLink>();
-            foreach (var i in Info.GetList(LinkListName))
-            {
-                rtn.Add(new ArticleLink(i, "articlelink"));
+                rtn.Add(new ArticleRowLimpet(ArticleId, i.XMLData));
             }
             return rtn;
         }
@@ -285,6 +191,9 @@ namespace RocketContent.Components
         public int PortalId { get; set; }
         public bool Exists { get {if (Info.ItemID  <= 0) { return false; } else { return true; }; } }
         public string Name { get { return Info.GetXmlProperty("genxml/textbox/name"); } set { Info.SetXmlProperty("genxml/textbox/name", value); } }
+        public string LinkListName { get { return "linklist"; } }
+        public string DocumentListName { get { return "documentlist"; } }
+        public string ImageListName { get { return "imagelist"; } }
         #endregion
 
     }
