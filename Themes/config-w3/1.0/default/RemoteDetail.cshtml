@@ -3,6 +3,7 @@
 @using RocketContent.Components;
 @using Simplisity;
 @using RazorEngine.Text;
+@using RocketPortal.Components;
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
@@ -15,7 +16,10 @@
     var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
     var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
     var sessionParams = Model.SessionParamsData;
+    var portalData = new PortalLimpet(PortalUtils.GetCurrentPortalId());
 }
+
+<link rel="stylesheet" href="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/API/Themes/config-w3/1.0/css/@(portalData.ColorAdminTheme)">
 
 @RenderRemoteLanguageSelector("remote_edit", "{\"dataref\":\"" + articleData.DataRef + "\"}", appThemeSystem, Model)
 
@@ -23,7 +27,7 @@
 
     <div class="w3-row">
         <div class="w3-third">
-            <span class="w3-padding w3-button w3-teal simplisity_click" s-cmd="remote_editsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
+            <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="remote_editsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
         </div>
         <div class="w3-third">
             @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border w3-hide ' ", @remoteModule.AppThemeFolder)
@@ -43,3 +47,8 @@
     <span class="w3-right">AppTheme: @remoteModule.AppThemeFolder</span>
 </div>
 
+<script>
+    $(document).ready(function () {
+        simplisity_setParamField("remoteedit", true);
+    });
+</script>
