@@ -52,88 +52,35 @@ namespace RocketContent.API
             return EditContent(); // remote display
             //return GetAdminArticle();
         }
-        public string AddArticleImage64()
-        {
-            var articleData = GetActiveArticle(_dataRef);
-            articleData.Save(_postInfo);
-
-            var userfilename = UserUtils.GetCurrentUserId() + "_base64image.jpg";
-            var baseFileMapPath = PortalUtils.TempDirectoryMapPath() + "\\" + userfilename;
-
-            var base64image = _postInfo.GetXmlProperty("genxml/base64image");
-            var baseArray = base64image.Split(',');
-            if (baseArray.Length >= 2)
-            {
-                base64image = baseArray[1];
-                var sInfo = new SimplisityInfo();
-                sInfo.SetXmlProperty("genxml/hidden/fileuploadlist", "base64image.jpg");
-
-                var bytes = Convert.FromBase64String(base64image);
-                using (var imageFile = new FileStream(baseFileMapPath, FileMode.Create))
-                {
-                    imageFile.Write(bytes, 0, bytes.Length);
-                    imageFile.Flush();
-                }
-
-                var imgList = ImgUtils.MoveImageToFolder(sInfo, _portalContent.ImageFolderMapPath);
-                foreach (var nam in imgList)
-                {
-                    articleData.AddImage(nam);
-                }
-                return GetAdminArticle();
-            }
-            return "";
-        }
         public string AddArticleDoc()
         {
             var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
-            var docList = MoveDocumentToFolder(_postInfo, _portalContent.DocFolderMapPath);
-            foreach (var nam in docList)
+
+
+            // Add new image if found in postInfo
+            var fileuploadlist = _postInfo.GetXmlProperty("genxml/hidden/fileuploadlist");
+            var fileuploadbase64 = _postInfo.GetXmlProperty("genxml/hidden/fileuploadbase64");
+            if (fileuploadbase64 != "")
             {
-                articleData.AddDoc(nam);
-            }
-            return GetAdminArticle();
-        }
-        private List<string> MoveDocumentToFolder(SimplisityInfo postInfo, string destinationFolder, int maxDocuments = 50)
-        {
-            destinationFolder = destinationFolder.TrimEnd('\\');
-            var rtn = new List<string>();
-            var userid = UserUtils.GetCurrentUserId(); // prefix to filename on upload.
-            if (!Directory.Exists(destinationFolder)) Directory.CreateDirectory(destinationFolder);
-            var fileuploadlist = postInfo.GetXmlProperty("genxml/hidden/fileuploadlist");
-            if (fileuploadlist != "")
-            {
-                var docCount = 1;
-                foreach (var f in fileuploadlist.Split(';'))
+                var filenameList = fileuploadlist.Split('*');
+                var filebase64List = fileuploadbase64.Split('*');
+                var fileList = DocUtils.UploadBase64file(filenameList, filebase64List, _portalContent.DocFolderMapPath);
+                if (fileList.Count == 0) return MessageDisplay("RC.invalidfile");
+                foreach (var imgFileMapPath in fileList)
                 {
-                    if (f != "")
-                    {
-                        var friendlyname = GeneralUtils.DeCode(f);
-                        var userfilename = userid + "_" + friendlyname;
-                        if (docCount <= maxDocuments)
-                        {
-                            var unqName = DNNrocketUtils.GetUniqueFileName(friendlyname.Replace(" ", "_"), destinationFolder);
-                            var fname = destinationFolder + "\\" + unqName;
-                            File.Move(PortalUtils.TempDirectoryMapPath() + "\\" + userfilename, fname);
-                            if (File.Exists(fname))
-                            {
-                                rtn.Add(unqName);
-                                docCount += 1;
-                            }
-                        }
-                        File.Delete(PortalUtils.TempDirectoryMapPath() + "\\" + userfilename);
-                    }
+                    articleData.AddDoc(Path.GetFileName(imgFileMapPath));
                 }
             }
-            return rtn;
+
+            return EditContent();
         }
         public string AddArticleLink()
         {
             var articleData = GetActiveArticle(_dataRef);
             articleData.Save(_postInfo);
             articleData.AddLink();
-            return GetAdminArticle();
+            return EditContent();
         }
         public String GetAdminArticle()
         {

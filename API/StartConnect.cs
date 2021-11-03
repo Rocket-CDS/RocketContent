@@ -85,7 +85,13 @@ namespace RocketContent.API
                     break;
 
 
-
+                    
+                case "remote_addlink":
+                    strOut = AddArticleLink();
+                    break;
+                case "remote_adddoc":
+                    strOut = AddArticleDoc();
+                    break;
                 case "remote_addimage":
                     strOut = AddArticleImage();
                     break;
@@ -312,6 +318,24 @@ namespace RocketContent.API
                 var dataObjects = new Dictionary<string, object>();
                 dataObjects.Add("apptheme", _appTheme);
                 dataObjects.Add("remotemodule", _remoteModule);
+                return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        private string MessageDisplay(string msgKey)
+        {
+            try
+            {
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
+                var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+                var razorTempl = _appThemeSystem.GetTemplate("MessageDisplay.cshtml");
+                var dataObjects = new Dictionary<string, object>();
+                dataObjects.Add("apptheme", _appTheme);
+                dataObjects.Add("remotemodule", _remoteModule);
+                _passSettings.Add("msgkey", msgKey);
                 return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
             }
             catch (Exception ex)

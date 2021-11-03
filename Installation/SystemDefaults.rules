@@ -64,7 +64,14 @@
 
 
 
-
+    <command>
+      <cmd>remote_addlink</cmd>
+      <action>false</action>
+    </command>
+    <command>
+      <cmd>remote_adddoc</cmd>
+      <action>false</action>
+    </command>
     <command>
       <cmd>remote_addimage</cmd>
       <action>false</action>

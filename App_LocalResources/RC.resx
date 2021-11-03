@@ -126,6 +126,12 @@
   <data name="invalidcatalog.Text" xml:space="preserve">
     <value>Setup has not been completed.  </value>
   </data>
+  <data name="invalidfile.Help" xml:space="preserve">
+    <value>Dangerous files will not be allowed.  Ensure your file type matches allowed file types and ensure it does not contain dangerous content.  Login as Host on the data service to bypass this security.</value>
+  </data>
+  <data name="invalidfile.Text" xml:space="preserve">
+    <value>Invalid File</value>
+  </data>
   <data name="name.Text" xml:space="preserve">
     <value>Name</value>
   </data>
