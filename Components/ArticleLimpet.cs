@@ -118,7 +118,7 @@ namespace RocketContent.Components
             var newArticleRows = new List<SimplisityInfo>();
             var articleRows = GetRowList();
             foreach (var sInfo in articleRows)
-            {
+            {                
                 if (sInfo.GetXmlProperty("genxml/config/key") == rowKey)
                 {
                     var newInfo = ReplaceInfoFields(new SimplisityInfo(), postInfo, "genxml/textbox/*");
@@ -137,7 +137,7 @@ namespace RocketContent.Components
             Info.RemoveList("rows");
             foreach (var sInfo in newArticleRows)
             {
-                Info.AddRecordListItem("rows", sInfo);
+                Info.AddListItem("rows", sInfo);
             }
             Update();
         }

@@ -67,8 +67,10 @@ namespace RocketContent.API
                     strOut = GetDashboard();
                     break;
 
-
-
+                    
+                case "article_admincreate":
+                    strOut = AdminCreateArticle();
+                    break;
                 case "article_adminlist":
                     strOut = AdminListDisplay();
                     break;
@@ -313,24 +315,16 @@ namespace RocketContent.API
         }
         private string EditContent()
         {
-            try
-            {
-                var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
-                if (remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
-                var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-                var articleRow = articleData.GetRow(0);
-                if (_rowKey != "")articleRow = articleData.GetRow(_rowKey);
-                var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
-                var dataObjects = new Dictionary<string, object>();
-                dataObjects.Add("apptheme", _appTheme);
-                dataObjects.Add("remotemodule", _remoteModule);
-                dataObjects.Add("articlerow", articleRow);
-                return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            var articleRow = articleData.GetRow(0);
+            if (_rowKey != "")articleRow = articleData.GetRow(_rowKey);
+            var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
+            var dataObjects = new Dictionary<string, object>();
+            dataObjects.Add("apptheme", _appTheme);
+            dataObjects.Add("remotemodule", _remoteModule);
+            dataObjects.Add("articlerow", articleRow);
+            return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
         }
         private string MessageDisplay(string msgKey)
         {

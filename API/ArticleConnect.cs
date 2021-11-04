@@ -57,7 +57,11 @@ namespace RocketContent.API
                 foreach (var imgFileMapPath in imgList)
                 {
                     var articleRow = articleData.GetRow(_rowKey);
-                    if (articleRow != null) articleRow.AddImage(Path.GetFileName(imgFileMapPath));
+                    if (articleRow != null)
+                    {
+                        articleRow.AddImage(Path.GetFileName(imgFileMapPath));
+                        articleData.UpdateRow(_rowKey, articleRow.Info);
+                    }
                 }
             }
 
@@ -111,11 +115,29 @@ namespace RocketContent.API
         }
         public String AdminDetailDisplay(ArticleLimpet articleData)
         {
+            if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
+            var articleRow = articleData.GetRow(0);
+            if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("apptheme", _appTheme);
-            dataObjects.Add("remotemodule", _remoteModule);  
+            dataObjects.Add("remotemodule", _remoteModule);
+            dataObjects.Add("articlerow", articleRow);
             return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
+        }
+        public String AdminCreateArticle()
+        {
+            var appTheme = _postInfo.GetXmlProperty("genxml/radio/apptheme");
+            if (appTheme == "") return "No AppTheme Selected";
+
+            _dataRef = GeneralUtils.GetGuidKey();
+
+            _remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
+            _remoteModule.Record.SetXmlProperty("genxml/remote/apptheme", appTheme);
+            _remoteModule.Update();
+            _appTheme = new AppThemeLimpet(_remoteModule.Record.GetXmlProperty("genxml/remote/apptheme"));
+
+            return GetAdminArticle();
         }
         public String AdminListDisplay()
         {
