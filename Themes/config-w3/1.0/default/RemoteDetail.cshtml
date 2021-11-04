@@ -40,6 +40,8 @@
 
     @RenderTemplate("AdminDetail.cshtml", appTheme, Model)
 
+    @RenderXml(info)
+
 </div>
 
 <div class="w3-row w3-tiny w3-padding">
@@ -49,6 +51,6 @@
 
 <script>
     $(document).ready(function () {
-        simplisity_setParamField("remoteedit", true);
+        simplisity_setParamField("remoteedit", 'true');
     });
 </script>

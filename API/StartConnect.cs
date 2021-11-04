@@ -105,7 +105,10 @@ namespace RocketContent.API
                     strOut = "true";
                     break;
                 case "remote_edit":
-                    strOut = EditContent();
+                    if (_sessionParams.Get("remoteedit") == "true") 
+                        strOut = EditContent();
+                    else
+                        strOut = AdminDetailDisplay(GetActiveArticle(_dataRef));
                     break;
                 case "remote_editsave":
                     strOut = SaveArticleRow();

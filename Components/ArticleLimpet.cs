@@ -127,6 +127,13 @@ namespace RocketContent.Components
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/select/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/radio/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/config/*");
+
+                    var imgList = postInfo.GetList(ImageListName);
+                    foreach (var img in imgList)
+                    {
+                        newInfo.AddListItem(ImageListName, img);
+                    }
+
                     newArticleRows.Add(newInfo);
                 }
                 else
