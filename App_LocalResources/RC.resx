@@ -138,6 +138,9 @@
   <data name="noapptheme.Text" xml:space="preserve">
     <value>No AppTheme Selected.  Edit module settings.</value>
   </data>
+  <data name="removerow.Text" xml:space="preserve">
+    <value>Remove Row ?</value>
+  </data>
   <data name="selectapptheme.Text" xml:space="preserve">
     <value>Select View AppTheme</value>
   </data>

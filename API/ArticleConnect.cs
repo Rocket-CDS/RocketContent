@@ -19,9 +19,16 @@ namespace RocketContent.API
         }
         public string AddRow()
         {
-            _passSettings.Add("saved", "true");
             var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
             articleData.AddRow();
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
+        }
+        public string RemoveRow()
+        {
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            articleData.Info.RemoveListItem("rows", "genxml/config/key", _rowKey);
+            articleData.Update();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
@@ -82,10 +89,14 @@ namespace RocketContent.API
                 var filebase64List = fileuploadbase64.Split('*');
                 var fileList = DocUtils.UploadBase64file(filenameList, filebase64List, _portalContent.DocFolderMapPath);
                 if (fileList.Count == 0) return MessageDisplay("RC.invalidfile");
-                foreach (var imgFileMapPath in fileList)
+                foreach (var docFileMapPath in fileList)
                 {
                     var articleRow = articleData.GetRow(_rowKey);
-                    if (articleRow != null) articleRow.AddDoc(Path.GetFileName(imgFileMapPath));
+                    if (articleRow != null)
+                    {
+                        articleRow.AddDoc(Path.GetFileName(docFileMapPath));
+                        articleData.UpdateRow(_rowKey, articleRow.Info);
+                    }
                 }
             }
 
@@ -98,7 +109,11 @@ namespace RocketContent.API
             articleData.UpdateRow(_rowKey, _postInfo);
 
             var articleRow = articleData.GetRow(_rowKey);
-            if (articleRow != null) articleRow.AddLink();
+            if (articleRow != null)
+            {
+                articleRow.AddLink();
+                articleData.UpdateRow(_rowKey, articleRow.Info);
+            }
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }

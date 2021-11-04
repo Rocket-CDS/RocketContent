@@ -133,6 +133,16 @@ namespace RocketContent.Components
                     {
                         newInfo.AddListItem(ImageListName, img);
                     }
+                    var docList = postInfo.GetList(DocumentListName);
+                    foreach (var doc in docList)
+                    {
+                        newInfo.AddListItem(DocumentListName, doc);
+                    }
+                    var linkList = postInfo.GetList(LinkListName);
+                    foreach (var link in linkList)
+                    {
+                        newInfo.AddListItem(LinkListName, link);
+                    }
 
                     newArticleRows.Add(newInfo);
                 }

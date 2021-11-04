@@ -88,7 +88,10 @@ namespace RocketContent.API
                     break;
 
 
-
+                    
+                case "remote_removerow":
+                    strOut = RemoveRow();
+                    break;
                 case "remote_addrow":
                     strOut = AddRow();
                     break;
@@ -105,10 +108,10 @@ namespace RocketContent.API
                     strOut = "true";
                     break;
                 case "remote_edit":
-                    if (_sessionParams.Get("remoteedit") == "true") 
-                        strOut = EditContent();
-                    else
+                    if (_sessionParams.Get("remoteedit") == "false")
                         strOut = AdminDetailDisplay(GetActiveArticle(_dataRef));
+                    else
+                        strOut = EditContent();
                     break;
                 case "remote_editsave":
                     strOut = SaveArticleRow();
