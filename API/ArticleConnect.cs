@@ -261,6 +261,8 @@ namespace RocketContent.API
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("paraminfo", _paramInfo);
             dataObjects.Add("portalcontent", _portalContent);
+            dataObjects.Add("apptheme", _appTheme);
+            dataObjects.Add("remotemodule", _remoteModule);
             return RenderRazorUtils.RazorObjectRender(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
         }
         public String GetPublicArticleHeader()
