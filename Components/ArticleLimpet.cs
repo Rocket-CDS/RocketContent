@@ -127,6 +127,7 @@ namespace RocketContent.Components
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/select/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/radio/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/config/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/config/*");
 
                     var imgList = postInfo.GetList(ImageListName);
                     foreach (var img in imgList)
@@ -161,8 +162,22 @@ namespace RocketContent.Components
         public void AddRow()
         {
             var newInfo = new SimplisityInfo();
-            newInfo.SetXmlProperty("genxml/config/key", GeneralUtils.GetGuidKey());
+            var rowKey = GeneralUtils.GetGuidKey();
+            newInfo.SetXmlProperty("genxml/config/key", rowKey);
+            newInfo.SetXmlProperty("genxml/lang/genxml/config/key", rowKey);
             Info.AddListItem("rows", newInfo);
+            Update();
+        }
+        public void RemoveRow(string rowKey)
+        {
+            var rowLangList = _objCtrl.GetList(PortalId, -1, _entityTypeCode + "LANG", " and R1.ParentItemId = " + ArticleId + " ", "", "", 0, 0, 0, 0, _tableName);
+            foreach (var r in rowLangList)
+            {
+                var rRec = new SimplisityRecord(r);
+                rRec.RemoveRecordListItem("rows", "genxml/config/key", rowKey);
+                _objCtrl.Update(rRec, _tableName);
+            }
+            Info.RemoveListItem("rows", "genxml/config/key", rowKey);
             Update();
         }
         public ArticleRowLimpet GetRow(string rowKey)

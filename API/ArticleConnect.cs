@@ -27,8 +27,12 @@ namespace RocketContent.API
         public string RemoveRow()
         {
             var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
-            articleData.Info.RemoveListItem("rows", "genxml/config/key", _rowKey);
-            articleData.Update();
+            articleData.RemoveRow(_rowKey);
+
+            // reload so we always have 1 row.
+            articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+
+            _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/key");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
@@ -131,8 +135,14 @@ namespace RocketContent.API
         public String AdminDetailDisplay(ArticleLimpet articleData)
         {
             if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
+
+            var rowKey = _sessionParams.Get("rowkey");
+            // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
-            if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
+            if ((rowKey == "" && _rowKey != "") || (!String.IsNullOrEmpty(rowKey) && rowKey == _rowKey)) articleRow = articleData.GetRow(_rowKey);
+            if (rowKey != "" && _rowKey == "") articleRow = articleData.GetRow(rowKey);
+            if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
+
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("apptheme", _appTheme);

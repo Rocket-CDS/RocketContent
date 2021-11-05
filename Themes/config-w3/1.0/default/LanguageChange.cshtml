@@ -50,11 +50,13 @@
 
 <script>
     $(document).ready(function () {
+
         $(".changeeditlanguage").click(function () {
             var l = $(this).attr('language');
             simplisity_setSessionField('culturecodeedit', l);
             simplisity_callserver(this);
         });
+
     });
 
     // Tools dropdown menu

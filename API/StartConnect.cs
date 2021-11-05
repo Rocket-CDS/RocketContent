@@ -321,10 +321,16 @@ namespace RocketContent.API
         }
         private string EditContent()
         {
+            var rowKey = _sessionParams.Get("rowkey");
             if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+
+            // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
-            if (_rowKey != "")articleRow = articleData.GetRow(_rowKey);
+            if ((rowKey == "" && _rowKey != "") || (!String.IsNullOrEmpty(rowKey) && rowKey == _rowKey)) articleRow = articleData.GetRow(_rowKey);
+            if (rowKey != "" && _rowKey == "") articleRow = articleData.GetRow(rowKey);
+            if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
+
             var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("apptheme", _appTheme);
