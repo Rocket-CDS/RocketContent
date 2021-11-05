@@ -64,6 +64,11 @@
 
 
 
+    
+    <command>
+      <cmd>remote_sortrows</cmd>
+      <action>false</action>
+    </command>
     <command>
       <cmd>remote_removerow</cmd>
       <action>false</action>

@@ -10,6 +10,8 @@ using DNNrocketAPI.Components;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using RocketContent.Components;
+using System.Xml.XPath;
+using System.Xml.Linq;
 
 namespace RocketContent.Components
 {
@@ -119,7 +121,7 @@ namespace RocketContent.Components
             var articleRows = GetRowList();
             foreach (var sInfo in articleRows)
             {                
-                if (sInfo.GetXmlProperty("genxml/config/key") == rowKey)
+                if (sInfo.GetXmlProperty("genxml/config/rowkey") == rowKey)
                 {
                     var newInfo = ReplaceInfoFields(new SimplisityInfo(), postInfo, "genxml/textbox/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/textbox/*");
@@ -159,14 +161,58 @@ namespace RocketContent.Components
             }
             Update();
         }
-        public void AddRow()
+        public string AddRow()
         {
             var newInfo = new SimplisityInfo();
             var rowKey = GeneralUtils.GetGuidKey();
-            newInfo.SetXmlProperty("genxml/config/key", rowKey);
-            newInfo.SetXmlProperty("genxml/lang/genxml/config/key", rowKey);
+            newInfo.SetXmlProperty("genxml/config/rowkey", rowKey);
+            newInfo.SetXmlProperty("genxml/lang/genxml/config/rowkeylang", rowKey);
             Info.AddListItem("rows", newInfo);
             Update();
+            return rowKey;
+        }
+        public void SortRows(string keylistcsv)
+        {
+            var rowSortOrder = new List<string>();
+            var l = keylistcsv.Split(',');
+            foreach (var rKey in l)
+            {
+                if (rKey != "") rowSortOrder.Add(rKey);
+            }
+
+            var rowLangList = _objCtrl.GetList(PortalId, -1, _entityTypeCode + "LANG", " and R1.ParentItemId = " + ArticleId + " ", "", "", 0, 0, 0, 0, _tableName);
+            foreach (var r in rowLangList)
+            {
+                var rRec = new SimplisityRecord(r);
+                var rowList = rRec.GetRecordList("rows");
+                var rowDict = new Dictionary<string, SimplisityRecord>();
+                foreach (var rowData in rowList)
+                {
+                    rowDict.Add(rowData.GetXmlProperty("genxml/config/rowkeylang"), rowData);
+                }
+                rRec.RemoveRecordList("rows");
+                foreach (var k in rowSortOrder)
+                {
+                    if (rowDict.ContainsKey(k)) rRec.AddRecordListItem("rows", rowDict[k]);
+                }
+                _objCtrl.Update(rRec, _tableName);
+            }
+            var sRec1 = new SimplisityRecord(Info);
+            var rowList1 = sRec1.GetRecordList("rows");
+            var rowDict1 = new Dictionary<string, SimplisityRecord>();
+            foreach (var rowData in rowList1)
+            {
+                rowDict1.Add(rowData.GetXmlProperty("genxml/config/rowkey"), rowData);
+            }
+            sRec1.RemoveRecordList("rows");
+            foreach (var k in rowSortOrder)
+            {
+                sRec1.AddRecordListItem("rows", rowDict1[k]);
+            }
+            _objCtrl.Update(sRec1, _tableName);
+            _objCtrl.RebuildLangIndex(PortalId, ArticleId, _tableName); // rebuild the index record [Essential to get the correct sort order] 
+
+            Populate(CultureCode);
         }
         public void RemoveRow(string rowKey)
         {
@@ -174,15 +220,15 @@ namespace RocketContent.Components
             foreach (var r in rowLangList)
             {
                 var rRec = new SimplisityRecord(r);
-                rRec.RemoveRecordListItem("rows", "genxml/config/key", rowKey);
+                rRec.RemoveRecordListItem("rows", "genxml/config/rowkeylang", rowKey);
                 _objCtrl.Update(rRec, _tableName);
             }
-            Info.RemoveListItem("rows", "genxml/config/key", rowKey);
+            Info.RemoveListItem("rows", "genxml/config/rowkey", rowKey);
             Update();
         }
         public ArticleRowLimpet GetRow(string rowKey)
         {
-            var articleRow = Info.GetListItem("rows", "genxml/config/key", rowKey);
+            var articleRow = Info.GetListItem("rows", "genxml/config/rowkey", rowKey);
             if (articleRow == null) return null;
             return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
         }

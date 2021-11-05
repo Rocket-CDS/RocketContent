@@ -164,7 +164,7 @@ namespace RocketContent.Components
         public string LinkListName { get { return "linklist"; } }
         public string DocumentListName { get { return "documentlist"; } }
         public string ImageListName { get { return "imagelist"; } }
-        public string RowKey { get { return Info.GetXmlProperty("genxml/config/key"); } }
+        public string RowKey { get { return Info.GetXmlProperty("genxml/config/rowkey"); } }
         #endregion
 
     }

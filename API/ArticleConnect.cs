@@ -20,7 +20,15 @@ namespace RocketContent.API
         public string AddRow()
         {
             var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
-            articleData.AddRow();
+            _rowKey = articleData.AddRow();
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
+        }
+        public string SortRows()
+        {
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var selectkeylist = _paramInfo.GetXmlProperty("genxml/hidden/selectkeylist");
+            articleData.SortRows(selectkeylist);
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
@@ -32,7 +40,7 @@ namespace RocketContent.API
             // reload so we always have 1 row.
             articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
 
-            _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/key");
+            _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
@@ -136,11 +144,9 @@ namespace RocketContent.API
         {
             if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
 
-            var rowKey = _sessionParams.Get("rowkey");
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
-            if ((rowKey == "" && _rowKey != "") || (!String.IsNullOrEmpty(rowKey) && rowKey == _rowKey)) articleRow = articleData.GetRow(_rowKey);
-            if (rowKey != "" && _rowKey == "") articleRow = articleData.GetRow(rowKey);
+            if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
 
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");

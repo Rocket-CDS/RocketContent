@@ -89,6 +89,9 @@ namespace RocketContent.API
 
 
                     
+                case "remote_sortrows":
+                    strOut = SortRows();
+                    break;
                 case "remote_removerow":
                     strOut = RemoveRow();
                     break;
@@ -321,14 +324,12 @@ namespace RocketContent.API
         }
         private string EditContent()
         {
-            var rowKey = _sessionParams.Get("rowkey");
             if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
 
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
-            if ((rowKey == "" && _rowKey != "") || (!String.IsNullOrEmpty(rowKey) && rowKey == _rowKey)) articleRow = articleData.GetRow(_rowKey);
-            if (rowKey != "" && _rowKey == "") articleRow = articleData.GetRow(rowKey);
+            if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
 
             var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
@@ -368,8 +369,14 @@ namespace RocketContent.API
             _passSettings = new Dictionary<string, string>();
             _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
             if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
-            _rowKey = _postInfo.GetXmlProperty("genxml/config/key");
-            if (_rowKey == "") _rowKey = _paramInfo.GetXmlProperty("genxml/hidden/key");
+            _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
+            if (_rowKey == "") _rowKey = _paramInfo.GetXmlProperty("genxml/hidden/rowkey");
+
+            // use a selectkey.  the selectkey is the same as the rowkey.
+            // we can not duplicate ID on simplisity_click in the s-fields, when the id is on the form. 
+            // The paramInfo field would contain the same as the form.  On load this may be empty.
+            var selectkey = _paramInfo.GetXmlProperty("genxml/hidden/selectkey");
+            if (selectkey != "") _rowKey = selectkey;
 
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();
