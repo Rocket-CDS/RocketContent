@@ -5,7 +5,7 @@
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/AppThemes/App_LocalResources/")
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketCatalog/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
 
 @{
     var portalContent = (PortalContentLimpet)Model.List.First();
@@ -17,25 +17,17 @@
 
     <div class="w3-row">
         <div class="w3-half">
-            <div class="w3-row w3-padding">
-                <label class="">@ResourceKey("RCP.securitykey")</label><br />
-                @TextBox(info, "genxml/securitykey", "class='w3-input w3-border' ", GeneralUtils.GetGuidKey(), false)
-            </div>
-            <div class="w3-row">
-            </div>
-        </div>
-        <div class="w3-half">
             <div class="w3-half">
                 <div class="w3-row w3-padding">
-                    <label class="">@ResourceKey("RCP.maxarticles")</label>
+                    <label class="">@ResourceKey("RC.maxarticles")</label>
                     @TextBox(info, "genxml/maxarticles", "class='w3-input w3-border' style='width:120px;' ", "100", false)
                 </div>
                 <div class="w3-row w3-padding">
-                    <label class="">@ResourceKey("RCP.articlesimagelimit")</label>
+                    <label class="">@ResourceKey("RC.articlesimagelimit")</label>
                     @TextBox(info, "genxml/articlesimagelimit", "class='w3-input w3-border' style='width:120px;' ", "1", false)
                 </div>
                 <div class="w3-row w3-padding">
-                    <label class="">@ResourceKey("RCP.articlesdocumentlimit")</label>
+                    <label class="">@ResourceKey("RC.articlesdocumentlimit")</label>
                     @TextBox(info, "genxml/articlesdocumentlimit", "class='w3-input w3-border' style='width:120px;' ", "0", false)
                 </div>
             </div>
@@ -54,15 +46,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="w3-row w3-margin">
-        <label>@ResourceKey("RCP.securitykey")</label>
-        <div id="secretkey" class="w3-margin-bottom w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(portalContent.SecurityKey)</div>
-        <i>@ResourceKey("RCP.securitycode", "", "Help")</i>
-        <br />
-        <div class="w3-button" onclick="docopyclipboard($('#secretcode'))"><b>@ResourceKey("RCP.securitycode")</b>&nbsp;<span id="iconsecretcode" class=" action-clipboardicon">@ButtonIcon(ButtonTypes.copy)</span></div>
-        <div id="secretcode" class="w3-padding w3-light-grey w3-border" style="width:100%;word-wrap:break-word;">@(portalContent.RemoteBase64Params())</div>
     </div>
 
 </div>

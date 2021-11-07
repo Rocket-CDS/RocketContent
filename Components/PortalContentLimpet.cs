@@ -97,27 +97,6 @@ namespace RocketContent.Components
         }
         #endregion
 
-        #region "Action Methods"
-        /// <summary>
-        /// This is used to create a string which is passed to any remote module, to give minimum setting.
-        /// </summary>
-        /// <returns></returns>
-        public string RemoteBase64Params()
-        {
-            var portalData = new PortalLimpet(PortalId);
-            var remoteParams = new RemoteParams(SystemKey);
-            remoteParams.EngineURL = portalData.EngineUrlWithProtocol;
-            remoteParams.SecurityKey = portalData.SecurityKey;
-            return remoteParams.RecordItemBase64;
-        }
-        public bool IsValidRemote(string securityKey)
-        {
-            if (Record.GetXmlProperty("genxml/securitykey") == securityKey) return true;
-            return false;
-        }
-
-        #endregion
-
         #region "Properties"
         public SimplisityInfo Info { get { return new SimplisityInfo(Record); } }
         public SimplisityRecord Record { get; set; }

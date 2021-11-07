@@ -1,6 +1,7 @@
 ﻿using DNNrocketAPI.Components;
 using Rocket.AppThemes.Components;
 using RocketContent.Components;
+using RocketPortal.Components;
 using Simplisity;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,7 @@ namespace RocketContent.API
         private AppThemeLimpet _appTheme;
         private RemoteModule _remoteModule;
         private string _rowKey;
+        private PortalLimpet _portalData; 
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -324,7 +326,7 @@ namespace RocketContent.API
         }
         private string EditContent()
         {
-            if (_remoteModule.AppThemeFolder == "") return LocalUtils.ResourceKey("RC.noapptheme");
+            if (_remoteModule.AppThemeFolder == "") return RocketContent.Components.LocalUtils.ResourceKey("RC.noapptheme");
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
 
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
@@ -393,6 +395,8 @@ namespace RocketContent.API
                 _portalContent = new PortalContentLimpet(PortalUtils.GetPortalId(), _sessionParams.CultureCodeEdit);
                 if (!_portalContent.Active) return "";
             }
+            _portalData = new PortalLimpet(PortalUtils.GetPortalId());
+
             // [TODO]: Users should only have access to their own services for setup on portal 0.
             // [TODO]: Private admin needs to allow access for managers.
             // [TODO]: Public facing API should allow access for all users.
@@ -400,8 +404,26 @@ namespace RocketContent.API
             _remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
             _appTheme = new AppThemeLimpet(_remoteModule.Record.GetXmlProperty("genxml/remote/apptheme"));
 
-            var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
-            paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
+            if (paramCmd.StartsWith("remote_"))
+            {
+                var sk = _paramInfo.GetXmlProperty("genxml/remote/securitykeyedit");
+                if (!paramCmd.StartsWith("remote_public"))
+                {
+                    if (_portalData.SecurityKeyEdit == sk)
+                    {
+                        if (!_appTheme.Exists && paramCmd != "remote_settingssave") paramCmd = "remote_settings";
+                    }
+                    else
+                    {
+                        paramCmd = "";
+                    }
+                }
+            }
+            else
+            {
+                var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
+                paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
+            }
 
             return paramCmd;
         }
