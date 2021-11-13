@@ -81,7 +81,7 @@ namespace RocketContent.Components
             PagesUtils.AddPagePermissions(PortalId, tabid, DNNrocketRoles.Manager);
             PagesUtils.AddPagePermissions(PortalId, tabid, DNNrocketRoles.Editor);
             PagesUtils.AddPagePermissions(PortalId, tabid, DNNrocketRoles.ClientEditor);
-            PagesUtils.AddPageSkin(PortalId, tabid, _systemkey, _systemkey + ".ascx");
+            PagesUtils.AddPageSkin(PortalId, tabid, "rocketportal", "rocketadmin.ascx");
         }
         public void Delete()
         {

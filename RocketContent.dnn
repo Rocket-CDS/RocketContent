@@ -1,7 +1,7 @@
 ﻿<dotnetnuke type="Package" version="5.0">
 	<packages>
     
-		<package name="RocketContent" type="Library" version="1.0.2">
+		<package name="RocketContent" type="Library" version="1.0.0">
 			<friendlyName>RocketContent</friendlyName>
 			<description>RocketContent</description>
       <iconFile></iconFile>
@@ -49,21 +49,6 @@
 						</resourceFile>
 					</resourceFiles>
 				</component>
-
-        <component type="Skin">
-          <skinFiles>
-            <basePath>Portals\_default\Skins\rocketcontent</basePath>
-            <skinName>rocketcontent</skinName>
-            <skinFile>
-              <path></path>
-              <name>rocketcontent.ascx</name>
-            </skinFile>
-            <skinFile>
-              <path></path>
-              <name>rocketcontent.xml</name>
-            </skinFile>
-          </skinFiles>
-        </component>
 
         <component type="Assembly">
 					<assemblies>

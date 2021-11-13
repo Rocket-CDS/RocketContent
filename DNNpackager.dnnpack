@@ -30,8 +30,6 @@
     <value>\Installation\Uninstall.SqlDataProvider</value>
     <value>\Installation\SystemDefaults.rules</value>
     <value>\system.rules</value>
-    <value>\Skins\rocketcontent\rocketcontent.ascx</value>
-    <value>\Skins\rocketcontent\rocketcontent.xml</value>
   </file>    
   <assembly>
 		<value>RocketContent.dll</value>
