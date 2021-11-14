@@ -44,7 +44,7 @@
         </checkbox>
         <radio>
           <securityrolesadministrators>1</securityrolesadministrators>
-          <securityrolesmanager>1</securityrolesmanager>
+          <securityrolesmanager>0</securityrolesmanager>
           <securityroleseditor>0</securityroleseditor>
           <securityrolesclienteditor>0</securityrolesclienteditor>
           <securityrolesregisteredusers>1</securityrolesregisteredusers>
@@ -76,9 +76,9 @@
           <securityrolesmanager>1</securityrolesmanager>
           <securityroleseditor>1</securityroleseditor>
           <securityrolesclienteditor>1</securityrolesclienteditor>
-          <securityrolesregisteredusers>1</securityrolesregisteredusers>
-          <securityrolessubscribers>1</securityrolessubscribers>
-          <securityrolesall>1</securityrolesall>
+          <securityrolesregisteredusers>0</securityrolesregisteredusers>
+          <securityrolessubscribers>0</securityrolessubscribers>
+          <securityrolesall>0</securityrolesall>
         </radio>
       </genxml>
 

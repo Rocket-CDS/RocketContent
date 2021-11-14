@@ -37,6 +37,10 @@ namespace RocketContent.API
 
             switch (paramCmd)
             {
+                case "rocketcontent_adminpanel":
+                    strOut = AdminPanel();
+                    break;
+
                 case "rocketsystem_edit":
                     strOut = RocketSystem();
                     break;
@@ -48,9 +52,6 @@ namespace RocketContent.API
                     break;
                 case "rocketsystem_valid":
                     strOut = RocketSystemValid();
-                    break;
-                case "rocketsystem_adminpanel":
-                    strOut = AdminPanel();
                     break;
                 case "rocketsystem_adminpanelheader":
                     strOut = AdminPanelHeader();

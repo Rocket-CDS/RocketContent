@@ -3,14 +3,16 @@
 
   <commands>
 
-	<command>
-		<cmd>rocketsystem_edit</cmd>
-		<action>true</action>
-	</command>
     <command>
-      <cmd>rocketsystem_adminpanel</cmd>
+      <cmd>rocketcontent_adminpanel</cmd>
       <action>true</action>
     </command>
+
+    
+    <command>
+		  <cmd>rocketsystem_edit</cmd>
+		  <action>true</action>
+	  </command>
     <command>
       <cmd>rocketsystem_init</cmd>
       <action>true</action>
