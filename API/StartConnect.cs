@@ -21,6 +21,7 @@ namespace RocketContent.API
         private AppThemeSystemLimpet _appThemeSystem;
         private PortalContentLimpet _portalContent;
         private string _dataRef;
+        private string _moduleRef;
         private AppThemeLimpet _appTheme;
         private RemoteModule _remoteModule;
         private string _rowKey;
@@ -115,7 +116,7 @@ namespace RocketContent.API
                     break;
                 case "remote_edit":
                     if (_sessionParams.Get("remoteedit") == "false")
-                        strOut = AdminDetailDisplay(GetActiveArticle(_dataRef));
+                        strOut = AdminDetailDisplay(GetActiveArticle(_remoteModule.DataRef));
                     else
                         strOut = EditContent();
                     break;
@@ -295,12 +296,12 @@ namespace RocketContent.API
                 var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
 
-                var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
 
                 var nbRazor = new SimplisityRazor(appThemeDataList, _passSettings);
                 nbRazor.DataObjects.Add("remotemodule", remoteModule);
                 nbRazor.SessionParamsData = _sessionParams;
-                nbRazor.DataRef = _dataRef;
+                nbRazor.DataRef = _moduleRef;
                 nbRazor.ModuleId = _paramInfo.ModuleId;
                 return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
             }
@@ -313,9 +314,9 @@ namespace RocketContent.API
         {
             try
             {
-                if (_dataRef != "")
+                if (_moduleRef != "")
                 {
-                    var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
+                    var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
                     remoteModule.Save(_postInfo);
                 }
                 return RemoteSettings();
@@ -328,7 +329,7 @@ namespace RocketContent.API
         private string EditContent()
         {
             if (_remoteModule.AppThemeFolder == "") return RocketContent.Components.LocalUtils.ResourceKey("RC.noapptheme");
-            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = GetActiveArticle(_remoteModule.DataRef, _sessionParams.CultureCodeEdit);
 
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
@@ -346,8 +347,8 @@ namespace RocketContent.API
         {
             try
             {
-                var remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
-                var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+                var articleData = GetActiveArticle(_remoteModule.DataRef, _sessionParams.CultureCodeEdit);
                 var razorTempl = _appThemeSystem.GetTemplate("MessageDisplay.cshtml");
                 var dataObjects = new Dictionary<string, object>();
                 dataObjects.Add("apptheme", _appTheme);
@@ -370,10 +371,12 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
-            _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
-            if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
+            _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
+            if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
             _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
             if (_rowKey == "") _rowKey = _paramInfo.GetXmlProperty("genxml/hidden/rowkey");
+
+            _sessionParams.ModuleRef = _moduleRef; // we need this on the module view template, to stop clashes in modules that use the same dataref. 
 
             // use a selectkey.  the selectkey is the same as the rowkey.
             // we can not duplicate ID on simplisity_click in the s-fields, when the id is on the form. 
@@ -402,7 +405,7 @@ namespace RocketContent.API
             // [TODO]: Private admin needs to allow access for managers.
             // [TODO]: Public facing API should allow access for all users.
 
-            _remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
+            _remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
             _appTheme = new AppThemeLimpet(_remoteModule.Record.GetXmlProperty("genxml/remote/apptheme"));
 
             if (paramCmd.StartsWith("remote_"))

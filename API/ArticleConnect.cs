@@ -19,14 +19,14 @@ namespace RocketContent.API
         }
         public string AddRow()
         {
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _remoteModule.DataRef, _sessionParams.CultureCodeEdit);
             _rowKey = articleData.AddRow();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
         public string SortRows()
         {
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _remoteModule.DataRef, _sessionParams.CultureCodeEdit);
             var selectkeylist = _paramInfo.GetXmlProperty("genxml/hidden/selectkeylist");
             articleData.SortRows(selectkeylist);
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
@@ -34,32 +34,31 @@ namespace RocketContent.API
         }
         public string RemoveRow()
         {
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _remoteModule.DataRef, _sessionParams.CultureCodeEdit);
             articleData.RemoveRow(_rowKey);
 
             // reload so we always have 1 row.
-            articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            articleData = new ArticleLimpet(_portalContent.PortalId, _remoteModule.DataRef, _sessionParams.CultureCodeEdit);
 
             _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
         public string SaveArticleRow()
-        {
-            
+        {            
             _passSettings.Add("saved", "true");
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = new ArticleLimpet(_portalContent.PortalId, _remoteModule.DataRef, _sessionParams.CultureCodeEdit);
             articleData.UpdateRow(_rowKey, _postInfo);
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
         public void DeleteArticle()
         {
-            GetActiveArticle(_dataRef).Delete();
+            GetActiveArticle(_remoteModule.DataRef).Delete();
         }
         public string AddArticleImage()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_remoteModule.DataRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
@@ -89,7 +88,7 @@ namespace RocketContent.API
         }
         public string AddArticleDoc()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_remoteModule.DataRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
@@ -117,7 +116,7 @@ namespace RocketContent.API
         }
         public string AddArticleLink()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_remoteModule.DataRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             var articleRow = articleData.GetRow(_rowKey);
@@ -131,12 +130,12 @@ namespace RocketContent.API
         }
         public String GetAdminArticle()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_remoteModule.DataRef);
             return AdminDetailDisplay(articleData);
         }
         public String GetAdminDeleteArticle()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_remoteModule.DataRef);
             articleData.Delete();
             return AdminListDisplay();
         }
@@ -161,9 +160,9 @@ namespace RocketContent.API
             var appTheme = _postInfo.GetXmlProperty("genxml/radio/apptheme");
             if (appTheme == "") return "No AppTheme Selected";
 
-            _dataRef = GeneralUtils.GetGuidKey();
+            _moduleRef = GeneralUtils.GetGuidKey();
 
-            _remoteModule = new RemoteModule(_portalContent.PortalId, _dataRef);
+            _remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
             _remoteModule.Record.SetXmlProperty("genxml/remote/apptheme", appTheme);
             _remoteModule.Update();
             _appTheme = new AppThemeLimpet(_remoteModule.Record.GetXmlProperty("genxml/remote/apptheme"));
@@ -255,7 +254,7 @@ namespace RocketContent.API
         }
         public String GetPublicArticle()
         {
-            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCode);
+            var articleData = GetActiveArticle(_remoteModule.DataRef, _sessionParams.CultureCode);
             var razorTempl = _appTheme.GetTemplate("View.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
@@ -267,10 +266,11 @@ namespace RocketContent.API
         }
         public String GetPublicArticleHeader()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_remoteModule.DataRef);
             var razorTempl = _appTheme.GetTemplate("ViewHeader.cshtml");
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
+            dataObjects.Add("articledata", articleData);               
             dataObjects.Add("paraminfo", _paramInfo); // we need this so we can check if a detail key has been passed.  if so, we need to do the SEO for the detail.            
             return RenderRazorUtils.RazorObjectRender(razorTempl, _portalContent, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
         }
