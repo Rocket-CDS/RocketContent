@@ -129,6 +129,9 @@
   <data name="datasourceref.Text" xml:space="preserve">
     <value>Data Source ModuleRef</value>
   </data>
+  <data name="editapptheme.Text" xml:space="preserve">
+    <value>Edit AppTheme</value>
+  </data>
   <data name="invalidcatalog.Text" xml:space="preserve">
     <value>Setup has not been completed.  </value>
   </data>
@@ -147,6 +150,9 @@
   <data name="noapptheme.Text" xml:space="preserve">
     <value>No AppTheme Selected.  Edit module settings.</value>
   </data>
+  <data name="optional.Text" xml:space="preserve">
+    <value>(Optional)</value>
+  </data>
   <data name="removerow.Text" xml:space="preserve">
     <value>Remove Row ?</value>
   </data>
@@ -157,7 +163,7 @@
     <value>Select DataItem</value>
   </data>
   <data name="viewapptheme.Text" xml:space="preserve">
-    <value>View AppTheme</value>
+    <value>Display AppTheme</value>
   </data>
   <data name="viewtype.Text" xml:space="preserve">
     <value>View Type</value>

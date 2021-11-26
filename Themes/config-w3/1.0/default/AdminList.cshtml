@@ -49,12 +49,10 @@
             </thead>
             @foreach (ArticleLimpet artcileData in articleList.GetArticleList())
             {
-                var remoteModule = new RemoteModule(artcileData.PortalId, artcileData.DataRef);
-
                 <tr class="simplisity_click" s-cmd="article_admindetail" s-fields='{"dataref":"@artcileData.DataRef"}' style="cursor:pointer;">
                     <td><b>@artcileData.Name</b></td>
                     <td>@artcileData.DataRef</td>
-                    <td>@remoteModule.AppThemeFolder.Replace("rocketcontent.","")</td>
+                    <td>@artcileData.AdminAppThemeFolder.Replace("rocketcontent.","")</td>
                 </tr>
             }
         </table>

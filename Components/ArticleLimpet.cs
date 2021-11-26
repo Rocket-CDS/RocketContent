@@ -268,10 +268,13 @@ namespace RocketContent.Components
         public bool DebugMode { get; set; }
         public int PortalId { get; set; }
         public bool Exists { get {if (Info.ItemID  <= 0) { return false; } else { return true; }; } }
-        public string Name { get { return Info.GetXmlProperty("genxml/textbox/name"); } set { Info.SetXmlProperty("genxml/textbox/name", value); } }
         public string LinkListName { get { return "linklist"; } }
         public string DocumentListName { get { return "documentlist"; } }
         public string ImageListName { get { return "imagelist"; } }
+        public string Name { get { return Info.GetXmlProperty("genxml/textbox/name"); } set { Info.SetXmlProperty("genxml/textbox/name", value); } }
+        public string AdminAppThemeFolder { get { return Info.GetXmlProperty("genxml/textbox/adminappthemefolder"); } set { Info.SetXmlProperty("genxml/textbox/adminappthemefolder", value); } }
+        public string AdminAppThemeFolderVersion { get { return Info.GetXmlProperty("genxml/textbox/adminappthemefolderversion"); } set { Info.SetXmlProperty("genxml/textbox/adminappthemefolderversion", value); } }
+
         #endregion
 
     }

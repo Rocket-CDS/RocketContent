@@ -9,83 +9,150 @@
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
 
 @{
+
+    // NOTE: All field xpath should be "genxml/remote/*"
+    // The save button is on the remote plugin.  This information is saved on the remote client.
+
     var appThemeList = (AppThemeDataList)Model.List.First();
-    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
-    var info  = new SimplisityInfo(remoteModule.Record);
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var moduleRef = Model.SessionParamsData.Get("moduleref");
+    var remoteData = new RemoteModule(articleData.PortalId, moduleRef);
+    var info = new SimplisityInfo(remoteData.Record);
 }
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<style>
+    .select2-container .select2-selection--single {
+        box-sizing: border-box;
+        cursor: pointer;
+        display: block;
+        height: 40px;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        height: 40px;
+        line-height: 40px;
+    }
+</style>
 
 <div id="a-selectapptheme" class="w3-container w3-margin w3-padding">
 
     <div class="w3-row">
-        <div class="w3-large">ModuleRef</div>
-        <div class="w3-input w3-border w3-light-grey">@remoteModule.ModuleRef</div>
-    </div>
-    <div class="w3-row">
-        <div class="w3-large">@ResourceKey("RC.apptheme")</div>
-        <select id="apptheme" s-xpath="genxml/remote/apptheme" s-update="save" class="w3-input" style="width:100%">
-            <option value="" versionfolder=""></option>
-            @foreach (var appTheme in appThemeList.List)
-            {
-                var selectedvalue = "";
-                if (remoteModule.Record.GetXmlProperty("genxml/remote/apptheme") == appTheme.AppThemeFolder)
-                {
-                    selectedvalue = "selected";
-                }
-                <option value="@appTheme.AppThemeFolder" @selectedvalue versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
-            }
-        </select>
-    </div>
-
-    <div class="w3-row">
         <div class="w3-half w3-padding">
-            <div class="w3-button" onclick="$('#advancedsettings').toggle();">Advanced</div>
+            <div class="w3-large">ModuleRef</div>
+            <div class="w3-light-grey w3-border w3-input">@moduleRef</div>
         </div>
         <div class="w3-half w3-padding">
-            &nbsp;
+            <div class="w3-large">DataRef&nbsp;@ResourceKey("RC.optional")</div>
+            @TextBox(info, "genxml/remote/dataref", " class='w3-input w3-border ' ", "")
         </div>
 
     </div>
-
-    <div id="advancedsettings" class="w3-row" style="display:none;">
-        <div class="w3-row">
-            <div class="w3-large">@ResourceKey("RC.datasourceref")</div>
-            @TextBox(info, "genxml/remote/datasourceref", " class='w3-input w3-border ' placeholder='" + remoteModule.ModuleRef + "' ", "")
-        </div>
-        <div class="w3-row">
-            <div class="w3-large">@ResourceKey("RC.viewapptheme")</div>
-            <select id="appthemeview" s-xpath="genxml/remote/appthemeview" s-update="save" class="w3-input " style="width:100%">
-                <option value="" versionfolder=""></option>
-                @foreach (var appTheme in appThemeList.List)
-                {
-                    var selectedvalue2 = "";
-                    if (remoteModule.Record.GetXmlProperty("genxml/select/appthemeview") == appTheme.AppThemeFolder)
+    <div class="w3-row">
+        <div class="w3-half">
+            <div class="w3-col m10 w3-padding">
+                <div class="w3-large">@ResourceKey("RC.editapptheme")</div>
+                <select id="apptheme" s-xpath="genxml/remote/apptheme" class="w3-input" s-update="save" style="width:100%">
+                    @foreach (var appTheme in appThemeList.List)
                     {
-                        selectedvalue2 = "selected";
+                        var selectedvalue = "";
+                        if (articleData.AdminAppThemeFolder == appTheme.AppThemeFolder)
+                        {
+                            selectedvalue = "selected";
+                        }
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
                     }
-                    <option value="@appTheme.AppThemeFolder" @selectedvalue2 versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
-                }
-            </select>
+                </select>
+            </div>
+            <div class="w3-col m2 w3-padding">
+                <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
+                <div id="appthemeversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-cmd='remote_getappthemeversions' s-after='popupversionselect' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeversion"}'>&nbsp;</div>
+                @HiddenField(info, "genxml/remote/appthemeversion")
+            </div>
         </div>
-    </div>
+        <div class="w3-half">
+            <div class="w3-col m10 w3-padding">
+                <div class="w3-large">@ResourceKey("RC.viewapptheme")&nbsp;@ResourceKey("RC.optional")</div>
+                <select id="appthemeview" s-xpath="genxml/remote/appthemeview" s-update="save" class="w3-input " style="width:100%;">
+                    <option value="" versionfolder=""></option>
+                    @foreach (var appTheme in appThemeList.List)
+                    {
+                        var selectedvalue2 = "";
+                        if (remoteData.AppThemeViewFolder == appTheme.AppThemeFolder)
+                        {
+                            selectedvalue2 = "selected";
+                        }
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue2 versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="w3-col m2 w3-padding">
+                <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
+                <div id="appthemeviewversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-cmd='remote_getappthemeversions' s-after='popupversionselect' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeviewversion"}'>&nbsp;</div>
+                @HiddenField(info, "genxml/remote/appthemeviewversion")
+            </div>
+        </div>
 
+
+    </div>
 
 </div>
 
 <div class="w3-row w3-padding w3-center">
-    <div class="w3-button w3-green simplisity_click" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"dataref":"@Model.DataRef"}'>@ButtonText(ButtonTypes.save)</div>
+    <div class="w3-button w3-green simplisity_click" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleref":"@(moduleRef)"}'>@ButtonText(ButtonTypes.save)</div>
 </div>
 
+<div id="versionselect" class="w3-modal">
+    <div class="w3-modal-content w3-animate-zoom w3-card-4" style="width:240px;">
+        <div style="height:40px;">
+            <span onclick="document.getElementById('versionselect').style.display='none'" class="w3-button w3-display-topright">&times;</span>
+        </div>
+        <div id="versionselectlist">
+        </div>
+    </div>
+</div>
 
 <script>
-
     $(document).ready(function () {
         $('#apptheme').select2();
         $('#appthemeview').select2();
+        activateVersionAction();
+        $('#apptheme').on('change.select2', function (e) {
+            $('#appthemeversion').val('');
+            $('#appthemeversiondisplay').html('&nbsp;');
+            $('#appthemeversiondisplay').trigger('click');
+        });
+        $('#appthemeview').on('change.select2', function (e) {
+            $('#appthemeviewversion').val('');
+            $('#appthemeviewversiondisplay').html('&nbsp;');
+            $('#appthemeviewversiondisplay').trigger('click');
+        });
+
     });
+
+    function activateVersionAction() {
+        if ($('#apptheme').val() == "") {
+            $('#appthemeversiondisplay').attr('s-stop', 'stop');
+        } else {
+            $('#appthemeversiondisplay').removeAttr("s-stop");
+        }
+        if ($('#appthemeview').val() == "") {
+            $('#appthemeviewversiondisplay').attr('s-stop', 'stop');
+        } else {
+            $('#appthemeviewversiondisplay').removeAttr("s-stop");
+        }
+    }
+
+    function popupversionselect() {
+        $('#versionselect').show();
+        $('#appthemeversion').val($(this).attr('versionfolder'));
+        $('#appthemeversiondisplay').html($(this).attr('versionfolder'));
+    }
+
 </script>
 
 
