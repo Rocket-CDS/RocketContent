@@ -53,7 +53,7 @@
 
     </div>
     <div class="w3-row">
-        <div class="w3-half">
+        <div id="editapptheme" class="w3-half">
             <div class="w3-col m10 w3-padding">
                 <div class="w3-large">@ResourceKey("RC.editapptheme")</div>
                 <select id="apptheme" s-xpath="genxml/remote/apptheme" class="w3-input" s-update="save" style="width:100%">
@@ -145,6 +145,12 @@
             $('#appthemeviewversiondisplay').attr('s-stop', 'stop');
         } else {
             $('#appthemeviewversiondisplay').removeAttr("s-stop");
+        }
+        if ($('#dataref').val() != '') {
+            // Disable Edit AppTheme to stop confusion and possible incorrect data.
+            // Satelite modules must use the same Edit AppTheme as the Main Module.
+            $('#appthemeversiondisplay').attr('s-stop', 'stop');
+            $('#apptheme').attr('disabled', '');
         }
     }
 
