@@ -23,7 +23,8 @@ namespace RocketContent.API
         private string _dataRef;
         private string _moduleRef;
         private string _rowKey;
-        private PortalLimpet _portalData; 
+        private PortalLimpet _portalData;
+        private RemoteModule _remoteModule;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -314,10 +315,13 @@ namespace RocketContent.API
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
+            var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
 
             var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
             var dataObjects = new Dictionary<string, object>();
+            dataObjects.Add("apptheme", new AppThemeLimpet(articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion));
             dataObjects.Add("articlerow", articleRow);
+            dataObjects.Add("remotemodule", remoteModule);            
             return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
         }
         private string MessageDisplay(string msgKey)
@@ -386,12 +390,8 @@ namespace RocketContent.API
             _passSettings = new Dictionary<string, string>();
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
             if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
-            _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
-            if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
-            if (_dataRef == "") _dataRef = _moduleRef;  // If we do not have a specified dataRef use the moduleRef.
             _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
             if (_rowKey == "") _rowKey = _paramInfo.GetXmlProperty("genxml/hidden/rowkey");
-
             _sessionParams.ModuleRef = _moduleRef; // we need this on the module view template, to stop clashes in modules that use the same dataref. 
 
             // use a selectkey.  the selectkey is the same as the rowkey.
@@ -409,13 +409,18 @@ namespace RocketContent.API
 
             var portalid = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
             if (portalid >= 0 && PortalUtils.GetPortalId() == 0)
+            {
+                _remoteModule = new RemoteModule(portalid, _moduleRef);
                 _portalContent = new PortalContentLimpet(portalid, _sessionParams.CultureCodeEdit); // Portal 0 is admin, editing portal setup
+            }
             else
             {
+                _remoteModule = new RemoteModule(PortalUtils.GetPortalId(), _moduleRef);
                 _portalContent = new PortalContentLimpet(PortalUtils.GetPortalId(), _sessionParams.CultureCodeEdit);
                 if (!_portalContent.Active) return "";
             }
             _portalData = new PortalLimpet(PortalUtils.GetPortalId());
+            _dataRef = _remoteModule.DataRef;
 
             // [TODO]: Users should only have access to their own services for setup on portal 0.
             // [TODO]: Private admin needs to allow access for managers.

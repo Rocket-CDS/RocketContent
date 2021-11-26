@@ -250,29 +250,31 @@ namespace RocketContent.API
         }
         public String GetPublicArticle()
         {
-            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCode);
-            var appThemeFolder = _paramInfo.GetXmlProperty("genxml/remote/appthemeview");
-            if (appThemeFolder == "") appThemeFolder = articleData.AdminAppThemeFolder;
-            var viewAppTheme = new AppThemeLimpet(appThemeFolder);
-            var razorTempl = viewAppTheme.GetTemplate("View.cshtml");
-            if (razorTempl == "") return "";
-            var dataObjects = new Dictionary<string, object>();
-            dataObjects.Add("paraminfo", _paramInfo);
-            dataObjects.Add("portalcontent", _portalContent);
-            return RenderRazorUtils.RazorObjectRender(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            return GetPublicView("View.cshtml");
         }
         public String GetPublicArticleHeader()
         {
-            var articleData = GetActiveArticle(_dataRef);
-            var appThemeFolder = _paramInfo.GetXmlProperty("genxml/remote/appthemeview");
+            return GetPublicView("ViewHeader.cshtml");
+        }
+
+        private string GetPublicView(string templateName)
+        {
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCode);
+            var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+            var appThemeFolder = remoteModule.AppThemeViewFolder;
             if (appThemeFolder == "") appThemeFolder = articleData.AdminAppThemeFolder;
-            var viewAppTheme = new AppThemeLimpet(appThemeFolder);
-            var razorTempl = viewAppTheme.GetTemplate("ViewHeader.cshtml");
+            var appThemeFolderVersion = remoteModule.AppThemeViewVersion;
+            if (appThemeFolderVersion == "") appThemeFolderVersion = articleData.AdminAppThemeFolderVersion;
+            var viewAppTheme = new AppThemeLimpet(appThemeFolder, appThemeFolderVersion);
+            var razorTempl = viewAppTheme.GetTemplate(templateName);
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
-            dataObjects.Add("articledata", articleData);               
-            dataObjects.Add("paraminfo", _paramInfo); // we need this so we can check if a detail key has been passed.  if so, we need to do the SEO for the detail.            
-            return RenderRazorUtils.RazorObjectRender(razorTempl, _portalContent, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            dataObjects.Add("apptheme", viewAppTheme);
+            dataObjects.Add("paraminfo", _paramInfo);
+            dataObjects.Add("portalcontent", _portalContent);
+            dataObjects.Add("remotemodule", remoteModule);
+            return RenderRazorUtils.RazorObjectRender(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+
         }
 
     }
