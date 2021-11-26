@@ -272,8 +272,8 @@ namespace RocketContent.Components
         public string DocumentListName { get { return "documentlist"; } }
         public string ImageListName { get { return "imagelist"; } }
         public string Name { get { return Info.GetXmlProperty("genxml/textbox/name"); } set { Info.SetXmlProperty("genxml/textbox/name", value); } }
-        public string AdminAppThemeFolder { get { return Info.GetXmlProperty("genxml/textbox/adminappthemefolder"); } set { Info.SetXmlProperty("genxml/textbox/adminappthemefolder", value); } }
-        public string AdminAppThemeFolderVersion { get { return Info.GetXmlProperty("genxml/textbox/adminappthemefolderversion"); } set { Info.SetXmlProperty("genxml/textbox/adminappthemefolderversion", value); } }
+        public string AdminAppThemeFolder { get { return Info.GetXmlProperty("genxml/textbox/apptheme"); } set { Info.SetXmlProperty("genxml/textbox/apptheme", value); } }
+        public string AdminAppThemeFolderVersion { get { return Info.GetXmlProperty("genxml/textbox/appthemeversion"); } set { Info.SetXmlProperty("genxml/textbox/appthemeversion", value); } }
 
         #endregion
 

@@ -57,6 +57,7 @@
             <div class="w3-col m10 w3-padding">
                 <div class="w3-large">@ResourceKey("RC.editapptheme")</div>
                 <select id="apptheme" s-xpath="genxml/remote/apptheme" class="w3-input" s-update="save" style="width:100%">
+                    <option value="" versionfolder=""></option>
                     @foreach (var appTheme in appThemeList.List)
                     {
                         var selectedvalue = "";
@@ -64,14 +65,14 @@
                         {
                             selectedvalue = "selected";
                         }
-                        <option value="@appTheme.AppThemeFolder" @selectedvalue versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue >@appTheme.Name</option>
                     }
                 </select>
             </div>
             <div class="w3-col m2 w3-padding">
                 <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
-                <div id="appthemeversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-cmd='remote_getappthemeversions' s-after='popupversionselect' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeversion"}'>&nbsp;</div>
-                @HiddenField(info, "genxml/remote/appthemeversion")
+                <div id="appthemeversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-after="popupversionselect" s-cmd='remote_getappthemeversions' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeversion"}'>@(articleData.AdminAppThemeFolderVersion)&nbsp;</div>
+                @HiddenField(articleData.Info, "genxml/remote/appthemeversion","", articleData.AdminAppThemeFolderVersion)
             </div>
         </div>
         <div class="w3-half">
@@ -86,13 +87,13 @@
                         {
                             selectedvalue2 = "selected";
                         }
-                        <option value="@appTheme.AppThemeFolder" @selectedvalue2 versionfolder="@appTheme.AppVersionFolder">@appTheme.Name</option>
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue2 >@appTheme.Name</option>
                     }
                 </select>
             </div>
             <div class="w3-col m2 w3-padding">
                 <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
-                <div id="appthemeviewversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-cmd='remote_getappthemeversions' s-after='popupversionselect' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeviewversion"}'>&nbsp;</div>
+                <div id="appthemeviewversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-after="popupversionselect" s-cmd='remote_getappthemeversions' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeviewversion"}'>@info.GetXmlProperty("genxml/remote/appthemeviewversion")&nbsp;</div>
                 @HiddenField(info, "genxml/remote/appthemeviewversion")
             </div>
         </div>
@@ -149,8 +150,6 @@
 
     function popupversionselect() {
         $('#versionselect').show();
-        $('#appthemeversion').val($(this).attr('versionfolder'));
-        $('#appthemeversiondisplay').html($(this).attr('versionfolder'));
     }
 
 </script>
