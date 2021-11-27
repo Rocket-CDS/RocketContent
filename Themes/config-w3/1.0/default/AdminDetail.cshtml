@@ -14,26 +14,25 @@
     var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
     var info = articleData.Info;
     var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
-    var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
     var sessionParams = Model.SessionParamsData;
     var portalData = new PortalLimpet(PortalUtils.GetCurrentPortalId());
 }
 
 <link rel="stylesheet" href="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/API/Themes/config-w3/1.0/css/@(portalData.ColorAdminTheme)">
 
-@RenderLanguageSelector("article_admindetail", "{\"moduleref\":\"" + remoteModule.ModuleRef + "\"}", appThemeSystem, Model)
+@RenderLanguageSelector("article_admindetail", "{\"dataref\":\"" + articleData.DataRef + "\"}", appThemeSystem, Model)
 
 <div id="a-articledata" class=" w3-padding">
 
     <div class=" w3-margin-bottom">
         <div class="w3-bar w3-padding">
             <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
-            <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"moduleref":"@(remoteModule.ModuleRef)"}'>@ButtonText(ButtonTypes.save)</span>
-            <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"moduleref":"@(remoteModule.ModuleRef)"}'>@ButtonText(ButtonTypes.delete)</span>
+            <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
+            <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
         </div>
         <div class="w3-row">
             <div class="w3-half">
-                @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border ' ", @remoteModule.AppThemeFolder)
+                @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border ' ", @articleData.AdminAppThemeFolder)
             </div>
             <div class="w3-half">
                 <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
@@ -49,7 +48,7 @@
 
 <div class="w3-row w3-tiny w3-padding">
     <span>Id: @articleData.ArticleId</span>
-    <span class="w3-right">AppTheme: @remoteModule.AppThemeFolder</span>
+    <span class="w3-right">AppThemeView: @articleData.AdminAppThemeFolder  v@(articleData.AdminAppThemeFolderVersion)</span>
 </div>
 
 <script>

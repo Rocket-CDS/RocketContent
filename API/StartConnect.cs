@@ -422,6 +422,13 @@ namespace RocketContent.API
             _portalData = new PortalLimpet(PortalUtils.GetPortalId());
             _dataRef = _remoteModule.DataRef;
 
+            if (_dataRef == "") 
+            {
+                // If we are editing from the AdminPanel, we will not have a moduleRef, only a dataref.
+                _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
+                if (_dataRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
+            }
+
             // [TODO]: Users should only have access to their own services for setup on portal 0.
             // [TODO]: Private admin needs to allow access for managers.
             // [TODO]: Public facing API should allow access for all users.
