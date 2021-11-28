@@ -426,7 +426,7 @@ namespace RocketContent.API
             {
                 // If we are editing from the AdminPanel, we will not have a moduleRef, only a dataref.
                 _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
-                if (_dataRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
+                if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
             }
 
             // [TODO]: Users should only have access to their own services for setup on portal 0.
@@ -436,7 +436,7 @@ namespace RocketContent.API
             if (paramCmd.StartsWith("remote_"))
             {
                 var sk = _paramInfo.GetXmlProperty("genxml/remote/securitykeyedit");
-                if (_portalData.SecurityKeyEdit != sk) paramCmd = "";                
+                if (!UserUtils.IsEditor() && _portalData.SecurityKeyEdit != sk) paramCmd = "";                
             }
             else
             {
