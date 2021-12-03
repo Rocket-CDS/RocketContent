@@ -311,6 +311,15 @@ namespace RocketContent.API
         private string EditContent()
         {
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+
+            if (articleData.AdminAppThemeFolder == "")
+            {
+                // should not happen, this is a data error.  Delete and Create.
+                articleData.Delete();
+                return AdminSelectAppThemeDisplay();
+            }
+
+
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);

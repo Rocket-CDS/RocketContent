@@ -152,11 +152,13 @@ namespace RocketContent.API
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
+            var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
 
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("articlerow", articleRow);
             dataObjects.Add("apptheme", new AppThemeLimpet(articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion));
+            dataObjects.Add("remotemodule", remoteModule);
             return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
         }
         public String AdminCreateArticle()

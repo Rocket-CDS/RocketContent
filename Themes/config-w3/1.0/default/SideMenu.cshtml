@@ -100,6 +100,19 @@
             <div class="w3-bar-item w3-button w3-padding-16  w3-center" id="adminbtn"><span class="material-icons">more_horiz</span></div>
         </div>
         <div class="w3-bar-block w3-section" style="display:none;" id="adminmenu">
+
+            <a class="w3-bar-item w3-button w3-text-black " href='/'>@ButtonText(ButtonTypes.home)</a>
+            @if (UserUtils.IsAdministrator())
+            {
+                <button type="button" class="w3-bar-item w3-button w3-padding-16 simplisity_click" s-cmd="rocketapptheme_getlist" s-fields="" s-index="2"><strong><span class="material-icons">developer_mode</span>&nbsp;AppThemes</strong></button>
+                <a class="w3-bar-item w3-button" href="//@PortalUtils.GetPortalAlias(sessionParams.CultureCode, 0)" style="text-decoration: none;color: black;">
+                    <span class="material-icons">
+                        miscellaneous_services
+                    </span>
+                    @ResourceKey("DNNrocket.services")
+                </a>
+            }
+
             <div class="w3-row w3-padding">
                 @foreach (var l in enabledlanguages)
                 {
