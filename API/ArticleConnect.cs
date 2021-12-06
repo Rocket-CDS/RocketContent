@@ -259,6 +259,10 @@ namespace RocketContent.API
         {
             return GetPublicView("ViewHeader.cshtml");
         }
+        public String GetPublicArticleBeforeHeader()
+        {
+            return GetPublicView("ViewBeforeHeader.cshtml");
+        }
 
         private string GetPublicView(string templateName)
         {

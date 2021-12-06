@@ -142,6 +142,9 @@ namespace RocketContent.API
                 case "remote_publicviewheader":
                     strOut = GetPublicArticleHeader();
                     break;
+                case "remote_publicviewbeforeheader":
+                    strOut = GetPublicArticleBeforeHeader();
+                    break;
                 case "remote_publicseo":
                     strOut = ""; // not used for rocketcontent
                     break;
