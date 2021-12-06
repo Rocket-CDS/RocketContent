@@ -65,14 +65,14 @@
                         {
                             selectedvalue = "selected";
                         }
-                        <option value="@appTheme.AppThemeFolder" @selectedvalue >@appTheme.Name</option>
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue>@appTheme.Name</option>
                     }
                 </select>
             </div>
             <div class="w3-col m2 w3-padding">
                 <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
                 <div id="appthemeversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-after="popupversionselect" s-cmd='remote_getappthemeversions' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeversion"}'>@(articleData.AdminAppThemeFolderVersion)&nbsp;</div>
-                @HiddenField(articleData.Info, "genxml/remote/appthemeversion","", articleData.AdminAppThemeFolderVersion)
+                @HiddenField(articleData.Info, "genxml/remote/appthemeversion", "", articleData.AdminAppThemeFolderVersion)
             </div>
         </div>
         <div class="w3-half">
@@ -87,7 +87,7 @@
                         {
                             selectedvalue2 = "selected";
                         }
-                        <option value="@appTheme.AppThemeFolder" @selectedvalue2 >@appTheme.Name</option>
+                        <option value="@appTheme.AppThemeFolder" @selectedvalue2>@appTheme.Name</option>
                     }
                 </select>
             </div>

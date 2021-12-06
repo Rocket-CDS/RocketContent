@@ -12,22 +12,22 @@
     var sessionParams = Model.SessionParamsData;
 }
 
-    @foreach (var l in enabledlanguages)
+@foreach (var l in enabledlanguages)
+{
+    var selectedcolor = "";
+    if (sessionParams.CultureCodeEdit == l)
     {
-        var selectedcolor = "";
-        if (sessionParams.CultureCodeEdit == l)
-        {
-            selectedcolor = "w3-border";
-        }
-        <div class="w3-button w3-padding-small w3-round @(selectedcolor) changeeditlanguage" s-post="#a-articledata" s-cmd="@Model.GetSetting("scmd")" s-fields='@(Model.GetSetting("sfields"))' language="@(l)" }><img src="//@(PortalUtils.DefaultPortalAlias())/DesktopModules/DNNrocket/API/images/flags/24/@(l).png" class="w3-round" /></div>
+        selectedcolor = "w3-border";
     }
+    <div class="w3-button w3-padding-small w3-round @(selectedcolor) changeeditlanguage" s-post="#a-articledata" s-cmd="@Model.GetSetting("scmd")" s-fields='@(Model.GetSetting("sfields"))' language="@(l)" }><img src="//@(PortalUtils.DefaultPortalAlias())/DesktopModules/DNNrocket/API/images/flags/24/@(l).png" class="w3-round" /></div>
+}
 
 <script>
     $(document).ready(function () {
         $(".changeeditlanguage").click(function () {
             var l = $(this).attr('language');
             simplisity_setSessionField('culturecodeedit', l);
-            simplisity_setSessionField('culturecode', '@(DNNrocketUtils.GetCurrentCulture())');   
+            simplisity_setSessionField('culturecode', '@(DNNrocketUtils.GetCurrentCulture())');
             simplisity_callserver(this);
         });
 

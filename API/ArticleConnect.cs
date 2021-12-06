@@ -264,6 +264,15 @@ namespace RocketContent.API
         {
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCode);
             var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+            //if (remoteModule.SiteKey != "")
+            //{
+            //    var dataClient = new RocketPortal.Components.DataClientLimpet(_portalContent.PortalId, remoteModule.SiteKey);
+            //    if (dataClient.LastAccessDate.Date != DateTime.Now.Date)
+            //    {
+            //        dataClient.LastAccessDate = DateTime.Now;
+            //        dataClient.Update();
+            //    }
+            //}
             var appThemeFolder = remoteModule.AppThemeViewFolder;
             if (appThemeFolder == "") appThemeFolder = articleData.AdminAppThemeFolder;
             var appThemeFolderVersion = remoteModule.AppThemeViewVersion;

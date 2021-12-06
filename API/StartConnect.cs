@@ -153,6 +153,10 @@ namespace RocketContent.API
             }
 
             rtnDic.Add("outputhtml", strOut);
+
+            // tell remote module it can cache the resposne 
+            rtnDic.Add("remote-cache", "true");
+
             return rtnDic;
 
         }
@@ -356,6 +360,9 @@ namespace RocketContent.API
                 {
                     var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
                     remoteModule.Save(_postInfo);
+                    // update sitekey after Save(), it replaces all XML.
+                    remoteModule.SiteKey = _sessionParams.SiteKey;
+                    remoteModule.Update();
 
                     // add the appTheme to the DataRecord.
                     var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
