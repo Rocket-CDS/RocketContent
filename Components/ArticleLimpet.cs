@@ -119,6 +119,10 @@ namespace RocketContent.Components
         {
             var newArticleRows = new List<SimplisityInfo>();
             var articleRows = GetRowList();
+
+            Info = ReplaceInfoFields(Info, postInfo, "genxml/data/*");
+            Info = ReplaceInfoFields(Info, postInfo, "genxml/lang/genxml/data/*");
+
             foreach (var sInfo in articleRows)
             {                
                 if (sInfo.GetXmlProperty("genxml/config/rowkey") == rowKey)
@@ -271,7 +275,7 @@ namespace RocketContent.Components
         public string LinkListName { get { return "linklist"; } }
         public string DocumentListName { get { return "documentlist"; } }
         public string ImageListName { get { return "imagelist"; } }
-        public string Name { get { return Info.GetXmlProperty("genxml/textbox/name"); } set { Info.SetXmlProperty("genxml/textbox/name", value); } }
+        public string Name { get { return Info.GetXmlProperty("genxml/data/name"); } set { Info.SetXmlProperty("genxml/data/name", value); } }
         public string AdminAppThemeFolder { get { return Info.GetXmlProperty("genxml/textbox/apptheme"); } set { Info.SetXmlProperty("genxml/textbox/apptheme", value); } }
         public string AdminAppThemeFolderVersion { get { return Info.GetXmlProperty("genxml/textbox/appthemeversion"); } set { Info.SetXmlProperty("genxml/textbox/appthemeversion", value); } }
 
