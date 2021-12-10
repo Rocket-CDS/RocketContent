@@ -92,6 +92,10 @@ namespace RocketContent.Components
             }
             return Info.ItemID;
         }
+        public void RebuildLangIndex()
+        {
+            _objCtrl.RebuildLangIndex(PortalId, ArticleId, _tableName);
+        }
         public int ValidateAndUpdate()
         {
             Validate();
@@ -174,49 +178,6 @@ namespace RocketContent.Components
             Info.AddListItem("rows", newInfo);
             Update();
             return rowKey;
-        }
-        public void SortRows(string keylistcsv)
-        {
-            var rowSortOrder = new List<string>();
-            var l = keylistcsv.Split(',');
-            foreach (var rKey in l)
-            {
-                if (rKey != "") rowSortOrder.Add(rKey);
-            }
-
-            var rowLangList = _objCtrl.GetList(PortalId, -1, _entityTypeCode + "LANG", " and R1.ParentItemId = " + ArticleId + " ", "", "", 0, 0, 0, 0, _tableName);
-            foreach (var r in rowLangList)
-            {
-                var rRec = new SimplisityRecord(r);
-                var rowList = rRec.GetRecordList("rows");
-                var rowDict = new Dictionary<string, SimplisityRecord>();
-                foreach (var rowData in rowList)
-                {
-                    rowDict.Add(rowData.GetXmlProperty("genxml/config/rowkeylang"), rowData);
-                }
-                rRec.RemoveRecordList("rows");
-                foreach (var k in rowSortOrder)
-                {
-                    if (rowDict.ContainsKey(k)) rRec.AddRecordListItem("rows", rowDict[k]);
-                }
-                _objCtrl.Update(rRec, _tableName);
-            }
-            var sRec1 = new SimplisityRecord(Info);
-            var rowList1 = sRec1.GetRecordList("rows");
-            var rowDict1 = new Dictionary<string, SimplisityRecord>();
-            foreach (var rowData in rowList1)
-            {
-                rowDict1.Add(rowData.GetXmlProperty("genxml/config/rowkey"), rowData);
-            }
-            sRec1.RemoveRecordList("rows");
-            foreach (var k in rowSortOrder)
-            {
-                sRec1.AddRecordListItem("rows", rowDict1[k]);
-            }
-            _objCtrl.Update(sRec1, _tableName);
-            _objCtrl.RebuildLangIndex(PortalId, ArticleId, _tableName); // rebuild the index record [Essential to get the correct sort order] 
-
-            Populate(CultureCode);
         }
         public void RemoveRow(string rowKey)
         {

@@ -26,11 +26,51 @@ namespace RocketContent.API
         }
         public string SortRows()
         {
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
             var selectkeylist = _paramInfo.GetXmlProperty("genxml/hidden/selectkeylist");
-            articleData.SortRows(selectkeylist);
+            var rowSortOrder = new List<string>();
+            var l = selectkeylist.Split(',');
+            foreach (var rKey in l)
+            {
+                if (rKey != "") rowSortOrder.Add(rKey);
+            }
+
+            var sortedArticles = new List<ArticleLimpet>();
+
+            // we need to sort ALL langauges. 
+            foreach (var cultureCode in DNNrocketUtils.GetCultureCodeList(_portalContent.PortalId))
+            {
+                var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, cultureCode);
+
+                // Build new sorted list
+                var rowInfoDict = new Dictionary<string, SimplisityInfo>();
+                foreach (var r in articleData.GetRowList()) 
+                {
+                    var key = r.GetXmlProperty("genxml/config/rowkey");
+                    rowInfoDict.Add(key, r);
+                }
+
+                // Remove existing row and Add sorted rows.
+                articleData.Info.RemoveList("rows");
+                foreach (var k in rowSortOrder)
+                {
+                    if (rowInfoDict.ContainsKey(k)) articleData.Info.AddListItem("rows", rowInfoDict[k]);
+                }
+
+                sortedArticles.Add(articleData);
+
+            }
+
+            // cannot update in loop, it will change sortorder on first record, the rest of the language will then be wrong.
+            foreach (var a in sortedArticles)
+            {
+                a.Update();
+                //a.RebuildLangIndex(); // rebuild the index record [Essential to get the correct sort order]
+            }
+
+
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            var articleData2 = new ArticleLimpet(_portalContent.PortalId, _dataRef, DNNrocketUtils.GetEditCulture());
+            return AdminDetailDisplay(articleData2);
         }
         public string RemoveRow()
         {
