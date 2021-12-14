@@ -321,16 +321,16 @@ namespace RocketContent.API
             if (appThemeFolder == "") appThemeFolder = articleData.AdminAppThemeFolder;
             var appThemeFolderVersion = remoteModule.AppThemeViewVersion;
             if (appThemeFolderVersion == "") appThemeFolderVersion = articleData.AdminAppThemeFolderVersion;
-            var viewAppTheme = new AppThemeLimpet(appThemeFolder, appThemeFolderVersion);
-            var razorTempl = viewAppTheme.GetTemplate(templateName);
+            var viewAppTheme = new AppThemeLimpet(PortalUtils.GetCurrentPortalId(), appThemeFolder, appThemeFolderVersion);
+            var razorTempl = viewAppTheme.GetTemplate(templateName, _moduleRef);
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("apptheme", viewAppTheme);
             dataObjects.Add("paraminfo", _paramInfo);
             dataObjects.Add("portalcontent", _portalContent);
             dataObjects.Add("remotemodule", remoteModule);
-            return RenderRazorUtils.RazorObjectRender(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
-
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            return pr.RenderedText;
         }
 
     }
