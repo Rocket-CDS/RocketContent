@@ -239,6 +239,7 @@ namespace RocketContent.Components
         public string Name { get { return Info.GetXmlProperty("genxml/data/name"); } set { Info.SetXmlProperty("genxml/data/name", value); } }
         public string AdminAppThemeFolder { get { return Info.GetXmlProperty("genxml/textbox/apptheme"); } set { Info.SetXmlProperty("genxml/textbox/apptheme", value); } }
         public string AdminAppThemeFolderVersion { get { return Info.GetXmlProperty("genxml/textbox/appthemeversion"); } set { Info.SetXmlProperty("genxml/textbox/appthemeversion", value); } }
+        public string Organisation { get { return Info.GetXmlProperty("genxml/select/org"); } set { Info.SetXmlProperty("genxml/select/org", value); } }
 
         #endregion
 

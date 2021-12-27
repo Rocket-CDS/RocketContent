@@ -321,7 +321,7 @@ namespace RocketContent.API
             if (appThemeFolder == "") appThemeFolder = articleData.AdminAppThemeFolder;
             var appThemeFolderVersion = remoteModule.AppThemeViewVersion;
             if (appThemeFolderVersion == "") appThemeFolderVersion = articleData.AdminAppThemeFolderVersion;
-            var viewAppTheme = new AppThemeLimpet(PortalUtils.GetCurrentPortalId(), appThemeFolder, appThemeFolderVersion);
+            var viewAppTheme = new AppThemeLimpet(PortalUtils.GetCurrentPortalId(), appThemeFolder, appThemeFolderVersion, _org);
             var razorTempl = viewAppTheme.GetTemplate(templateName, _moduleRef);
             if (razorTempl == "") return "";
             var dataObjects = new Dictionary<string, object>();

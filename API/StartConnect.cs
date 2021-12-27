@@ -25,6 +25,9 @@ namespace RocketContent.API
         private string _rowKey;
         private PortalLimpet _portalData;
         private RemoteModule _remoteModule;
+        private string _org;
+        private Dictionary<string, object> _dataObjects;
+        private OrganisationLimpet _orgData;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -302,13 +305,13 @@ namespace RocketContent.API
         {
             try
             {
-                var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
+                var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
                 var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
-                var nbRazor = new SimplisityRazor(appThemeDataList, _passSettings);
-                nbRazor.DataObjects.Add("articledata", articleData);
-                nbRazor.SessionParamsData = _sessionParams;
-                return RenderRazorUtils.RazorDetail(razorTempl, nbRazor);
+                _dataObjects.Add("articledata", articleData);
+                _dataObjects.Add("remotemodule", _remoteModule);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
+                return pr.RenderedText;
             }
             catch (Exception ex)
             {
@@ -371,6 +374,7 @@ namespace RocketContent.API
                     var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
                     articleData.AdminAppThemeFolder = remoteModule.AppThemeFolder;
                     articleData.AdminAppThemeFolderVersion = remoteModule.AppThemeVersion;
+                    articleData.Organisation = _org;
                     articleData.Update();
                 }
                 return RemoteSettings();
@@ -386,11 +390,12 @@ namespace RocketContent.API
             {
                 var appTheme = _postInfo.GetXmlProperty("genxml/remote/apptheme");
                 if (_paramInfo.GetXmlProperty("genxml/hidden/ctrl") == "appthemeviewversion") appTheme = _postInfo.GetXmlProperty("genxml/remote/appthemeview");
-                var appThemeData = new AppThemeLimpet(appTheme);
+                var appThemeData = new AppThemeLimpet(_portalData.PortalId, appTheme, "", _org);
                 if (!appThemeData.Exists) return "Invalid AppTheme: " + appTheme;
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteAppThemeVersions.cshtml");
                 var dataObjects = new Dictionary<string, object>();
-                return RenderRazorUtils.RazorDetail(razorTempl, appThemeData, dataObjects, _sessionParams, _passSettings, true);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, dataObjects,  _passSettings, _sessionParams, true);
+                return pr.RenderedText;
             }
             catch (Exception ex)
             {
@@ -407,6 +412,7 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
+            _orgData = new OrganisationLimpet();
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
             if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
             _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
@@ -447,6 +453,12 @@ namespace RocketContent.API
                 _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
                 if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
             }
+
+            _org = _paramInfo.GetXmlProperty("genxml/remote/selectedorg");
+            if (_org == "") _org = _paramInfo.GetXmlProperty("genxml/hidden/selectedorg");
+            if (_org == "") _org = _orgData.DefaultOrg();
+
+            _dataObjects = new Dictionary<string, object>();
 
             // [TODO]: Users should only have access to their own services for setup on portal 0.
             // [TODO]: Private admin needs to allow access for managers.

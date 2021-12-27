@@ -120,6 +120,9 @@
   <data name="apptheme.Text" xml:space="preserve">
     <value>AppTheme</value>
   </data>
+  <data name="appthemeorg.Text" xml:space="preserve">
+    <value>AppTheme Group</value>
+  </data>
   <data name="articlesdocumentlimit.Text" xml:space="preserve">
     <value>Document Limit</value>
   </data>
