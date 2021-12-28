@@ -197,9 +197,10 @@ namespace RocketContent.API
             var razorTempl = _appThemeSystem.GetTemplate("admindetail.cshtml");
             var dataObjects = new Dictionary<string, object>();
             dataObjects.Add("articlerow", articleRow);
-            dataObjects.Add("apptheme", new AppThemeLimpet(articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion));
+            dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
             dataObjects.Add("remotemodule", remoteModule);
-            return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, true);
+            return pr.RenderedText;
         }
         public String AdminCreateArticle()
         {

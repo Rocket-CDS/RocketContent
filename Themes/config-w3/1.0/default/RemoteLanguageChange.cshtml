@@ -24,19 +24,13 @@
 
 <script>
     $(document).ready(function () {
+
         $(".changeeditlanguage").click(function () {
             var l = $(this).attr('language');
             simplisity_setSessionField('culturecodeedit', l);
             simplisity_setSessionField('culturecode', '@(DNNrocketUtils.GetCurrentCulture())');
-            simplisity_callserver(this);
+            simplisity_callserver(this)
         });
-
-        // select correct edit langauge.  This was set by the server and may be wrong on first load.
-        var culturecodeedit = simplisity_getSessionField('culturecodeedit');
-        var selectedculturecodeedit = $('.changeeditlanguage.w3-border').attr('language');
-        if (culturecodeedit !== selectedculturecodeedit) {
-            $('.changeeditlanguage.w3-border').trigger('click');
-        }
 
     });
 
