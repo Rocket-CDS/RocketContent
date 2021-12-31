@@ -21,6 +21,7 @@ namespace RocketContent.Components
         public const string _entityTypeCode = "ART";
         private DNNrocketController _objCtrl;
         private int _articleId;
+        private SimplisityInfo _info;
 
         /// <summary>
         /// Should be used to create an article, the portalId is required on creation
@@ -31,13 +32,13 @@ namespace RocketContent.Components
         public ArticleLimpet(int portalId, string dataRef, string langRequired)
         {
             PortalId = portalId;
-            Info = new SimplisityInfo();
-            Info.ItemID = -1;
-            Info.TypeCode = _entityTypeCode;
-            Info.ModuleId = -1;
-            Info.UserId = -1;
-            Info.GUIDKey = dataRef;
-            Info.PortalId = PortalId;
+            _info = new SimplisityInfo();
+            _info.ItemID = -1;
+            _info.TypeCode = _entityTypeCode;
+            _info.ModuleId = -1;
+            _info.UserId = -1;
+            _info.GUIDKey = dataRef;
+            _info.PortalId = PortalId;
 
             Populate(langRequired);
         }
@@ -47,10 +48,10 @@ namespace RocketContent.Components
         /// <param name="articleData"></param>
         public ArticleLimpet(ArticleLimpet articleData)
         {
-            Info = articleData.Info;
+            _info = articleData._info;
             _articleId = articleData.ArticleId;
             CultureCode = articleData.CultureCode;
-            PortalId = Info.PortalId;
+            PortalId = _info.PortalId;
         }
         private void Populate(string cultureCode)
         {
@@ -58,16 +59,19 @@ namespace RocketContent.Components
             CultureCode = cultureCode;
 
             var info = _objCtrl.GetByGuidKey(PortalId, -1, _entityTypeCode, DataRef, "", _tableName, cultureCode);
-            if (info != null && info.ItemID > 0) Info = info; // check if we have a real record, or a dummy being created and not saved yet.
-            Info.Lang = CultureCode;
-            PortalId = Info.PortalId;
+            if (info != null && info.ItemID > 0) _info = info; // check if we have a real record, or a dummy being created and not saved yet.
+            _info.Lang = CultureCode;
+            PortalId = _info.PortalId;
             if (DataRef == "") DataRef = GeneralUtils.GetGuidKey();
-
             if (GetRowList().Count  == 0) AddRow(); // create first row automatically
+
+            // Add namespace and json convert to lists. (for handlebars)
+            GeneralUtils.AddJsonNetRootAttribute(ref _info);
+
         }
         public void Delete()
         {
-            _objCtrl.Delete(Info.ItemID, _tableName);
+            _objCtrl.Delete(_info.ItemID, _tableName);
         }
 
         private SimplisityInfo ReplaceInfoFields(SimplisityInfo newInfo, SimplisityInfo postInfo, string xpathListSelect)
@@ -84,13 +88,21 @@ namespace RocketContent.Components
         }
         public int Update()
         {
-            Info = _objCtrl.SaveData(Info, _tableName);
-            if (Info.GUIDKey == "")
+            // Add namespace and json convert to lists. (for handlebars)
+            GeneralUtils.AddJsonArrayAttributesForXPath("genxml/rows/genxml/imagelist/genxml", ref _info);
+            GeneralUtils.AddJsonArrayAttributesForXPath("genxml/lang/genxml/rows/genxml/imagelist/genxml", ref _info);
+            GeneralUtils.AddJsonArrayAttributesForXPath("genxml/rows/genxml/documentlist/genxml", ref _info);
+            GeneralUtils.AddJsonArrayAttributesForXPath("genxml/lang/genxml/rows/genxml/documentlist/genxml", ref _info);
+            GeneralUtils.AddJsonArrayAttributesForXPath("genxml/rows/genxml/linklist/genxml", ref _info);
+            GeneralUtils.AddJsonArrayAttributesForXPath("genxml/lang/genxml/rows/genxml/linklist/genxml", ref _info);
+
+            _info = _objCtrl.SaveData(_info, _tableName);
+            if (_info.GUIDKey == "")
             {
-                Info.GUIDKey = GeneralUtils.GetGuidKey();
-                Info = _objCtrl.SaveData(Info, _tableName);
+                _info.GUIDKey = GeneralUtils.GetGuidKey();
+                _info = _objCtrl.SaveData(_info, _tableName);
             }
-            return Info.ItemID;
+            return _info.ItemID;
         }
         public void RebuildLangIndex()
         {
@@ -103,15 +115,15 @@ namespace RocketContent.Components
         }
         public int Copy()
         {
-            Info.ItemID = -1;
-            Info.GUIDKey = GeneralUtils.GetGuidKey();
+            _info.ItemID = -1;
+            _info.GUIDKey = GeneralUtils.GetGuidKey();
             return Update();
         }
 
         public void AddListItem(string listname)
         {
-            if (Info.ItemID < 0) Update(); // blank record, not on DB.  Create now.
-            Info.AddListItem(listname);         
+            if (_info.ItemID < 0) Update(); // blank record, not on DB.  Create now.
+            _info.AddListItem(listname);         
             Update();
         }
         public void Validate()
@@ -124,8 +136,8 @@ namespace RocketContent.Components
             var newArticleRows = new List<SimplisityInfo>();
             var articleRows = GetRowList();
 
-            Info = ReplaceInfoFields(Info, postInfo, "genxml/data/*");
-            Info = ReplaceInfoFields(Info, postInfo, "genxml/lang/genxml/data/*");
+            _info = ReplaceInfoFields(_info, postInfo, "genxml/data/*");
+            _info = ReplaceInfoFields(_info, postInfo, "genxml/lang/genxml/data/*");
 
             foreach (var sInfo in articleRows)
             {                
@@ -144,16 +156,26 @@ namespace RocketContent.Components
                     {
                         newInfo.AddListItem(ImageListName, img);
                     }
+                    newInfo.SetXmlProperty("genxml/" + ImageListName + "/@list", "true");
+                    newInfo.SetXmlProperty("genxml/lang/genxml/" + ImageListName + "/@list", "true");
+
                     var docList = postInfo.GetList(DocumentListName);
                     foreach (var doc in docList)
                     {
                         newInfo.AddListItem(DocumentListName, doc);
                     }
+                    newInfo.SetXmlProperty("genxml/" + DocumentListName + "/@list", "true");
+                    newInfo.SetXmlProperty("genxml/lang/genxml/" + DocumentListName + "/@list", "true");
+
                     var linkList = postInfo.GetList(LinkListName);
                     foreach (var link in linkList)
                     {
                         newInfo.AddListItem(LinkListName, link);
                     }
+                    newInfo.SetXmlProperty("genxml/" + LinkListName + "/@list", "true");
+                    newInfo.SetXmlProperty("genxml/lang/genxml/" + LinkListName + "/@list", "true");
+
+
 
                     newArticleRows.Add(newInfo);
                 }
@@ -162,10 +184,10 @@ namespace RocketContent.Components
                     newArticleRows.Add(sInfo);
                 }
             }
-            Info.RemoveList("rows");
+            _info.RemoveList("rows");
             foreach (var sInfo in newArticleRows)
             {
-                Info.AddListItem("rows", sInfo);
+                _info.AddListItem("rows", sInfo);
             }
             Update();
         }
@@ -175,7 +197,7 @@ namespace RocketContent.Components
             var rowKey = GeneralUtils.GetGuidKey();
             newInfo.SetXmlProperty("genxml/config/rowkey", rowKey);
             newInfo.SetXmlProperty("genxml/lang/genxml/config/rowkeylang", rowKey);
-            Info.AddListItem("rows", newInfo);
+            _info.AddListItem("rows", newInfo);
             Update();
             return rowKey;
         }
@@ -188,29 +210,29 @@ namespace RocketContent.Components
                 rRec.RemoveRecordListItem("rows", "genxml/config/rowkeylang", rowKey);
                 _objCtrl.Update(rRec, _tableName);
             }
-            Info.RemoveListItem("rows", "genxml/config/rowkey", rowKey);
+            _info.RemoveListItem("rows", "genxml/config/rowkey", rowKey);
             Update();
         }
         public ArticleRowLimpet GetRow(string rowKey)
         {
-            var articleRow = Info.GetListItem("rows", "genxml/config/rowkey", rowKey);
+            var articleRow = _info.GetListItem("rows", "genxml/config/rowkey", rowKey);
             if (articleRow == null) return null;
             return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
         }
         public ArticleRowLimpet GetRow(int idx)
         {
-            var articleRow = Info.GetListItem("rows", idx);
+            var articleRow = _info.GetListItem("rows", idx);
             if (articleRow == null) return null;
             return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
         }
         public List<SimplisityInfo> GetRowList()
         {
-            return Info.GetList("rows");
+            return _info.GetList("rows");
         }
         public List<ArticleRowLimpet> GetRows()
         {
             var rtn = new List<ArticleRowLimpet>();
-            foreach (var i in Info.GetList("rows"))
+            foreach (var i in _info.GetList("rows"))
             {
                 rtn.Add(new ArticleRowLimpet(ArticleId, i.XMLData));
             }
@@ -222,24 +244,24 @@ namespace RocketContent.Components
 
         public string CultureCode { get; private set; }
         public string EntityTypeCode { get { return _entityTypeCode; } }
-        public SimplisityInfo Info { get; set; }
-        public int ModuleId { get { return Info.ModuleId; } set { Info.ModuleId = value; } }
-        public int XrefItemId { get { return Info.XrefItemId; } set { Info.XrefItemId = value; } }
-        public int ParentItemId { get { return Info.ParentItemId; } set { Info.ParentItemId = value; } }
-        public int ArticleId { get { return Info.ItemID; } set { Info.ItemID = value; } }
-        public string DataRef { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
-        public string GUIDKey { get { return Info.GUIDKey; } set { Info.GUIDKey = value; } }
-        public int SortOrder { get { return Info.SortOrder; } set { Info.SortOrder = value; } }
+        public SimplisityInfo Info { get { return _info; } }
+        public int ModuleId { get { return _info.ModuleId; } set { _info.ModuleId = value; } }
+        public int XrefItemId { get { return _info.XrefItemId; } set { _info.XrefItemId = value; } }
+        public int ParentItemId { get { return _info.ParentItemId; } set { _info.ParentItemId = value; } }
+        public int ArticleId { get { return _info.ItemID; } set { _info.ItemID = value; } }
+        public string DataRef { get { return _info.GUIDKey; } set { _info.GUIDKey = value; } }
+        public string GUIDKey { get { return _info.GUIDKey; } set { _info.GUIDKey = value; } }
+        public int SortOrder { get { return _info.SortOrder; } set { _info.SortOrder = value; } }
         public bool DebugMode { get; set; }
         public int PortalId { get; set; }
-        public bool Exists { get {if (Info.ItemID  <= 0) { return false; } else { return true; }; } }
+        public bool Exists { get {if (_info.ItemID  <= 0) { return false; } else { return true; }; } }
         public string LinkListName { get { return "linklist"; } }
         public string DocumentListName { get { return "documentlist"; } }
         public string ImageListName { get { return "imagelist"; } }
-        public string Name { get { return Info.GetXmlProperty("genxml/data/name"); } set { Info.SetXmlProperty("genxml/data/name", value); } }
-        public string AdminAppThemeFolder { get { return Info.GetXmlProperty("genxml/textbox/apptheme"); } set { Info.SetXmlProperty("genxml/textbox/apptheme", value); } }
-        public string AdminAppThemeFolderVersion { get { return Info.GetXmlProperty("genxml/textbox/appthemeversion"); } set { Info.SetXmlProperty("genxml/textbox/appthemeversion", value); } }
-        public string Organisation { get { return Info.GetXmlProperty("genxml/select/org"); } set { Info.SetXmlProperty("genxml/select/org", value); } }
+        public string Name { get { return _info.GetXmlProperty("genxml/data/name"); } set { _info.SetXmlProperty("genxml/data/name", value); } }
+        public string AdminAppThemeFolder { get { return _info.GetXmlProperty("genxml/textbox/apptheme"); } set { _info.SetXmlProperty("genxml/textbox/apptheme", value); } }
+        public string AdminAppThemeFolderVersion { get { return _info.GetXmlProperty("genxml/textbox/appthemeversion"); } set { _info.SetXmlProperty("genxml/textbox/appthemeversion", value); } }
+        public string Organisation { get { return _info.GetXmlProperty("genxml/select/org"); } set { _info.SetXmlProperty("genxml/select/org", value); } }
 
         #endregion
 
