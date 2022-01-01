@@ -70,12 +70,12 @@
                         </div>
                         <div class="w3-col m6 w3-padding externallink@(linkLP)" style="@(externaldisplay);height:64px;">
                             <label>@ResourceKey("DNNrocket.url")</label>&nbsp;@EditFlag(sessionParams)
-                            @TextBox(linkInfo, "genxml/textbox/externallink" + fieldId, " class='w3-input w3-border' autocomplete='off'", "https://", true, linkLP)
+                            @TextBox(linkInfo, "genxml/lang/genxml/textbox/externallink" + fieldId, " class='w3-input w3-border' autocomplete='off'", "https://", true, linkLP)
                         </div>
 
                         <div class="w3-col m2 w3-padding">
-                            <label class="">@ResourceKey("DNNrocket.anchor")</label>
-                            @TextBox(linkInfo, "genxml/textbox/anchor" + fieldId, " class='w3-input w3-border' autocomplete='off'", "", false, linkLP)
+                            <label class="">@ResourceKey("DNNrocket.anchor")</label>&nbsp;@EditFlag(sessionParams)
+                            @TextBox(linkInfo, "genxml/lang/genxml/textbox/anchor" + fieldId, " class='w3-input w3-border' autocomplete='off'", "", true, linkLP)
                         </div>
 
                     </div>
