@@ -157,8 +157,13 @@ namespace RocketContent.API
                     break;
 
             }
+            if (paramCmd == "remote_publicview" || paramCmd == "remote_publicmenu")
+            {
+                rtnDic.Add("remote-firstheader", GetPublicArticleBeforeHeader());
+                rtnDic.Add("remote-lastheader", GetPublicArticleHeader());
+            }
 
-            rtnDic.Add("outputhtml", strOut);
+            if (!rtnDic.ContainsKey("outputjson")) rtnDic.Add("outputhtml", strOut);
 
             // tell remote module it can cache the resposne 
             rtnDic.Add("remote-cache", "true");
