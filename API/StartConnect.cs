@@ -460,8 +460,7 @@ namespace RocketContent.API
                 if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
             }
 
-            _org = _paramInfo.GetXmlProperty("genxml/remote/selectedorg");
-            if (_org == "") _org = _paramInfo.GetXmlProperty("genxml/hidden/selectedorg");
+            _org = _remoteModule.Organisation;
             if (_org == "") _org = _orgData.DefaultOrg();
 
             _dataObjects = new Dictionary<string, object>();
