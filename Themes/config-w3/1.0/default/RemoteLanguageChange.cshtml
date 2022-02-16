@@ -30,8 +30,7 @@
         $(".changeeditlanguage").click(function () {
             var l = $(this).attr('language');
             simplisity_setSessionField('culturecodeedit', l);
-            simplisity_setSessionField('culturecode', '@(DNNrocketUtils.GetCurrentCulture())');
-            simplisity_callserver(this)
+            simplisity_callserver(this);
         });
 
     });
