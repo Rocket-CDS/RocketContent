@@ -20,13 +20,6 @@
     var info = new SimplisityInfo(remoteData.Record);
     var orgData = new OrganisationLimpet();
 
-    var selectedOrg = articleData.Organisation;
-    if (selectedOrg == "" && orgData.ActiveList().Count > 0)
-    {
-        selectedOrg = orgData.DefaultOrg();
-    }
-
-
 }
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -58,13 +51,14 @@
             <div class="w3-large">ModuleRef</div>
             <div class="w3-light-grey w3-border w3-input">@moduleRef</div>
         </div>
+
         <div class="w3-row w3-padding">
             <div class="w3-large">@ResourceKey("RC.appthemeorg")</div>
-            @DropDownList(new SimplisityInfo(), "genxml/remote/selectedorg", orgData.ActiveList(), " class='w3-input w3-border'", selectedOrg)
+            @DropDownList(new SimplisityInfo(remoteData.Record), "genxml/remote/org", orgData.ActiveList(), " class='w3-input w3-border'")
         </div>
         <div id="editapptheme" class="w3-row">
             <div class="w3-col m10 w3-padding">
-                <div class="w3-large">@ResourceKey("RC.editapptheme")</div>
+                <div class="w3-large">@ResourceKey("RC.apptheme")</div>
                 <select id="apptheme" s-xpath="genxml/remote/apptheme" class="w3-input" s-update="save" style="width:100%">
                     <option value="" versionfolder=""></option>
                     @foreach (var appTheme in appThemeList.List)
@@ -125,7 +119,7 @@
 </div>
 
 <div class="w3-row w3-padding w3-center">
-    <div class="w3-button w3-green simplisity_click savebutton" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleref":"@(moduleRef)"}'>@ButtonText(ButtonTypes.save)</div>
+    <div class="w3-button w3-green simplisity_click savebutton" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleref":"@(moduleRef)"}' s-reload="true">@ButtonText(ButtonTypes.save)</div>
 </div>
 
 <div id="versionselect" class="w3-modal">
@@ -154,9 +148,9 @@
             $('#appthemeviewversiondisplay').trigger('click');
         });
 
-        $('#selectedorg').off("change");
-        $('#selectedorg').change(function () {
-            simplisity_setSessionField("selectedorg", $(this).val());
+        $('#org').off("change");
+        $('#org').change(function () {
+            simplisity_setSessionField("org", $(this).val());
             $('.savebutton').trigger('click');
             return false;
         });

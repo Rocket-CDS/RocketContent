@@ -376,7 +376,12 @@ namespace RocketContent.API
                     remoteModule.SiteKey = _sessionParams.SiteKey;
                     remoteModule.Update();
 
-                    // add the appTheme to the DataRecord.
+                    // Make sure we have the correct _org, if changed.
+                    _remoteModule = remoteModule;
+                    _org = _remoteModule.Organisation;
+                    if (_org == "") _org = _orgData.DefaultOrg();
+
+                    // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
                     var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
                     articleData.AdminAppThemeFolder = remoteModule.AppThemeFolder;
                     articleData.AdminAppThemeFolderVersion = remoteModule.AppThemeVersion;
