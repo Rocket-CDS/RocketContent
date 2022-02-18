@@ -129,6 +129,9 @@
   <data name="articlesimagelimit.Text" xml:space="preserve">
     <value>Image Limit</value>
   </data>
+  <data name="datasource.Text" xml:space="preserve">
+    <value>Data Source</value>
+  </data>
   <data name="datasourceref.Text" xml:space="preserve">
     <value>Data Source ModuleRef</value>
   </data>
