@@ -53,6 +53,11 @@
         </div>
 
         <div class="w3-row w3-padding">
+            <div class="w3-large">@ResourceKey("RC.name")</div>
+            @TextBox(new SimplisityInfo(remoteData.Record), "genxml/remote/modulename", " class='w3-input w3-border ' ", "")
+        </div>
+
+        <div class="w3-row w3-padding">
             <div class="w3-large">@ResourceKey("RC.appthemeorg")</div>
             @DropDownList(new SimplisityInfo(remoteData.Record), "genxml/remote/org", orgData.ActiveList(), " class='w3-input w3-border'")
         </div>

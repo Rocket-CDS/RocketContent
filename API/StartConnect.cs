@@ -163,6 +163,7 @@ namespace RocketContent.API
                 rtnDic.Add("remote-lastheader", GetPublicArticleHeader());
             }
 
+            if (!rtnDic.ContainsKey("remote-settingsxml")) rtnDic.Add("remote-settingsxml", _remoteModule.Record.ToXmlItem());            
             if (!rtnDic.ContainsKey("outputjson")) rtnDic.Add("outputhtml", strOut);
 
             // tell remote module it can cache the resposne 
