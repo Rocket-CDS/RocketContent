@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Handlebars">
+      <HintPath>..\..\DNNrocket\API\_external\Handlebars.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="App_LocalResources\SideMenu.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
