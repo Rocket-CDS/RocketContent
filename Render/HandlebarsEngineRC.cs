@@ -34,6 +34,91 @@ namespace RocketContent.Components
         {
             RegisterArticle(hbs);
             RegisterRow(hbs);
+            RegisterModuleRef(hbs);
+            RegisterImage(hbs);
+        }
+        /// <summary>
+        /// Get moduleRef
+        /// {{moduleref @root}}
+        /// </summary>
+        /// <param name="hbs"></param>
+        private static void RegisterModuleRef(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("moduleref", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments[0] != null)
+                {
+                    var o = (JObject)arguments[0];
+                    dataValue = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
+                }
+                writer.WriteSafeString(dataValue);
+            });
+        }
+        /// <summary>
+        /// Get Image Data
+        /// 
+        /// "alt" - {{image @root "alt" @../index @index}}
+        /// 
+        /// "count" - {{image @root "count" @../index }}
+        /// "thumburl" - Usually used within 2 loops, row and image.
+        /// {{image @root "thumburl" @../index @index 640 200}}
+        /// </summary>
+        /// <param name="hbs">image @root cmd rowidx imageidx</param>
+        private static void RegisterImage(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("image", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments.Length >= 2)
+                {
+                    var o = (JObject)arguments[0];
+                    var moduleref = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
+                    var cultureCode = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
+                    var enginrUrl = (string)o.SelectToken("genxml.sessionparams.r.engineurl") ?? "";
+
+                    var cacheKey = moduleref + "*" + cultureCode;
+                    var articleData = (ArticleLimpet)CacheUtils.GetCache(cacheKey, "article");
+                    if (articleData == null)
+                    {
+                        articleData = new ArticleLimpet(-1, moduleref, cultureCode);
+                        CacheUtils.SetCache(cacheKey, articleData, "article");
+                    }
+
+                    var rowidx = 0;
+                    if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                    var imgidx = 0;
+                    if (arguments.Length >= 4) imgidx = (int)arguments[3];
+                    var img = articleData.GetRow(rowidx).GetImage(imgidx);
+
+                    switch (arguments[1].ToString())
+                    {
+                        case "alt":
+                            dataValue = img.Alt;
+                            break;
+                        case "relpath":
+                            dataValue = img.RelPath;
+                            break;
+                        case "height":
+                            dataValue = img.Height.ToString();
+                            break;
+                        case "width":
+                            dataValue = img.Width.ToString();
+                            break;
+                        case "count":
+                            dataValue = articleData.GetRow(rowidx).GetImageList().Count.ToString();
+                            break;
+                        case "thumburl":
+                            var width = Convert.ToInt32(arguments[4]);
+                            var height = Convert.ToInt32(arguments[5]);
+                            dataValue = enginrUrl.TrimEnd('/') + "/DesktopModules/DNNrocket/API/DNNrocketThumb.ashx?src=" + img.RelPath + "&w=" + width + "&h=" + height;
+                            break;
+
+                    }
+               }
+
+                writer.WriteSafeString(dataValue);
+            });
         }
 
         private static void RegisterRow(IHandlebars hbs)
@@ -41,21 +126,38 @@ namespace RocketContent.Components
             hbs.RegisterHelper("articlerow", (writer, context, arguments) =>
             {
                 var dataValue = "";
-                if (arguments[0] != null)
+                if (arguments.Length == 4)
                 {
                     var o = (JObject)arguments[0];
-                    var moduleref = (string)o.SelectToken("genxml.sessionparams.r.moduleref") ?? "";
+                    var moduleref = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
                     var cultureCode = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
 
-                    var articleData = new ArticleLimpet(-1, moduleref, cultureCode);
+                    var cacheKey = moduleref + "*" + cultureCode;
+                    var articleData = (ArticleLimpet)CacheUtils.GetCache(cacheKey, "article");
+                    if (articleData == null)
+                    {
+                        articleData = new ArticleLimpet(-1, moduleref, cultureCode);
+                        CacheUtils.SetCache(cacheKey, articleData, "article");
+                    }
+
+                    var rowKey = (string)arguments[2];
+                    var imgidx = (int)arguments[3];
+                    var img = articleData.GetRow(rowKey).GetImage(imgidx);
 
                     switch (arguments[1].ToString())
                     {
-                        case "name":
-                            dataValue = articleData.Name ?? "";
+                        case "alt":
+                            dataValue = img.Alt;
+                            break;
+                        case "imagealt":
+                            dataValue = img.Alt;
                             break;
 
                     }
+
+                    dataValue = img.RelPath;
+                    
+
                 }
 
                 writer.WriteSafeString(dataValue);

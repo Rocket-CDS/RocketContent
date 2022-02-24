@@ -89,11 +89,13 @@ namespace RocketContent.API
             _passSettings.Add("saved", "true");
             var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
             articleData.UpdateRow(_rowKey, _postInfo);
+            CacheUtils.ClearAllCache("article");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
         public void DeleteArticle()
         {
+            CacheUtils.ClearAllCache("article");
             GetActiveArticle(_dataRef).Delete();
         }
         public string AddArticleImage()
