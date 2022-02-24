@@ -108,6 +108,15 @@ namespace RocketContent.Components
                         case "count":
                             dataValue = articleData.GetRow(rowidx).GetImageList().Count.ToString();
                             break;
+                        case "summary":
+                            dataValue = img.Summary;
+                            break;
+                        case "url":
+                            dataValue = img.Url;
+                            break;
+                        case "urltext":
+                            dataValue = img.UrlText;
+                            break;
                         case "thumburl":
                             var width = Convert.ToInt32(arguments[4]);
                             var height = Convert.ToInt32(arguments[5]);

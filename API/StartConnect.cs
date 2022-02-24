@@ -313,6 +313,7 @@ namespace RocketContent.API
             {
                 var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
                 var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+                _dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
                 _dataObjects.Add("articledata", articleData);
                 _dataObjects.Add("remotemodule", _remoteModule);

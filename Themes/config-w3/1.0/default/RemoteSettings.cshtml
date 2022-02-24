@@ -15,10 +15,12 @@
     var sessionParams = Model.SessionParamsData;
     var appThemeList = (AppThemeDataList)Model.List.First();
     var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeData = (AppThemeLimpet)Model.GetDataObject("apptheme");
     var moduleRef = Model.SessionParamsData.Get("moduleref");
     var remoteData = (RemoteModule)Model.GetDataObject("remotemodule");
     var info = new SimplisityInfo(remoteData.Record);
     var orgData = new OrganisationLimpet();
+
 
 }
 
@@ -84,6 +86,15 @@
             </div>
         </div>
 
+
+        @if (appThemeData != null)
+        {
+            <div class="w3-row">
+                @RenderTemplate("RemoteSettings.cshtml", appThemeData, Model, true)
+            </div>
+        }
+
+
         <div class="w3-row">
             <div class="w3-button" onclick="$('#advancedfields').toggle();">@ResourceKey("DNNrocket.advanced")...</div>
         </div>
@@ -116,6 +127,8 @@
                 </div>
             </div>
         </div>
+
+
 
     </div>
 
