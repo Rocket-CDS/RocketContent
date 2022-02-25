@@ -79,7 +79,14 @@ RocketCDS uses XML to store data, Handlebars.js uses Json.  A conversion from XM
 ### doc
 ```
 {{#each genxml.data.genxml.rows.genxml}}
-    {{#each imagelist.genxml}}
+    {{#each documentlist.genxml}}
+
+        {{#doctest @root "ishidden" @../index @index}}
+            <h1>Is Hidden</h1>
+        {{/doctest}}
+        {{#doctest @root "isshown" @../index @index}}
+            <h1>Is Shown</h1>
+        {{/doctest}}
 
         {{doc @root "key" @../index @index}}
         {{doc @root "name" @../index @index}}
@@ -96,7 +103,14 @@ RocketCDS uses XML to store data, Handlebars.js uses Json.  A conversion from XM
 ### link
 ```
 {{#each genxml.data.genxml.rows.genxml}}
-    {{#each imagelist.genxml}}
+    {{#each linklist.genxml}}
+
+        {{#linktest @root "ishidden" @../index @index}}
+            <h1>Is Hidden</h1>
+        {{/linktest}}
+        {{#linktest @root "isshown" @../index @index}}
+            <h1>Is Shown</h1>
+        {{/linktest}}
 
         {{link @root "key" @../index @index 640 200}}
         {{link @root "name" @../index @index 640 200}}

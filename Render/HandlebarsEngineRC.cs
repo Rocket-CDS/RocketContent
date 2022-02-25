@@ -37,6 +37,7 @@ namespace RocketContent.Components
             RegisterModuleRef(hbs);
             RegisterImageShow(hbs);
             RegisterImage(hbs);
+            RegisterDocumentShow(hbs);
             RegisterDocument(hbs);
             RegisterLink(hbs);
             RegisterEngineUrl(hbs);
@@ -297,6 +298,37 @@ namespace RocketContent.Components
             });
         }
 
+        private static void RegisterDocumentShow(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("doctest", (writer, options, context, arguments) =>
+            {
+                var o = (JObject)arguments[0];
+                var articleData = GetArticleData(o);
+
+                var cmd = arguments[1].ToString();
+                var rowidx = 0;
+                if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                var idx = 0;
+                if (arguments.Length >= 4) idx = (int)arguments[3];
+                var doc = articleData.GetRow(rowidx).GetDoc(idx);
+
+                if (cmd == "isshown")
+                {
+                    if (!doc.Hidden)
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "ishidden")
+                {
+                    if (doc.Hidden)
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+
+            });
+        }
         private static void RegisterDocument(IHandlebars hbs)
         {
             hbs.RegisterHelper("document", (writer, context, arguments) =>
@@ -345,6 +377,36 @@ namespace RocketContent.Components
                     }
                 }
                 writer.WriteSafeString(dataValue);
+            });
+        }
+        private static void RegisterLinkShow(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("linktest", (writer, options, context, arguments) =>
+            {
+                var o = (JObject)arguments[0];
+                var articleData = GetArticleData(o);
+                var cmd = arguments[1].ToString();
+                var rowidx = 0;
+                if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                var idx = 0;
+                if (arguments.Length >= 4) idx = (int)arguments[3];
+                var lnk = articleData.GetRow(rowidx).Getlink(idx);
+
+                if (cmd == "isshown")
+                {
+                    if (!lnk.Hidden)
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "ishidden")
+                {
+                    if (lnk.Hidden)
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+
             });
         }
         private static void RegisterLink(IHandlebars hbs)
