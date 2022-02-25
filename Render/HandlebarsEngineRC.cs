@@ -36,12 +36,29 @@ namespace RocketContent.Components
             RegisterRow(hbs);
             RegisterModuleRef(hbs);
             RegisterImage(hbs);
+            RegisterDocument(hbs);
+            RegisterLink(hbs);
+            RegisterEngineUrl(hbs);
+            RegisterCultureCodeEdit(hbs);
+            RegisterCultureCode(hbs);
         }
-        /// <summary>
-        /// Get moduleRef
-        /// {{moduleref @root}}
-        /// </summary>
-        /// <param name="hbs"></param>
+
+        private static ArticleLimpet GetArticleData(JObject o)
+        {
+            var moduleref = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
+            var cultureCode = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
+
+            var cacheKey = moduleref + "*" + cultureCode;
+            var articleData = (ArticleLimpet)CacheUtils.GetCache(cacheKey, "article");
+            if (articleData == null)
+            {
+                articleData = new ArticleLimpet(-1, moduleref, cultureCode);
+                CacheUtils.SetCache(cacheKey, articleData, "article");
+            }
+            return articleData;
+        }
+
+        // Get moduleRef
         private static void RegisterModuleRef(IHandlebars hbs)
         {
             hbs.RegisterHelper("moduleref", (writer, context, arguments) =>
@@ -55,16 +72,46 @@ namespace RocketContent.Components
                 writer.WriteSafeString(dataValue);
             });
         }
-        /// <summary>
-        /// Get Image Data
-        /// 
-        /// "alt" - {{image @root "alt" @../index @index}}
-        /// 
-        /// "count" - {{image @root "count" @../index }}
-        /// "thumburl" - Usually used within 2 loops, row and image.
-        /// {{image @root "thumburl" @../index @index 640 200}}
-        /// </summary>
-        /// <param name="hbs">image @root cmd rowidx imageidx</param>
+        private static void RegisterEngineUrl(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("engineurl", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments[0] != null)
+                {
+                    var o = (JObject)arguments[0];
+                    dataValue = (string)o.SelectToken("genxml.sessionparams.r.engineurl") ?? "";
+                }
+                writer.WriteSafeString(dataValue);
+            });
+        }
+        private static void RegisterCultureCode(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("culturecode", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments[0] != null)
+                {
+                    var o = (JObject)arguments[0];
+                    dataValue = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
+                }
+                writer.WriteSafeString(dataValue);
+            });
+        }
+        private static void RegisterCultureCodeEdit(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("culturecodeedit", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments[0] != null)
+                {
+                    var o = (JObject)arguments[0];
+                    dataValue = (string)o.SelectToken("genxml.sessionparams.r.culturecodeedit") ?? "";
+                }
+                writer.WriteSafeString(dataValue);
+            });
+        }
+        // Get Image Data
         private static void RegisterImage(IHandlebars hbs)
         {
             hbs.RegisterHelper("image", (writer, context, arguments) =>
@@ -73,25 +120,16 @@ namespace RocketContent.Components
                 if (arguments.Length >= 2)
                 {
                     var o = (JObject)arguments[0];
-                    var moduleref = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
-                    var cultureCode = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
-                    var enginrUrl = (string)o.SelectToken("genxml.sessionparams.r.engineurl") ?? "";
-
-                    var cacheKey = moduleref + "*" + cultureCode;
-                    var articleData = (ArticleLimpet)CacheUtils.GetCache(cacheKey, "article");
-                    if (articleData == null)
-                    {
-                        articleData = new ArticleLimpet(-1, moduleref, cultureCode);
-                        CacheUtils.SetCache(cacheKey, articleData, "article");
-                    }
+                    var articleData = GetArticleData(o);
 
                     var rowidx = 0;
                     if (arguments.Length >= 3) rowidx = (int)arguments[2];
                     var imgidx = 0;
                     if (arguments.Length >= 4) imgidx = (int)arguments[3];
                     var img = articleData.GetRow(rowidx).GetImage(imgidx);
+                    var cmd = arguments[1].ToString();
 
-                    switch (arguments[1].ToString())
+                    switch (cmd)
                     {
                         case "alt":
                             dataValue = img.Alt;
@@ -120,7 +158,15 @@ namespace RocketContent.Components
                         case "thumburl":
                             var width = Convert.ToInt32(arguments[4]);
                             var height = Convert.ToInt32(arguments[5]);
+                            var enginrUrl = (string)o.SelectToken("genxml.sessionparams.r.engineurl") ?? "";
                             dataValue = enginrUrl.TrimEnd('/') + "/DesktopModules/DNNrocket/API/DNNrocketThumb.ashx?src=" + img.RelPath + "&w=" + width + "&h=" + height;
+                            break;
+                        case "fieldid":
+                            dataValue = img.FieldId;
+                            break;
+                        default:
+                            dataValue = img.Info.GetXmlProperty(cmd);
+                            if (dataValue == "") dataValue = img.Info.GetXmlProperty("genxml/lang/" + cmd);
                             break;
 
                     }
@@ -130,152 +176,164 @@ namespace RocketContent.Components
             });
         }
 
+        // Get row data
         private static void RegisterRow(IHandlebars hbs)
         {
             hbs.RegisterHelper("articlerow", (writer, context, arguments) =>
             {
                 var dataValue = "";
-                if (arguments.Length == 4)
+                if (arguments.Length == 3)
                 {
                     var o = (JObject)arguments[0];
-                    var moduleref = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
-                    var cultureCode = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
+                    var articleData = GetArticleData(o);
+                    var cmd = arguments[1].ToString();
+                    var rowidx = 0;
+                    if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                    var row = articleData.GetRow(rowidx);
 
-                    var cacheKey = moduleref + "*" + cultureCode;
-                    var articleData = (ArticleLimpet)CacheUtils.GetCache(cacheKey, "article");
-                    if (articleData == null)
+                    switch (cmd)
                     {
-                        articleData = new ArticleLimpet(-1, moduleref, cultureCode);
-                        CacheUtils.SetCache(cacheKey, articleData, "article");
-                    }
-
-                    var rowKey = (string)arguments[2];
-                    var imgidx = (int)arguments[3];
-                    var img = articleData.GetRow(rowKey).GetImage(imgidx);
-
-                    switch (arguments[1].ToString())
-                    {
-                        case "alt":
-                            dataValue = img.Alt;
+                        case "rowkey":
+                            dataValue = row.RowKey;
                             break;
-                        case "imagealt":
-                            dataValue = img.Alt;
+                        default:
+                            dataValue = row.Info.GetXmlProperty(cmd);
+                            if (dataValue == "") dataValue = row.Info.GetXmlProperty("genxml/lang/" + cmd);
                             break;
 
                     }
-
-                    dataValue = img.RelPath;
-                    
-
                 }
 
                 writer.WriteSafeString(dataValue);
             });
         }
-
-
         private static void RegisterArticle(IHandlebars hbs)
         {
             hbs.RegisterHelper("article", (writer, context, arguments) =>
             {
                 var dataValue = "";
-                if (arguments[0] != null)
+                if (arguments.Count() >= 2)
                 {
                     var o = (JObject)arguments[0];
+                    var articleData = GetArticleData(o);
+                    var cmd = arguments[1].ToString();
 
-                    switch (arguments[1].ToString())
+                    switch (cmd)
                     {
-                        case "ref":
-                            dataValue = (string)o.SelectToken("genxml.data.genxml.textbox.articleref") ?? "";
+                        case "name":
+                            dataValue = articleData.Name;
+                            break;
+                        default:
+                            dataValue = articleData.Info.GetXmlProperty(cmd);
+                            if (dataValue == "") dataValue = articleData.Info.GetXmlProperty("genxml/lang/" + cmd);
+                            break;
+                    }
+                }
+                writer.WriteSafeString(dataValue);
+            });
+        }
+
+        private static void RegisterDocument(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("document", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments.Length >= 2)
+                {
+                    var o = (JObject)arguments[0];
+                    var articleData = GetArticleData(o);
+
+                    var cmd = arguments[1].ToString();
+                    var rowidx = 0;
+                    if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                    var idx = 0;
+                    if (arguments.Length >= 4) idx = (int)arguments[3];
+                    var doc = articleData.GetRow(rowidx).GetDoc(idx);
+
+                    switch (cmd)
+                    {
+                        case "key":
+                            dataValue = doc.DocKey;
                             break;
                         case "name":
-                            dataValue = (string)o.SelectToken("genxml.data.genxml.lang.genxml.textbox.articlename") ?? "";
+                            dataValue = doc.Name;
                             break;
-                        case "summary":
-                            dataValue = System.Web.HttpUtility.HtmlEncode((string)o.SelectToken("genxml.data.genxml.lang.genxml.textbox.articlesummary"));
-                            if (dataValue == null) dataValue = "";
-                            dataValue = dataValue.Replace(Environment.NewLine, "<br/>");
-                            dataValue = dataValue.Replace("\n", "<br/>");
-                            dataValue = dataValue.Replace("\t", "&nbsp;&nbsp;&nbsp;");
-                            dataValue = dataValue.Replace("'", "&apos;");
+                        case "hidden":
+                            dataValue = doc.Hidden.ToString().ToLower();
                             break;
-                        case "imagealt":
-                            var fieldname2 = "imagealt";
-                            if (arguments.Length >= 4 && arguments[3] != null) fieldname2 = arguments[3].ToString();
-                            if (!fieldname2.Contains(".")) fieldname2 = "textbox." + fieldname2;
-                            var nod = o.SelectToken("genxml.data.genxml.lang.genxml.imagelist.genxml.[" + arguments[2].ToString() + "]." + fieldname2);
-                            if (nod != null)
-                            {
-                                dataValue = nod.ToString();
-                            }
+                        case "fieldid":
+                            dataValue = doc.FieldId;
                             break;
-                        case "imageurl":
-                            var fieldname1 = "imagepatharticleimage";
-                            if (arguments.Length >= 6 && arguments[5] != null) fieldname1 = arguments[5].ToString();
-                            if (!fieldname1.Contains(".")) fieldname1 = "hidden." + fieldname1;
-                            var nod1 = o.SelectToken("genxml.data.genxml.imagelist.genxml.[" + arguments[2].ToString() + "]." + fieldname1);
-                            if (nod1 != null)
-                            {
-                                var w = arguments[3].ToString();
-                                var h = arguments[4].ToString();
-                                var iurl = nod1.ToString();
-                                var eurl = o.SelectToken("genxml.sessionparams.r.engineurl").ToString();
-                                if (eurl != null) dataValue = eurl.TrimEnd('/') + "/DesktopModules/DNNrocket/API/DNNrocketThumb.ashx?src=" + iurl + "&w=" + w + "&h=" + h;
-                            }
+                        case "relpath":
+                            dataValue = doc.RelPath;
                             break;
-                        case "linkurl":
-                            var fieldname = "externallinkarticlelink";
-                            if (arguments.Length >= 4 && arguments[3] != null) fieldname = arguments[3].ToString();
-                            if (!fieldname.Contains(".")) fieldname = "textbox." + fieldname;
-                            var nodLinkUrl = o.SelectToken("genxml.data.genxml.lang.genxml.linklist.genxml.[" + arguments[2].ToString() + "]." + fieldname);
-                            if (nodLinkUrl != null && nodLinkUrl.ToString() != "")
-                            {
-                                dataValue = nodLinkUrl.ToString();
+                        case "count":
+                            dataValue = articleData.GetRow(rowidx).GetDocList().Count.ToString();
+                            break;
+                        case "url":
+                            var enginrUrl = (string)o.SelectToken("genxml.sessionparams.r.engineurl") ?? "";
+                            dataValue = enginrUrl.TrimEnd('/') + "/DesktopModules/DNNrocket/API/DNNrocketThumb.ashx?src=" + doc.RelPath;
+                            break;
+                        default:
+                            dataValue = doc.Info.GetXmlProperty(cmd);
+                            if (dataValue == "") dataValue = doc.Info.GetXmlProperty("genxml/lang/" + cmd);
+                            break;
+                    }
+                }
+                writer.WriteSafeString(dataValue);
+            });
+        }
+        private static void RegisterLink(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("link", (writer, context, arguments) =>
+            {
+                var dataValue = "";
+                if (arguments.Length >= 2)
+                {
+                    var o = (JObject)arguments[0];
+                    var articleData = GetArticleData(o);
+                    var cmd = arguments[1].ToString();
+                    var rowidx = 0;
+                    if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                    var idx = 0;
+                    if (arguments.Length >= 4) idx = (int)arguments[3];
+                    var lnk = articleData.GetRow(rowidx).Getlink(idx);
 
-                                var anchorName = "anchorarticlelink";
-                                if (arguments.Length >= 5 && arguments[4] != null) anchorName = arguments[4].ToString();
-                                if (anchorName != "")
-                                {
-                                    if (!anchorName.Contains(".")) anchorName = "textbox." + anchorName;
-                                    var nodLinkAnchor = o.SelectToken("genxml.data.genxml.lang.genxml.linklist.genxml.[" + arguments[2].ToString() + "]." + anchorName);
-                                    if (nodLinkAnchor != null)
-                                    {
-                                        var aurl = nodLinkAnchor.ToString();
-                                        if (aurl != "") dataValue += "#" + aurl;
-                                    }
-                                }
-                            }
+                    switch (cmd)
+                    {
+                        case "key":
+                            dataValue = lnk.LinkKey;
                             break;
-                        case "linkname":
-                            var fieldname3 = "namearticlelink";
-                            if (arguments.Length >= 4 && arguments[3] != null) fieldname3 = arguments[3].ToString();
-                            if (!fieldname3.Contains(".")) fieldname3 = "textbox." + fieldname3;
-                            var nodLinkName = o.SelectToken("genxml.data.genxml.lang.genxml.linklist.genxml.[" + arguments[2].ToString() + "]." + fieldname3);
-                            if (nodLinkName != null)
-                            {
-                                dataValue = nodLinkName.ToString();
-                            }
+                        case "name":
+                            dataValue =  lnk.Name;
                             break;
-                        case "docurl":
-                            var docpath = "documentpatharticledoc";
-                            if (arguments.Length >= 4 && arguments[3] != null) docpath = arguments[3].ToString();
-                            if (!docpath.Contains(".")) docpath = "hidden." + docpath;
-                            var nodDocUrl = o.SelectToken("genxml.data.genxml.documentlist.genxml.[" + arguments[2].ToString() + "]." + docpath);
-                            if (nodDocUrl != null && nodDocUrl.ToString() != "")
-                            {
-                                var eurl = o.SelectToken("genxml.sessionparams.r.engineurl").ToString();
-                                if (eurl != null) dataValue = eurl.TrimEnd('/') + "/" + nodDocUrl.ToString();
-                            }
+                        case "hidden":
+                            dataValue = lnk.Hidden.ToString().ToLower();
                             break;
-                        case "docname":
-                            var docname = "documentnamearticledoc";
-                            if (arguments.Length >= 4 && arguments[3] != null) docname = arguments[3].ToString();
-                            if (!docname.Contains(".")) docname = "textbox." + docname;
-                            var noddocname = o.SelectToken("genxml.data.genxml.documentlist.genxml.[" + arguments[2].ToString() + "]." + docname);
-                            if (noddocname != null)
-                            {
-                                dataValue = noddocname.ToString();
-                            }
+                        case "fieldid":
+                            dataValue = lnk.FieldId;
+                            break;
+                        case "count":
+                            dataValue = articleData.GetRow(rowidx).GetLinkList().Count.ToString();
+                            break;
+                        case "ref":
+                            dataValue = lnk.Ref;
+                            break;
+                        case "type":
+                            dataValue = lnk.LinkType.ToString();
+                            break;
+                        case "target":
+                            dataValue = lnk.Target;
+                            break;
+                        case "anchor":
+                            dataValue = lnk.Anchor;
+                            break;
+                        case "url":
+                            dataValue = lnk.Url;
+                            break;
+                        default:
+                            dataValue = lnk.Info.GetXmlProperty(cmd);
+                            if (dataValue == "") dataValue = lnk.Info.GetXmlProperty("genxml/lang/" + cmd);
                             break;
                     }
                 }
