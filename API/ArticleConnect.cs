@@ -112,6 +112,7 @@ namespace RocketContent.API
                 var filebase64List = fileuploadbase64.Split('*');
                 var baseFileMapPath = PortalUtils.TempDirectoryMapPath() + "\\" + GeneralUtils.GetGuidKey();
                 var imgsize = _postInfo.GetXmlPropertyInt("genxml/hidden/imageresize");
+                if (imgsize == 0) imgsize = _remoteModule.Record.GetXmlPropertyInt("genxml/settings/imageresize");
                 if (imgsize == 0) imgsize = 640;
                 var imgList = ImgUtils.UploadBase64Image(filenameList, filebase64List, baseFileMapPath, _portalContent.ImageFolderMapPath, imgsize);
                 foreach (var imgFileMapPath in imgList)

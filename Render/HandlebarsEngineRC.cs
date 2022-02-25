@@ -35,6 +35,7 @@ namespace RocketContent.Components
             RegisterArticle(hbs);
             RegisterRow(hbs);
             RegisterModuleRef(hbs);
+            RegisterImageShow(hbs);
             RegisterImage(hbs);
             RegisterDocument(hbs);
             RegisterLink(hbs);
@@ -112,6 +113,66 @@ namespace RocketContent.Components
             });
         }
         // Get Image Data
+        private static void RegisterImageShow(IHandlebars hbs)
+        {
+            hbs.RegisterHelper("imagetest", (writer, options, context, arguments) =>
+            {
+                var o = (JObject)arguments[0];
+                var articleData = GetArticleData(o);
+
+                var rowidx = 0;
+                if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                var imgidx = 0;
+                if (arguments.Length >= 4) imgidx = (int)arguments[3];
+                var img = articleData.GetRow(rowidx).GetImage(imgidx);
+                var cmd = arguments[1].ToString();
+
+                if (cmd == "isshown")
+                {
+                    if (!img.Hidden)
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "ishidden")
+                {
+                    if (img.Hidden)
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "hasheading")
+                {
+                    if (img.Alt != "")
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "hasimage")
+                {
+                    if (img.RelPath != "")
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "haslink")
+                {
+                    if (img.UrlText != "")
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+                if (cmd == "hassummary")
+                {
+                    if (!String.IsNullOrWhiteSpace(img.Summary))
+                        options.Template(writer, (object)context);
+                    else
+                        options.Inverse(writer, (object)context);
+                }
+
+
+            });
+        }
         private static void RegisterImage(IHandlebars hbs)
         {
             hbs.RegisterHelper("image", (writer, context, arguments) =>
@@ -154,6 +215,9 @@ namespace RocketContent.Components
                             break;
                         case "urltext":
                             dataValue = img.UrlText;
+                            break;
+                        case "hidden":
+                            dataValue = img.Hidden.ToString();
                             break;
                         case "thumburl":
                             var width = Convert.ToInt32(arguments[4]);

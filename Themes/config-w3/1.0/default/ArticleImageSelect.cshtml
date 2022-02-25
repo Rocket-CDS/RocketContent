@@ -16,11 +16,6 @@
         info = articleData.Info;
     }
     var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");
-    var imageresize = Model.GetSettingInt("imageresize");
-    if (imageresize == 0)
-    {
-        imageresize = 640;
-    }
 }
 
 <div id="articleimageselect" class="w3-modal">
@@ -35,7 +30,7 @@
                 <h2>@ResourceKey("DNNrocket.imageupload")</h2>
                 <p>@ResourceKey("DNNrocket.imageupload", "", "Msg")</p>
 
-                <input id="imagefileupload" class="simplisity_base64upload" s-reload="false" s-cmd="remote_addimage" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"imageresize":"@(imageresize)","dataref":"@(articleData.DataRef)","moduleref":"@remoteModule.ModuleRef"}' type="file" name="file[]" multiple style="display:none;">
+                <input id="imagefileupload" class="simplisity_base64upload" s-reload="false" s-cmd="remote_addimage" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)","moduleref":"@remoteModule.ModuleRef"}' type="file" name="file[]" multiple style="display:none;">
                 <div class="w3-row w3-margin-bottom">
                     <span class="w3-col m12 w3-button w3-teal fileuploadaction" onclick="$('#imagefileupload').trigger('click');">@ButtonText(ButtonTypes.upload)</span>
                 </div>
