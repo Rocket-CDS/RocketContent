@@ -122,9 +122,9 @@ namespace RocketContent.Components
                 var articleData = GetArticleData(o);
 
                 var rowidx = 0;
-                if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                if (arguments.Length >= 3) rowidx = Convert.ToInt32(arguments[2]);
                 var imgidx = 0;
-                if (arguments.Length >= 4) imgidx = (int)arguments[3];
+                if (arguments.Length >= 4) imgidx = Convert.ToInt32(arguments[3]);
                 var img = articleData.GetRow(rowidx).GetImage(imgidx);
                 var cmd = arguments[1].ToString();
 
@@ -185,9 +185,9 @@ namespace RocketContent.Components
                     var articleData = GetArticleData(o);
 
                     var rowidx = 0;
-                    if (arguments.Length >= 3) rowidx = (int)arguments[2];
+                    if (arguments.Length >= 3) rowidx = Convert.ToInt32(arguments[2]);
                     var imgidx = 0;
-                    if (arguments.Length >= 4) imgidx = (int)arguments[3];
+                    if (arguments.Length >= 4) imgidx = Convert.ToInt32(arguments[3]);
                     var img = articleData.GetRow(rowidx).GetImage(imgidx);
                     var cmd = arguments[1].ToString();
 

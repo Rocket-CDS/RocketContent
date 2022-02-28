@@ -76,6 +76,7 @@ RocketCDS uses XML to store data, Handlebars.js uses Json.  A conversion from XM
     {{/each}}
 {{/each}}
 ```
+NOTE: There is a bug in handlebars.js.  If the "@../index" is used within a loop it only works for the @first, after that the @index seems to be passed.
 ### doc
 ```
 {{#each genxml.data.genxml.rows.genxml}}
