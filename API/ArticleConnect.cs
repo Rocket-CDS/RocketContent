@@ -157,6 +157,21 @@ namespace RocketContent.API
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
         }
+        public string AddArticleListItem()
+        {
+            var articleData = GetActiveArticle(_dataRef);
+            articleData.UpdateRow(_rowKey, _postInfo);
+
+            var articleRow = articleData.GetRow(_rowKey);
+            if (articleRow != null)
+            {
+                var listName = _paramInfo.GetXmlProperty("genxml/hidden/listname");
+                articleRow.Info.AddListItem(listName, new SimplisityInfo());
+                articleData.UpdateRow(_rowKey, articleRow.Info);
+            }
+            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
+            return AdminDetailDisplay(articleData);
+        }
         public string AddArticleLink()
         {
             var articleData = GetActiveArticle(_dataRef);

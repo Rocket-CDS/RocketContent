@@ -151,31 +151,17 @@ namespace RocketContent.Components
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/config/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/config/*");
 
-                    var imgList = postInfo.GetList(ImageListName);
-                    foreach (var img in imgList)
+                    var postLists = postInfo.GetLists();
+                    foreach (var listname in postLists)
                     {
-                        newInfo.AddListItem(ImageListName, img);
+                        var listData = postInfo.GetList(listname);
+                        foreach (var listItem in listData)
+                        {
+                            newInfo.AddListItem(listname, listItem);
+                        }
+                        newInfo.SetXmlProperty("genxml/" + listname + "/@list", "true");
+                        newInfo.SetXmlProperty("genxml/lang/genxml/" + listname + "/@list", "true");
                     }
-                    newInfo.SetXmlProperty("genxml/" + ImageListName + "/@list", "true");
-                    newInfo.SetXmlProperty("genxml/lang/genxml/" + ImageListName + "/@list", "true");
-
-                    var docList = postInfo.GetList(DocumentListName);
-                    foreach (var doc in docList)
-                    {
-                        newInfo.AddListItem(DocumentListName, doc);
-                    }
-                    newInfo.SetXmlProperty("genxml/" + DocumentListName + "/@list", "true");
-                    newInfo.SetXmlProperty("genxml/lang/genxml/" + DocumentListName + "/@list", "true");
-
-                    var linkList = postInfo.GetList(LinkListName);
-                    foreach (var link in linkList)
-                    {
-                        newInfo.AddListItem(LinkListName, link);
-                    }
-                    newInfo.SetXmlProperty("genxml/" + LinkListName + "/@list", "true");
-                    newInfo.SetXmlProperty("genxml/lang/genxml/" + LinkListName + "/@list", "true");
-
-
 
                     newArticleRows.Add(newInfo);
                 }

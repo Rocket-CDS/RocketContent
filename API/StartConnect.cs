@@ -104,6 +104,9 @@ namespace RocketContent.API
                 case "remote_addrow":
                     strOut = AddRow();
                     break;
+                case "remote_addlistitem":
+                    strOut = AddArticleListItem();
+                    break;
                 case "remote_addlink":
                     strOut = AddArticleLink();
                     break;

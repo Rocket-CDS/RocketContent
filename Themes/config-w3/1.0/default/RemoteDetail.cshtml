@@ -27,7 +27,7 @@
 
     <div class="w3-row w3-margin-bottom">
         <div class="w3-third">
-            <span class="w3-padding w3-button w3-theme-action simplisity_click" s-cmd="remote_editsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"moduleref":"@(remoteModule.ModuleRef)"}'>@ButtonText(ButtonTypes.save)</span>
+            <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="remote_editsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"moduleref":"@(remoteModule.ModuleRef)"}'>@ButtonText(ButtonTypes.save)</span>
         </div>
         <div class="w3-third">
             @TextBox(info, "genxml/textbox/name", " class='w3-input w3-border w3-hide ' ", @remoteModule.AppThemeFolder)
