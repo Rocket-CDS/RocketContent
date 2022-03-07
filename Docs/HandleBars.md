@@ -179,3 +179,21 @@ gteq:   >=
 lt:     <
 lteq:   <=
 ```
+
+## resourcekey helper
+```
+{{resourcekey this, file.key, language = '', extension = 'Text'}}
+```
+In the razor template that calls the handlebars templates (Usually view.cshtml) you must have defined the rexlist.  The resxlist passes the paths for resx files to handlebars. 
+```
+AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/");
+AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/");
+AddProcessData("resourcepath", "/DesktopModules/RocketThemes/" + articleData.Organisation + "/" + articleData.AdminAppThemeFolder+ "/" + articleData.AdminAppThemeFolderVersion  + "/resx");
+    
+hbsDict.Add("resxlist", RenderRazorUtils.GetResxPaths(Processdata));
+```
+
+Example:
+```
+{{resourcekey @root "Theme.tel" "" "Text"}}:{{textbox.tel}}
+```
