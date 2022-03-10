@@ -89,14 +89,14 @@ NOTE: There is a bug in handlebars.js.  If the "@../index" is used within a loop
             <h1>Is Shown</h1>
         {{/doctest}}
 
-        {{doc @root "key" @../index @index}}
-        {{doc @root "name" @../index @index}}
-        {{doc @root "hidden" @../index @index}}
-        {{doc @root "url" @../index @index}}
-        {{doc @root "relpath" @../index @index}}
-        {{doc @root "fieldid" @../index @index}}
-        {{doc @root "count"}}
-        {{doc @root "genxml/textbox/mytextbox" @../index @index}}
+        {{document @root "key" @../index @index}}
+        {{document @root "name" @../index @index}}
+        {{document @root "hidden" @../index @index}}
+        {{document @root "url" @../index @index}}
+        {{document @root "relpath" @../index @index}}
+        {{document @root "fieldid" @../index @index}}
+        {{document @root "count"}}
+        {{document @root "genxml/textbox/mytextbox" @../index @index}}
 
     {{/each}}
 {{/each}}
