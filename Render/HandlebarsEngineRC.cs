@@ -39,6 +39,7 @@ namespace RocketContent.Components
             RegisterImage(hbs);
             RegisterDocumentShow(hbs);
             RegisterDocument(hbs);
+            RegisterLinkShow(hbs);
             RegisterLink(hbs);
             RegisterEngineUrl(hbs);
             RegisterCultureCodeEdit(hbs);
