@@ -18,6 +18,7 @@ namespace RocketContent.API
         private Dictionary<string, string> _passSettings;
         private SessionParams _sessionParams;
         private UserParams _userParams;
+        private AppThemeLimpet _appTheme;
         private AppThemeSystemLimpet _appThemeSystem;
         private PortalContentLimpet _portalContent;
         private string _dataRef;
@@ -181,11 +182,11 @@ namespace RocketContent.API
             var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid"); // we may have passed selection
             if (portalId >= 0)
             {
-                var portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit);
-                if (portalContent.PortalId >= 0) portalContent.Save(_postInfo);
-                _portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit); // reload portal data after save (for langauge change)
+                _portalContent.Save(_postInfo);
                 var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+                if (pr.StatusCode != "00") return pr.ErrorMsg;
+                return pr.RenderedText;
             }
             return "Invalid PortalId";
         }
@@ -193,11 +194,12 @@ namespace RocketContent.API
             {
                 try
                 {
-                    _portalContent = new PortalContentLimpet(_portalContent.PortalId, _sessionParams.CultureCodeEdit);
                     var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
-                    return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+                    var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+                    if (pr.StatusCode != "00") return pr.ErrorMsg;
+                    return pr.RenderedText;
                 }
-                catch (Exception ex)
+            catch (Exception ex)
                 {
                     return ex.ToString();
                 }
@@ -460,7 +462,7 @@ namespace RocketContent.API
                 _portalContent = new PortalContentLimpet(PortalUtils.GetPortalId(), _sessionParams.CultureCodeEdit);
                 if (!_portalContent.Active) return "";
             }
-            _portalData = new PortalLimpet(PortalUtils.GetPortalId());
+            _portalData = new PortalLimpet(_portalContent.PortalId);
             _dataRef = _remoteModule.DataRef;
 
             if (_dataRef == "") 
@@ -473,11 +475,17 @@ namespace RocketContent.API
             _org = _remoteModule.Organisation;
             if (_org == "") _org = _orgData.DefaultOrg();
 
-            _dataObjects = new Dictionary<string, object>();
+            _appTheme = new AppThemeLimpet(_portalContent.PortalId, _remoteModule.AppThemeViewFolder, _remoteModule.AppThemeViewVersion, _org);
+            var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
 
-            // [TODO]: Users should only have access to their own services for setup on portal 0.
-            // [TODO]: Private admin needs to allow access for managers.
-            // [TODO]: Public facing API should allow access for all users.
+            _dataObjects = new Dictionary<string, object>();
+            _dataObjects.Add("remotemodule", _remoteModule);
+            _dataObjects.Add("apptheme", _appTheme);
+            _dataObjects.Add("appthemesystem", _appThemeSystem);
+            _dataObjects.Add("portalcontent", _portalContent);
+            _dataObjects.Add("portaldata", _portalData);
+            _dataObjects.Add("securitydata", securityData);
+            _dataObjects.Add("systemdata", _systemData);
 
             if (paramCmd.StartsWith("remote_"))
             {
@@ -486,7 +494,6 @@ namespace RocketContent.API
             }
             else
             {
-                var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
                 paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
             }
 

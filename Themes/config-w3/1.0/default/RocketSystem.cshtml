@@ -11,9 +11,9 @@
 @{
     var portalContent = (PortalContentLimpet)Model.List.First();
     var info = portalContent.Info;
-    var portalData = new PortalLimpet(portalContent.PortalId);
-    var systemData = new SystemLimpet("rocketcontent");
-    var systemAppTheme = new AppThemeSystemLimpet(systemData.SystemKey);
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var systemData = (SystemLimpet)Model.GetDataObject("systemdata");
+    var appThemeSystem = (AppThemeSystemLimpet)Model.GetDataObject("appthemesystem");
     DNNrocketUtils.SetCurrentCulture(DNNrocketUtils.GetEditCulture());
     var enabledlanguages = DNNrocketUtils.GetCultureCodeList();
 
@@ -31,7 +31,7 @@
 </div>
 
 <div id="servicesettings" class="w3-row w3-margin-top">
-    @RenderTemplate("RocketSystemGeneral.cshtml", systemAppTheme, Model, true)
+    @RenderTemplate("RocketSystemGeneral.cshtml", appThemeSystem, Model, true)
 </div>
 
 
