@@ -293,7 +293,9 @@ namespace RocketContent.API
 
                 var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
                 var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, null, _passSettings, _sessionParams, true);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObjects, _passSettings, _sessionParams, true);
+                if (pr.StatusCode != "00") return pr.ErrorMsg;
+                return pr.RenderedText;
             }
             catch (Exception ex)
             {
@@ -305,7 +307,9 @@ namespace RocketContent.API
             try
             {
                 var razorTempl = _appThemeSystem.GetTemplate("Dashboard.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+                if (pr.StatusCode != "00") return pr.ErrorMsg;
+                return pr.RenderedText;
             }
             catch (Exception ex)
             {
@@ -321,6 +325,7 @@ namespace RocketContent.API
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
                 _dataObjects.Add("articledata", articleData);
                 var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
+                if (pr.StatusCode != "00") return pr.ErrorMsg;
                 return pr.RenderedText;
             }
             catch (Exception ex)
@@ -344,14 +349,12 @@ namespace RocketContent.API
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
-            var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
-
             var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
-            var dataObjects = new Dictionary<string, object>();
-            dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
-            dataObjects.Add("articlerow", articleRow);
-            dataObjects.Add("remotemodule", remoteModule);            
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, true);
+            _dataObjects.Remove("apptheme");
+            _dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
+            _dataObjects.Add("articlerow", articleRow);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
         private string MessageDisplay(string msgKey)
@@ -360,9 +363,10 @@ namespace RocketContent.API
             {
                 var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
                 var razorTempl = _appThemeSystem.GetTemplate("MessageDisplay.cshtml");
-                var dataObjects = new Dictionary<string, object>();
                 _passSettings.Add("msgkey", msgKey);
-                return RenderRazorUtils.RazorDetail(razorTempl, articleData, dataObjects, _sessionParams, _passSettings, true);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
+                if (pr.StatusCode != "00") return pr.ErrorMsg;
+                return pr.RenderedText;
             }
             catch (Exception ex)
             {
@@ -409,8 +413,8 @@ namespace RocketContent.API
                 var appThemeData = new AppThemeLimpet(_portalData.PortalId, appTheme, "", _org);
                 if (!appThemeData.Exists) return "Invalid AppTheme: " + appTheme;
                 var razorTempl = _appThemeSystem.GetTemplate("RemoteAppThemeVersions.cshtml");
-                var dataObjects = new Dictionary<string, object>();
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, dataObjects,  _passSettings, _sessionParams, true);
+                var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, _dataObjects,  _passSettings, _sessionParams, true);
+                if (pr.StatusCode != "00") return pr.ErrorMsg;
                 return pr.RenderedText;
             }
             catch (Exception ex)
@@ -474,6 +478,7 @@ namespace RocketContent.API
             if (_org == "") _org = _orgData.DefaultOrg();
 
             _appTheme = new AppThemeLimpet(_portalContent.PortalId, _remoteModule.AppThemeViewFolder, _remoteModule.AppThemeViewVersion, _org);
+
             var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
 
             _dataObjects = new Dictionary<string, object>();

@@ -22,30 +22,34 @@
 
 @RenderLanguageSelector("article_admindetail", "{\"dataref\":\"" + articleData.DataRef + "\"}", appThemeSystem, Model)
 
-<div id="a-articledata" class=" w3-padding">
+<div style="padding-top:48px;">
 
-    <div class=" w3-margin-bottom">
-        <div class="w3-bar w3-padding">
-            <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
-            <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
-            <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
-        </div>
-        <div class="w3-row">
-            <div class="w3-half">
-                <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
+    <div id="a-articledata" class=" w3-padding">
+
+        <div class=" w3-margin-bottom">
+            <div class="w3-bar w3-padding">
+                <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
+                <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
+                <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
+            </div>
+            <div class="w3-row">
+                <div class="w3-half">
+                    <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
+                </div>
             </div>
         </div>
+
+        @RenderTemplate("AdminDetail.cshtml", appTheme, Model)
+
+        @RenderXml(info)
+
     </div>
 
-    @RenderTemplate("AdminDetail.cshtml", appTheme, Model)
+    <div class="w3-row w3-tiny w3-padding">
+        <span>Id: @articleData.ArticleId</span>
+        <span class="w3-right">AppThemeView: @articleData.AdminAppThemeFolder  v@(articleData.AdminAppThemeFolderVersion)</span>
+    </div>
 
-    @RenderXml(info)
-
-</div>
-
-<div class="w3-row w3-tiny w3-padding">
-    <span>Id: @articleData.ArticleId</span>
-    <span class="w3-right">AppThemeView: @articleData.AdminAppThemeFolder  v@(articleData.AdminAppThemeFolderVersion)</span>
 </div>
 
 <script>

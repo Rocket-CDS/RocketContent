@@ -1,18 +1,15 @@
-﻿@inherits RocketContent.Components.RocketContentTokens<Simplisity.SimplisityRazor>
-@using RocketContent.Components;
+﻿@inherits DNNrocketAPI.render.DNNrocketTokens<Simplisity.SimplisityRazor>
 @using DNNrocketAPI.Components;
-@using Simplisity;
-@using RazorEngine.Text;
-
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources")
 
 @{
     var enabledlanguages = DNNrocketUtils.GetCultureCodeList();
     var sessionParams = Model.SessionParamsData;
 }
 
-<div class="w3-row w3-theme w3-padding w3-margin-bottom " style="z-index:2;">
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketEcommerce/App_LocalResources")
+
+<div class="w3-row w3-theme w3-padding w3-top " style="z-index:2;width: calc(100% - 280px);">
     <div class="w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><span class="material-icons" style="max-height:16px;">menu</span></div>
 
     @foreach (var l in enabledlanguages)
@@ -22,7 +19,7 @@
         {
             selectedcolor = "w3-theme-l3";
         }
-        <div class="w3-button w3-padding-small w3-round @(selectedcolor) changeeditlanguage" s-post="#a-articledata" s-cmd="@Model.GetSetting("scmd")" s-fields='@(Model.GetSetting("sfields"))' language="@(l)" }><img src="/DesktopModules/DNNrocket/API/images/flags/24/@(l).png" class="w3-round" /></div>
+        <div class="w3-button w3-padding-small w3-round @(selectedcolor) changeeditlanguage" s-cmd="@Model.GetSetting("scmd")" s-fields='@(Model.GetSetting("sfields"))' language="@(l)" }><img src="/DesktopModules/DNNrocket/API/images/flags/24/@(l).png" class="w3-round" /></div>
     }
 
 
@@ -50,13 +47,11 @@
 
 <script>
     $(document).ready(function () {
-
         $(".changeeditlanguage").click(function () {
             var l = $(this).attr('language');
             simplisity_setSessionField('culturecodeedit', l);
             simplisity_callserver(this);
         });
-
     });
 
     // Tools dropdown menu
