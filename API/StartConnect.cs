@@ -54,9 +54,6 @@ namespace RocketContent.API
                 case "rocketsystem_delete":
                     strOut = RocketSystemDelete();
                     break;
-                case "rocketsystem_valid":
-                    strOut = RocketSystemValid();
-                    break;
                 case "rocketsystem_adminpanelheader":
                     strOut = AdminPanelHeader();
                     break;
@@ -183,6 +180,8 @@ namespace RocketContent.API
             if (portalId >= 0)
             {
                 _portalContent.Save(_postInfo);
+                _portalData.Record.SetXmlProperty("genxml/systems/" + _systemData.SystemKey + "setup", "True");
+                _portalData.Update();
                 var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
                 var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
                 if (pr.StatusCode != "00") return pr.ErrorMsg;
@@ -191,147 +190,74 @@ namespace RocketContent.API
             return "Invalid PortalId";
         }
         private String RocketSystem()
+        {
+            var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
+        }
+        private String RocketSystemInit()
+        {
+            var newportalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/newportalid");
+            if (newportalId > 0)
             {
-                try
-                {
-                    var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
-                    var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
-                    if (pr.StatusCode != "00") return pr.ErrorMsg;
-                    return pr.RenderedText;
-                }
-            catch (Exception ex)
-                {
-                    return ex.ToString();
-                }
+                _portalContent = new PortalContentLimpet(newportalId, _sessionParams.CultureCodeEdit);
+                _portalContent.Validate();
+                _portalContent.Update();
             }
-            private String RocketSystemInit()
+            return "";
+        }
+        private String RocketSystemDelete()
+        {
+            var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
+            if (portalId > 0)
             {
-                try
-                {
-                    var newportalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/newportalid");
-                    if (newportalId > 0)
-                    {
-                        _portalContent = new PortalContentLimpet(newportalId, _sessionParams.CultureCodeEdit);
-                        _portalContent.Validate();
-                        _portalContent.Update();
-                    }
-                    return "";
-                }
-                catch (Exception ex)
-                {
-                    return ex.ToString();
-                }
+                _portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit);
+                _portalContent.Delete();
             }
-            private String RocketSystemDelete()
-            {
-                try
-                {
-                    var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
-                    if (portalId > 0)
-                    {
-                        _portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit);
-                        _portalContent.Delete();
-                    }
-                    return "";
-                }
-                catch (Exception ex)
-                {
-                    return ex.ToString();
-                }
-            }
-            private String RocketSystemValid()
-            {
-                try
-                {
-                    var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
-                    if (portalId > 0)
-                    {
-                        _portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit);
-                        if (!_portalContent.Valid)
-                        {
-                            var razorTempl = _appThemeSystem.GetTemplate("InvalidSystem.cshtml");
-                            return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
-                        }
-                    }
-                    return "";
-                }
-                catch (Exception ex)
-                {
-                    return ex.ToString();
-                }
-            }
+            return "";
+        }
         private string AdminPanel()
         {
-            try
-            {
-                var razorTempl = _appThemeSystem.GetTemplate("AdminPanel.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var razorTempl = _appThemeSystem.GetTemplate("AdminPanel.cshtml");
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         private string AdminPanelHeader()
         {
-            try
-            {
-                var razorTempl = _appThemeSystem.GetTemplate("AdminPanelHeader.cshtml");
-                return RenderRazorUtils.RazorDetail(razorTempl, _portalContent, _passSettings, _sessionParams, true);
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var razorTempl = _appThemeSystem.GetTemplate("AdminPanelHeader.cshtml");
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         private string ReloadPage()
         {
-            try
-            {
-                // user does not have access, logoff
-                UserUtils.SignOut();
+            // user does not have access, logoff
+            UserUtils.SignOut();
 
-                var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
-                var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObjects, _passSettings, _sessionParams, true);
-                if (pr.StatusCode != "00") return pr.ErrorMsg;
-                return pr.RenderedText;
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
+            var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         private string GetDashboard()
         {
-            try
-            {
-                var razorTempl = _appThemeSystem.GetTemplate("Dashboard.cshtml");
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
-                if (pr.StatusCode != "00") return pr.ErrorMsg;
-                return pr.RenderedText;
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var razorTempl = _appThemeSystem.GetTemplate("Dashboard.cshtml");
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         private string RemoteSettings()
         {
-            try
-            {
-                var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
-                var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-                var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
-                _dataObjects.Add("articledata", articleData);
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
-                if (pr.StatusCode != "00") return pr.ErrorMsg;
-                return pr.RenderedText;
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
+            _dataObjects.Add("articledata", articleData);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         private string EditContent()
         {
@@ -359,68 +285,47 @@ namespace RocketContent.API
         }
         private string MessageDisplay(string msgKey)
         {
-            try
-            {
-                var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-                var razorTempl = _appThemeSystem.GetTemplate("MessageDisplay.cshtml");
-                _passSettings.Add("msgkey", msgKey);
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
-                if (pr.StatusCode != "00") return pr.ErrorMsg;
-                return pr.RenderedText;
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            var razorTempl = _appThemeSystem.GetTemplate("MessageDisplay.cshtml");
+            _passSettings.Add("msgkey", msgKey);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         private string SaveSettings()
         {
-            try
+            if (_moduleRef != "")
             {
-                if (_moduleRef != "")
-                {
-                    var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
-                    remoteModule.Save(_postInfo);
-                    // update sitekey after Save(), it replaces all XML.
-                    remoteModule.SiteKey = _sessionParams.SiteKey;
-                    remoteModule.Update();
+                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+                remoteModule.Save(_postInfo);
+                // update sitekey after Save(), it replaces all XML.
+                remoteModule.SiteKey = _sessionParams.SiteKey;
+                remoteModule.Update();
 
-                    // Make sure we have the correct _org, if changed.
-                    _remoteModule = remoteModule;
-                    _org = _remoteModule.Organisation;
-                    if (_org == "") _org = _orgData.DefaultOrg();
+                // Make sure we have the correct _org, if changed.
+                _remoteModule = remoteModule;
+                _org = _remoteModule.Organisation;
+                if (_org == "") _org = _orgData.DefaultOrg();
 
-                    // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
-                    var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
-                    articleData.AdminAppThemeFolder = remoteModule.AppThemeFolder;
-                    articleData.AdminAppThemeFolderVersion = remoteModule.AppThemeVersion;
-                    articleData.Organisation = _org;
-                    articleData.Update();
-                }
-                return RemoteSettings();
+                // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
+                var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+                articleData.AdminAppThemeFolder = remoteModule.AppThemeFolder;
+                articleData.AdminAppThemeFolderVersion = remoteModule.AppThemeVersion;
+                articleData.Organisation = _org;
+                articleData.Update();
             }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            return RemoteSettings();
         }
         private string AppThemeVersions()
         {
-            try
-            {
-                var appTheme = _postInfo.GetXmlProperty("genxml/remote/apptheme");
-                if (_paramInfo.GetXmlProperty("genxml/hidden/ctrl") == "appthemeviewversion") appTheme = _postInfo.GetXmlProperty("genxml/remote/appthemeview");
-                var appThemeData = new AppThemeLimpet(_portalData.PortalId, appTheme, "", _org);
-                if (!appThemeData.Exists) return "Invalid AppTheme: " + appTheme;
-                var razorTempl = _appThemeSystem.GetTemplate("RemoteAppThemeVersions.cshtml");
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, _dataObjects,  _passSettings, _sessionParams, true);
-                if (pr.StatusCode != "00") return pr.ErrorMsg;
-                return pr.RenderedText;
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
+            var appTheme = _postInfo.GetXmlProperty("genxml/remote/apptheme");
+            if (_paramInfo.GetXmlProperty("genxml/hidden/ctrl") == "appthemeviewversion") appTheme = _postInfo.GetXmlProperty("genxml/remote/appthemeview");
+            var appThemeData = new AppThemeLimpet(_portalData.PortalId, appTheme, "", _org);
+            if (!appThemeData.Exists) return "Invalid AppTheme: " + appTheme;
+            var razorTempl = _appThemeSystem.GetTemplate("RemoteAppThemeVersions.cshtml");
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, _dataObjects,  _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         public string InitCmd(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {

@@ -22,10 +22,6 @@
       <action>true</action>
     </command>
     <command>
-      <cmd>rocketsystem_valid</cmd>
-      <action>true</action>
-    </command>
-    <command>
       <cmd>rocketsystem_save</cmd>
       <action>true</action>
     </command>
