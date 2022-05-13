@@ -15,11 +15,12 @@ namespace RocketContent.API
         private ArticleLimpet GetActiveArticle(string dataRef, string culturecode = "")
         {
             if (culturecode == "") culturecode = _sessionParams.CultureCodeEdit;
+            if (culturecode == "") culturecode = DNNrocketUtils.GetEditCulture();
             return new ArticleLimpet(_portalContent.PortalId, dataRef, culturecode);
         }
         public string AddRow()
         {
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = GetActiveArticle(_dataRef);
             _rowKey = articleData.AddRow();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay(articleData);
@@ -69,16 +70,16 @@ namespace RocketContent.API
 
 
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            var articleData2 = new ArticleLimpet(_portalContent.PortalId, _dataRef, DNNrocketUtils.GetEditCulture());
+            var articleData2 = GetActiveArticle(_dataRef);
             return AdminDetailDisplay(articleData2);
         }
         public string RemoveRow()
         {
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.RemoveRow(_rowKey);
 
             // reload so we always have 1 row.
-            articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            articleData = GetActiveArticle(_dataRef);
 
             _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
@@ -87,7 +88,7 @@ namespace RocketContent.API
         public string SaveArticleRow()
         {            
             _passSettings.Add("saved", "true");
-            var articleData = new ArticleLimpet(_portalContent.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+            var articleData = GetActiveArticle(_dataRef);
             articleData.UpdateRow(_rowKey, _postInfo);
             CacheUtils.ClearAllCache("article");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
@@ -219,6 +220,7 @@ namespace RocketContent.API
             dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
             dataObjects.Add("remotemodule", remoteModule);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
         public String AdminCreateArticle()
@@ -235,14 +237,17 @@ namespace RocketContent.API
             var articleDataList = new ArticleLimpetList(_paramInfo, _portalContent, _sessionParams.CultureCodeEdit, true);
             var dataObjects = new Dictionary<string, object>();
             var razorTempl = _appThemeSystem.GetTemplate("adminlist.cshtml");
-            return RenderRazorUtils.RazorDetail(razorTempl, articleDataList, dataObjects, _sessionParams, _passSettings, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleDataList, _dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         public String AdminSelectAppThemeDisplay()
         {
             var appThemeDataList = new AppThemeDataList(_systemData.SystemKey);
             var razorTempl = _appThemeSystem.GetTemplate("SelectAppTheme.cshtml");
-            var strOut = RenderRazorUtils.RazorDetail(razorTempl, appThemeDataList, _passSettings, _sessionParams, true);
-            return strOut;
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
         public string ArticleDocumentList()
         {
@@ -265,7 +270,10 @@ namespace RocketContent.API
             _passSettings.Add("articleid", articleid.ToString());
 
             var razorTempl = _appThemeSystem.GetTemplate("DocumentSelect.cshtml");
-            return RenderRazorUtils.RazorList(razorTempl, docList, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, docList, _dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
+
         }
         public void ArticleDocumentUploadToFolder()
         {
@@ -351,6 +359,7 @@ namespace RocketContent.API
             dataObjects.Add("portalcontent", _portalContent);
             dataObjects.Add("remotemodule", remoteModule);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _portalContent.DebugMode);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
 
