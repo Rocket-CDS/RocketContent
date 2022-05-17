@@ -85,12 +85,11 @@
                 @HiddenField(articleData.Info, "genxml/remote/appthemeversion", "", articleData.AdminAppThemeFolderVersion)
             </div>
         </div>
-
-
+       
         @if (appThemeData != null)
         {
             <div class="w3-row">
-                @RenderTemplate("RemoteSettings.cshtml", appThemeData, Model, true)
+                @RenderTemplate("ThemeSettings.cshtml", appThemeData, Model, true)
             </div>
         }
 
