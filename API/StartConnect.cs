@@ -20,6 +20,7 @@ namespace RocketContent.API
         private UserParams _userParams;
         private AppThemeLimpet _appTheme;
         private AppThemeSystemLimpet _appThemeSystem;
+        private AppThemeSystemLimpet _appThemeContent;
         private PortalContentLimpet _portalContent;
         private string _dataRef;
         private string _moduleRef;
@@ -173,7 +174,18 @@ namespace RocketContent.API
             return rtnDic;
 
         }
-
+        /// <summary>
+        /// We may have a wrapper system, so check both systems for the template 
+        /// </summary>
+        /// <param name="templateName"></param>
+        /// <returns></returns>
+        private string GetSystemTemplate(string templateName)
+        {
+            var razorTempl = _appTheme.GetTemplate(templateName);
+            if (razorTempl == "") razorTempl = _appThemeSystem.GetTemplate(templateName);
+            if (razorTempl == "") razorTempl = _appThemeContent.GetTemplate(templateName);
+            return razorTempl;
+        }
         private string RocketSystemSave()
         {
             var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid"); // we may have passed selection
@@ -182,16 +194,13 @@ namespace RocketContent.API
                 _portalContent.Save(_postInfo);
                 _portalData.Record.SetXmlProperty("genxml/systems/" + _systemData.SystemKey + "setup", "True");
                 _portalData.Update();
-                var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
-                var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
-                if (pr.StatusCode != "00") return pr.ErrorMsg;
-                return pr.RenderedText;
+                return RocketSystem();
             }
             return "Invalid PortalId";
         }
         private String RocketSystem()
         {
-            var razorTempl = _appThemeSystem.GetTemplate("RocketSystem.cshtml");
+            var razorTempl = GetSystemTemplate("RocketSystem.cshtml");
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
@@ -219,14 +228,14 @@ namespace RocketContent.API
         }
         private string AdminPanel()
         {
-            var razorTempl = _appThemeSystem.GetTemplate("AdminPanel.cshtml");
+            var razorTempl = GetSystemTemplate("AdminPanel.cshtml");
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
         private string AdminPanelHeader()
         {
-            var razorTempl = _appThemeSystem.GetTemplate("AdminPanelHeader.cshtml");
+            var razorTempl = GetSystemTemplate("AdminPanelHeader.cshtml");
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
@@ -244,7 +253,7 @@ namespace RocketContent.API
         }
         private string GetDashboard()
         {
-            var razorTempl = _appThemeSystem.GetTemplate("Dashboard.cshtml");
+            var razorTempl = GetSystemTemplate("Dashboard.cshtml");
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
@@ -253,7 +262,7 @@ namespace RocketContent.API
         {
             var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-            var razorTempl = _appThemeSystem.GetTemplate("RemoteSettings.cshtml");
+            var razorTempl = GetSystemTemplate("RemoteSettings.cshtml");
             _dataObjects.Add("articledata", articleData);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
@@ -275,7 +284,7 @@ namespace RocketContent.API
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
-            var razorTempl = _appThemeSystem.GetTemplate("remotedetail.cshtml");
+            var razorTempl = GetSystemTemplate("remotedetail.cshtml");
             _dataObjects.Remove("apptheme");
             _dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
             _dataObjects.Add("articlerow", articleRow);
@@ -286,7 +295,7 @@ namespace RocketContent.API
         private string MessageDisplay(string msgKey)
         {
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-            var razorTempl = _appThemeSystem.GetTemplate("MessageDisplay.cshtml");
+            var razorTempl = GetSystemTemplate("MessageDisplay.cshtml");
             _passSettings.Add("msgkey", msgKey);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
@@ -322,7 +331,7 @@ namespace RocketContent.API
             if (_paramInfo.GetXmlProperty("genxml/hidden/ctrl") == "appthemeviewversion") appTheme = _postInfo.GetXmlProperty("genxml/remote/appthemeview");
             var appThemeData = new AppThemeLimpet(_portalData.PortalId, appTheme, "", _org);
             if (!appThemeData.Exists) return "Invalid AppTheme: " + appTheme;
-            var razorTempl = _appThemeSystem.GetTemplate("RemoteAppThemeVersions.cshtml");
+            var razorTempl = GetSystemTemplate("RemoteAppThemeVersions.cshtml");
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, _dataObjects,  _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
@@ -333,6 +342,7 @@ namespace RocketContent.API
             _paramInfo = paramInfo;
             _systemData = new SystemLimpet(systemInfo.GetXmlProperty("genxml/systemkey"));
             _appThemeSystem = new AppThemeSystemLimpet(_systemData.SystemKey);
+            _appThemeContent = new AppThemeSystemLimpet("rocketcontent");
             _rocketInterface = new RocketInterface(interfaceInfo);
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
@@ -390,6 +400,7 @@ namespace RocketContent.API
             _dataObjects.Add("remotemodule", _remoteModule);
             _dataObjects.Add("apptheme", _appTheme);
             _dataObjects.Add("appthemesystem", _appThemeSystem);
+            _dataObjects.Add("appthemecontent", _appThemeContent);
             _dataObjects.Add("portalcontent", _portalContent);
             _dataObjects.Add("portaldata", _portalData);
             _dataObjects.Add("securitydata", securityData);
