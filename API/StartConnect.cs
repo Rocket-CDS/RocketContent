@@ -262,7 +262,7 @@ namespace RocketContent.API
         {
             var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-            var razorTempl = GetSystemTemplate("RemoteSettings.cshtml");
+            var razorTempl = _appThemeContent.GetTemplate("RemoteSettings.cshtml"); // only find system template.
             _dataObjects.Add("articledata", articleData);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
