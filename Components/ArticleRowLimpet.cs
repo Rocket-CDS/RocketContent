@@ -21,11 +21,14 @@ namespace RocketContent.Components
         /// <param name="portalId"></param>
         /// <param name="dataRef"></param>
         /// <param name="langRequired"></param>
-        public ArticleRowLimpet(int articleId, string XMLData)
+        public ArticleRowLimpet(int articleId, string XMLData, string guidKey)
         {
             ArticleId = articleId;
             Info = new SimplisityInfo();
             Info.XMLData = XMLData;
+            Info.ItemID = ArticleId;
+            Info.SetXmlProperty("genxml/column/itemid", ArticleId.ToString());
+            Info.SetXmlProperty("genxml/column/guidkey", guidKey);
         }
         public SimplisityInfo Copy()
         {

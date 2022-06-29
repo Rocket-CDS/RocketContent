@@ -203,13 +203,13 @@ namespace RocketContent.Components
         {
             var articleRow = _info.GetListItem("rows", "genxml/config/rowkey", rowKey);
             if (articleRow == null) return null;
-            return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
+            return new ArticleRowLimpet(ArticleId, articleRow.XMLData, _info.GUIDKey);
         }
         public ArticleRowLimpet GetRow(int idx)
         {
             var articleRow = _info.GetListItem("rows", idx);
             if (articleRow == null) return null;
-            return new ArticleRowLimpet(ArticleId, articleRow.XMLData);
+            return new ArticleRowLimpet(ArticleId, articleRow.XMLData, _info.GUIDKey);
         }
         public List<SimplisityInfo> GetRowList()
         {
@@ -220,7 +220,7 @@ namespace RocketContent.Components
             var rtn = new List<ArticleRowLimpet>();
             foreach (var i in _info.GetList("rows"))
             {
-                rtn.Add(new ArticleRowLimpet(ArticleId, i.XMLData));
+                rtn.Add(new ArticleRowLimpet(ArticleId, i.XMLData, _info.GUIDKey));
             }
             return rtn;
         }

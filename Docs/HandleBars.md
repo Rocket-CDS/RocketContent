@@ -38,6 +38,8 @@ RocketCDS uses XML to store data, Handlebars.js uses Json.  A conversion from XM
 
 ### image
 ```
+<img src='{{image @root "thumburl" 0 0 640 200}}' style="width:100%">
+
 {{#each genxml.data.genxml.rows.genxml}}
     {{#each imagelist.genxml}}
 
@@ -77,6 +79,17 @@ RocketCDS uses XML to store data, Handlebars.js uses Json.  A conversion from XM
 {{/each}}
 ```
 NOTE: There is a bug in handlebars.js.  If the "@../index" is used within a loop it only works for the @first, after that the @index seems to be passed.
+
+```
+<div class="w3-col m3 l2 w3-padding-small">
+    {{#each genxml.data.genxml.imagelist.genxml}}
+    {{#if @first}}
+        <img src="{{thumbnailimageurl @root.genxml.sessionparams.r.engineurl hidden.imagepatharticleimage 400 -1  }}" style="width:100%">
+    {{/if}}
+    {{/each}}
+</div>
+```
+
 ### doc
 ```
 {{#each genxml.data.genxml.rows.genxml}}

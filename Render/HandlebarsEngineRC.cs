@@ -49,6 +49,7 @@ namespace RocketContent.Components
         private static ArticleLimpet GetArticleData(JObject o)
         {
             var moduleref = (string)o.SelectToken("genxml.data.genxml.column.guidkey") ?? "";
+            if (moduleref == "") moduleref = (string)o.SelectToken("genxml.sessionparams.r.moduleref") ?? "";
             var cultureCode = (string)o.SelectToken("genxml.sessionparams.r.culturecode") ?? "";
 
             var cacheKey = moduleref + "*" + cultureCode;
