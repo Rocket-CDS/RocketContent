@@ -341,8 +341,8 @@ namespace RocketContent.API
             _postInfo = postInfo;
             _paramInfo = paramInfo;
             _systemData = new SystemLimpet(systemInfo.GetXmlProperty("genxml/systemkey"));
-            _appThemeSystem = new AppThemeSystemLimpet(_systemData.SystemKey);
-            _appThemeContent = new AppThemeSystemLimpet("rocketcontent");
+            _appThemeSystem = new AppThemeSystemLimpet(PortalUtils.GetPortalId(), _systemData.SystemKey);
+            _appThemeContent = new AppThemeSystemLimpet(PortalUtils.GetPortalId(), "rocketcontent");
             _rocketInterface = new RocketInterface(interfaceInfo);
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
