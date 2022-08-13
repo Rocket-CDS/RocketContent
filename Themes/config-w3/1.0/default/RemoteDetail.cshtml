@@ -11,7 +11,7 @@
 @{
     var articleData = (ArticleLimpet)Model.List.First();
     var systemData = new SystemLimpet("rocketcontent");
-    var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+    var appThemeSystem = new AppThemeSystemLimpet(PortalUtils.GetPortalId(), systemData.SystemKey);
     var info = articleData.Info;
     var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
     var remoteModule = (RemoteModule)Model.GetDataObject("remotemodule");

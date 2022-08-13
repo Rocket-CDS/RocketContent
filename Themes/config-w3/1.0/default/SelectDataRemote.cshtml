@@ -10,7 +10,7 @@
 
 @{
     var articleList = (ArticleLimpetList)Model.List.First();
-    var appThemeSystem = new AppThemeSystemLimpet("rocketcontent");
+    var appThemeSystem = new AppThemeSystemLimpet(PortalUtils.GetPortalId(),"rocketcontent");
 }
 
 <div id="selectdataitem" class="">
@@ -31,8 +31,8 @@
             {
                 <tr class="simplisity_click" s-cmd="article_selectdataitem" s-fields='{"articleid":"@artcileData.ArticleId"}' style="cursor:pointer;">
                     <td><b>@artcileData.Name</b></td>
-                    <td>@artcileData.AppTheme.Name</td>
-                    <td>@artcileData.Ref</td>
+                    <td></td>
+                    <td></td>
                 </tr>
             }
         </table>

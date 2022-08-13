@@ -10,7 +10,7 @@
 
 @{
     var appThemeList = (AppThemeDataList)Model.List.First();
-    var appThemeSystem = new AppThemeSystemLimpet("rocketcontent");
+    var appThemeSystem = new AppThemeSystemLimpet(PortalUtils.GetPortalId(), "rocketcontent");
 }
 
 @RenderLanguageSelector("article_selectapptheme", "", appThemeSystem, Model)

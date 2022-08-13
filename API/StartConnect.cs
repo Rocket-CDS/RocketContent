@@ -286,7 +286,7 @@ namespace RocketContent.API
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
             var razorTempl = GetSystemTemplate("remotedetail.cshtml");
             _dataObjects.Remove("apptheme");
-            _dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.Organisation));
+            _dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.ProjectName));
             _dataObjects.Add("articlerow", articleRow);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
@@ -320,7 +320,7 @@ namespace RocketContent.API
                 var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
                 articleData.AdminAppThemeFolder = remoteModule.AppThemeFolder;
                 articleData.AdminAppThemeFolderVersion = remoteModule.AppThemeVersion;
-                articleData.Organisation = _org;
+                articleData.ProjectName = _org;
                 articleData.Update();
             }
             return RemoteSettings();
