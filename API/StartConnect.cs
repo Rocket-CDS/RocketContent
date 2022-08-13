@@ -29,7 +29,7 @@ namespace RocketContent.API
         private RemoteModule _remoteModule;
         private string _org;
         private Dictionary<string, object> _dataObjects;
-        private OrganisationLimpet _orgData;
+        private AppThemeProjectLimpet _orgData;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -314,7 +314,7 @@ namespace RocketContent.API
                 // Make sure we have the correct _org, if changed.
                 _remoteModule = remoteModule;
                 _org = _remoteModule.Organisation;
-                if (_org == "") _org = _orgData.DefaultOrg();
+                if (_org == "") _org = _orgData.DefaultProjectName();
 
                 // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
                 var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
@@ -347,7 +347,7 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
             _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
-            _orgData = new OrganisationLimpet();
+            _orgData = new AppThemeProjectLimpet();
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
             if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
             _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
@@ -390,7 +390,7 @@ namespace RocketContent.API
             }
 
             _org = _remoteModule.Organisation;
-            if (_org == "") _org = _orgData.DefaultOrg();
+            if (_org == "") _org = _orgData.DefaultProjectName();
 
             _appTheme = new AppThemeLimpet(_portalContent.PortalId, _remoteModule.AppThemeViewFolder, _remoteModule.AppThemeViewVersion, _org);
 
