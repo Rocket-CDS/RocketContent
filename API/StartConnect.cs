@@ -313,7 +313,7 @@ namespace RocketContent.API
 
                 // Make sure we have the correct _org, if changed.
                 _remoteModule = remoteModule;
-                _org = _remoteModule.Organisation;
+                _org = _remoteModule.ProjectName;
                 if (_org == "") _org = _orgData.DefaultProjectName();
 
                 // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
@@ -389,7 +389,7 @@ namespace RocketContent.API
                 if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
             }
 
-            _org = _remoteModule.Organisation;
+            _org = _remoteModule.ProjectName;
             if (_org == "") _org = _orgData.DefaultProjectName();
 
             _appTheme = new AppThemeLimpet(_portalContent.PortalId, _remoteModule.AppThemeViewFolder, _remoteModule.AppThemeViewVersion, _org);
