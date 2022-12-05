@@ -5,6 +5,7 @@ using RocketPortal.Components;
 using Simplisity;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace RocketContent.API
@@ -14,22 +15,12 @@ namespace RocketContent.API
         private SimplisityInfo _postInfo;
         private SimplisityInfo _paramInfo;
         private RocketInterface _rocketInterface;
-        private SystemLimpet _systemData;
         private Dictionary<string, string> _passSettings;
         private SessionParams _sessionParams;
-        private UserParams _userParams;
-        private AppThemeLimpet _appTheme;
-        private AppThemeSystemLimpet _appThemeSystem;
-        private AppThemeSystemLimpet _appThemeContent;
-        private PortalContentLimpet _portalContent;
         private string _dataRef;
         private string _moduleRef;
         private string _rowKey;
-        private PortalLimpet _portalData;
-        private RemoteModule _remoteModule;
-        private string _org;
-        private Dictionary<string, object> _dataObjects;
-        private AppThemeProjectLimpet _orgData;
+        private DataObjectLimpet _dataObject;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -62,7 +53,6 @@ namespace RocketContent.API
                     strOut = RocketSystemSave();
                     break;
                 case "rocketsystem_login":
-                    _userParams.TrackClear(_systemData.SystemKey);
                     strOut = ReloadPage();
                     break;
                 
@@ -136,7 +126,20 @@ namespace RocketContent.API
                 case "remote_getappthemeversions":
                     strOut = AppThemeVersions();
                     break;
-                    
+
+                case "remote_appthemeprojectlist":
+                    strOut = DisplayAppThemeProjectSelect();
+                    break;
+                case "remote_appthemelist":
+                    strOut = DisplayAppThemeSelect();
+                    break;
+                case "remote_selectappthemeproject":
+                    strOut = SelectAppThemeProject();
+                    break;
+                case "remote_selectapptheme":
+                    strOut = SelectAppTheme();
+                    break;
+
 
                 case "remote_publiclist":
                     strOut = ""; // not used for rocketcontent
@@ -144,10 +147,10 @@ namespace RocketContent.API
                 case "remote_publicview":
                     strOut = GetPublicArticle();
                     break;
-                case "remote_publicviewheader":
+                case "remote_publicviewlastheader":
                     strOut = GetPublicArticleHeader();
                     break;
-                case "remote_publicviewbeforeheader":
+                case "remote_publicviewfirstheader":
                     strOut = GetPublicArticleBeforeHeader();
                     break;
                 case "remote_publicseo":
@@ -165,7 +168,7 @@ namespace RocketContent.API
                 rtnDic.Add("remote-lastheader", GetPublicArticleHeader());
             }
 
-            if (!rtnDic.ContainsKey("remote-settingsxml")) rtnDic.Add("remote-settingsxml", _remoteModule.Record.ToXmlItem());            
+            if (!rtnDic.ContainsKey("remote-settingsxml")) rtnDic.Add("remote-settingsxml", _dataObject.RemoteModule.Record.ToXmlItem());            
             if (!rtnDic.ContainsKey("outputjson")) rtnDic.Add("outputhtml", strOut);
 
             // tell remote module it can cache the resposne 
@@ -181,19 +184,16 @@ namespace RocketContent.API
         /// <returns></returns>
         private string GetSystemTemplate(string templateName)
         {
-            var razorTempl = _appTheme.GetTemplate(templateName);
-            if (razorTempl == "") razorTempl = _appThemeSystem.GetTemplate(templateName);
-            if (razorTempl == "") razorTempl = _appThemeContent.GetTemplate(templateName);
-            return razorTempl;
+            return _dataObject.AppThemeSystem.GetTemplate(templateName);
         }
         private string RocketSystemSave()
         {
             var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid"); // we may have passed selection
             if (portalId >= 0)
             {
-                _portalContent.Save(_postInfo);
-                _portalData.Record.SetXmlProperty("genxml/systems/" + _systemData.SystemKey + "setup", "True");
-                _portalData.Update();
+                _dataObject.PortalContent.Save(_postInfo);
+                _dataObject.PortalData.Record.SetXmlProperty("genxml/systems/" + _dataObject.SystemKey + "setup", "True");
+                _dataObject.PortalData.Update();
                 return RocketSystem();
             }
             return "Invalid PortalId";
@@ -201,7 +201,7 @@ namespace RocketContent.API
         private String RocketSystem()
         {
             var razorTempl = GetSystemTemplate("RocketSystem.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -210,9 +210,10 @@ namespace RocketContent.API
             var newportalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/newportalid");
             if (newportalId > 0)
             {
-                _portalContent = new PortalContentLimpet(newportalId, _sessionParams.CultureCodeEdit);
-                _portalContent.Validate();
-                _portalContent.Update();
+                var portalContent = new PortalContentLimpet(newportalId, _sessionParams.CultureCodeEdit);
+                portalContent.Validate();
+                portalContent.Update();
+                _dataObject.SetDataObject("portalcontent", portalContent);
             }
             return "";
         }
@@ -221,22 +222,21 @@ namespace RocketContent.API
             var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
             if (portalId > 0)
             {
-                _portalContent = new PortalContentLimpet(portalId, _sessionParams.CultureCodeEdit);
-                _portalContent.Delete();
+                _dataObject.PortalContent.Delete();
             }
             return "";
         }
         private string AdminPanel()
         {
             var razorTempl = GetSystemTemplate("AdminPanel.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
         private string AdminPanelHeader()
         {
             var razorTempl = GetSystemTemplate("AdminPanelHeader.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -247,24 +247,54 @@ namespace RocketContent.API
 
             var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
             var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
         private string GetDashboard()
         {
             var razorTempl = GetSystemTemplate("Dashboard.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _portalContent, _dataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
+        private string DisplayAppThemeProjectSelect()
+        {
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("SelectAppThemeProject.cshtml"); // only find system template.
+            _dataObject.DataObjects.Add("articledata", articleData);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.DataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
+        }
+        private string DisplayAppThemeSelect()
+        {
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("SelectAppTheme.cshtml"); // only find system template.
+            _dataObject.DataObjects.Add("articledata", articleData);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.DataObjects, _passSettings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
+        }
+        private string SelectAppThemeProject()
+        {
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+
+
+            return DisplayAppThemeSelect();
+        }
+        private string SelectAppTheme()
+        {
+            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
+            return GetPublicArticle();
+        }
         private string RemoteSettings()
         {
-            var appThemeDataList = new AppThemeDataList(_org, _systemData.SystemKey);
+            var appThemeDataList = new AppThemeDataList(_dataObject.AppThemeProjectName, _dataObject.SystemKey);
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-            var razorTempl = _appThemeContent.GetTemplate("RemoteSettings.cshtml"); // only find system template.
-            _dataObjects.Add("articledata", articleData);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObjects, _passSettings,_sessionParams, true);
+            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("RemoteSettings.cshtml"); // only find system template.
+            _dataObject.DataObjects.Add("articledata", articleData);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObject.DataObjects, _passSettings,_sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -285,10 +315,10 @@ namespace RocketContent.API
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
             var razorTempl = GetSystemTemplate("remotedetail.cshtml");
-            _dataObjects.Remove("apptheme");
-            _dataObjects.Add("apptheme", new AppThemeLimpet(_portalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.ProjectName));
-            _dataObjects.Add("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
+            _dataObject.DataObjects.Remove("apptheme");
+            _dataObject.DataObjects.Add("apptheme", new AppThemeLimpet(_dataObject.PortalContent.PortalId, articleData.AdminAppThemeFolder, articleData.AdminAppThemeFolderVersion, articleData.ProjectName));
+            _dataObject.DataObjects.Add("articlerow", articleRow);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -297,7 +327,7 @@ namespace RocketContent.API
             var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
             var razorTempl = GetSystemTemplate("MessageDisplay.cshtml");
             _passSettings.Add("msgkey", msgKey);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -305,22 +335,20 @@ namespace RocketContent.API
         {
             if (_moduleRef != "")
             {
-                var remoteModule = new RemoteModule(_portalContent.PortalId, _moduleRef);
+                var remoteModule = new RemoteModule(_dataObject.PortalContent.PortalId, _moduleRef);
                 remoteModule.Save(_postInfo);
                 // update sitekey after Save(), it replaces all XML.
                 remoteModule.SiteKey = _sessionParams.SiteKey;
                 remoteModule.Update();
 
                 // Make sure we have the correct _org, if changed.
-                _remoteModule = remoteModule;
-                _org = _remoteModule.ProjectName;
-                if (_org == "") _org = _orgData.DefaultProjectName();
+                _dataObject.SetDataObject("remotemodule", remoteModule);
 
                 // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
-                var articleData = new ArticleLimpet(_portalData.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
+                var articleData = new ArticleLimpet(_dataObject.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
                 articleData.AdminAppThemeFolder = remoteModule.AppThemeFolder;
                 articleData.AdminAppThemeFolderVersion = remoteModule.AppThemeVersion;
-                articleData.ProjectName = _org;
+                articleData.ProjectName = _dataObject.AppThemeProjectName;
                 articleData.Update();
             }
             return RemoteSettings();
@@ -329,10 +357,8 @@ namespace RocketContent.API
         {
             var appTheme = _postInfo.GetXmlProperty("genxml/remote/apptheme");
             if (_paramInfo.GetXmlProperty("genxml/hidden/ctrl") == "appthemeviewversion") appTheme = _postInfo.GetXmlProperty("genxml/remote/appthemeview");
-            var appThemeData = new AppThemeLimpet(_portalData.PortalId, appTheme, "", _org);
-            if (!appThemeData.Exists) return "Invalid AppTheme: " + appTheme;
             var razorTempl = GetSystemTemplate("RemoteAppThemeVersions.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeData, _dataObjects,  _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.AppThemeView, _dataObject.DataObjects,  _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -340,14 +366,13 @@ namespace RocketContent.API
         {
             _postInfo = postInfo;
             _paramInfo = paramInfo;
-            _systemData = new SystemLimpet(systemInfo.GetXmlProperty("genxml/systemkey"));
-            _appThemeSystem = new AppThemeSystemLimpet(PortalUtils.GetPortalId(), _systemData.SystemKey);
-            _appThemeContent = new AppThemeSystemLimpet(PortalUtils.GetPortalId(), "rocketcontent");
+
+            var portalid = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
+
             _rocketInterface = new RocketInterface(interfaceInfo);
             _sessionParams = new SessionParams(_paramInfo);
-            _userParams = new UserParams(_sessionParams.BrowserSessionId);
             _passSettings = new Dictionary<string, string>();
-            _orgData = new AppThemeProjectLimpet();
+
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
             if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
             _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
@@ -360,27 +385,23 @@ namespace RocketContent.API
             var selectkey = _paramInfo.GetXmlProperty("genxml/hidden/selectkey");
             if (selectkey != "") _rowKey = selectkey;
 
+            _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _sessionParams.CultureCodeEdit);
+
+            if (_dataObject.AppThemeView == null) return "remote_appthemeprojectlist";
+
+            _dataObject.AppThemeView = new AppThemeLimpet(portalid, _dataObject.RemoteModule.AppThemeViewFolder, _dataObject.RemoteModule.AppThemeViewVersion, _dataObject.AppThemeProjectName); ;
+            _dataObject.AppThemeAdmin = new AppThemeLimpet(portalid, _dataObject.RemoteModule.AppThemeFolder, _dataObject.RemoteModule.AppThemeFolder, _dataObject.AppThemeProjectName);
+
             // Assign Langauge
             DNNrocketUtils.SetCurrentCulture();
             if (_sessionParams.CultureCode == "") _sessionParams.CultureCode = DNNrocketUtils.GetCurrentCulture();
             if (_sessionParams.CultureCodeEdit == "") _sessionParams.CultureCodeEdit = DNNrocketUtils.GetEditCulture();
             DNNrocketUtils.SetCurrentCulture(_sessionParams.CultureCode);
             DNNrocketUtils.SetEditCulture(_sessionParams.CultureCodeEdit);
+            
+            if (_dataObject.PortalContent.PortalId != 0 && !_dataObject.PortalContent.Active) return "";
 
-            var portalid = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
-            if (portalid >= 0 && PortalUtils.GetPortalId() == 0)
-            {
-                _remoteModule = new RemoteModule(portalid, _moduleRef);
-                _portalContent = new PortalContentLimpet(portalid, _sessionParams.CultureCodeEdit); // Portal 0 is admin, editing portal setup
-            }
-            else
-            {
-                _remoteModule = new RemoteModule(PortalUtils.GetPortalId(), _moduleRef);
-                _portalContent = new PortalContentLimpet(PortalUtils.GetPortalId(), _sessionParams.CultureCodeEdit);
-                if (!_portalContent.Active) return "";
-            }
-            _portalData = new PortalLimpet(_portalContent.PortalId);
-            _dataRef = _remoteModule.DataRef;
+            _dataRef = _dataObject.RemoteModule.DataRef;
 
             if (_dataRef == "") 
             {
@@ -389,31 +410,19 @@ namespace RocketContent.API
                 if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
             }
 
-            _org = _remoteModule.ProjectName;
-            if (_org == "") _org = _orgData.DefaultProjectName();
+            var securityData = new SecurityLimpet(_dataObject.PortalId, _dataObject.SystemKey, _rocketInterface, -1, -1);
 
-            _appTheme = new AppThemeLimpet(_portalContent.PortalId, _remoteModule.AppThemeViewFolder, _remoteModule.AppThemeViewVersion, _org);
-
-            var securityData = new SecurityLimpet(_portalContent.PortalId, _systemData.SystemKey, _rocketInterface, -1, -1);
-
-            _dataObjects = new Dictionary<string, object>();
-            _dataObjects.Add("remotemodule", _remoteModule);
-            _dataObjects.Add("apptheme", _appTheme);
-            _dataObjects.Add("appthemesystem", _appThemeSystem);
-            _dataObjects.Add("appthemecontent", _appThemeContent);
-            _dataObjects.Add("portalcontent", _portalContent);
-            _dataObjects.Add("portaldata", _portalData);
-            _dataObjects.Add("securitydata", securityData);
-            _dataObjects.Add("systemdata", _systemData);
-
-            if (paramCmd.StartsWith("remote_"))
+            if (!paramCmd.StartsWith("remote_public"))
             {
-                var sk = _paramInfo.GetXmlProperty("genxml/remote/securitykeyedit");
-                if (!UserUtils.IsEditor() && _portalData.SecurityKeyEdit != sk) paramCmd = "";                
-            }
-            else
-            {
-                paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
+                if (paramCmd.StartsWith("remote_"))
+                {
+                    var sk = _paramInfo.GetXmlProperty("genxml/remote/securitykeyedit");
+                    if (!UserUtils.IsEditor() && _dataObject.PortalData.SecurityKeyEdit != sk) paramCmd = "";
+                }
+                else
+                {
+                    paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
+                }
             }
 
             return paramCmd;

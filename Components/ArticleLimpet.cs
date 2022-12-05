@@ -84,6 +84,14 @@ namespace RocketContent.Components
                     newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, nod.InnerText);
                 }
             }
+            textList = postInfo.XMLDoc.SelectNodes(xpathListSelect);
+            if (textList != null)
+            {
+                foreach (XmlNode nod in textList)
+                {
+                    Info.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, SecurityInput.RemoveScripts(nod.InnerText));
+                }
+            }
             return newInfo;
         }
         public int Update()
