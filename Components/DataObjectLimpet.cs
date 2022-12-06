@@ -20,6 +20,7 @@ namespace RocketContent.Components
             _dataObjects.Add("portaldata", new PortalLimpet(portalid));
             _dataObjects.Add("systemdata", new SystemLimpet(SystemKey));
             _dataObjects.Add("appthemeprojects", new AppThemeProjectLimpet());
+            _dataObjects.Add("articledata", new ArticleLimpet(portalid, moduleRef, cultureCode));
         }
         public void SetDataObject(String key, object value)
         {
@@ -37,7 +38,7 @@ namespace RocketContent.Components
         }
         public string SystemKey { get { return "rocketcontent"; } }
         public int PortalId { get { return PortalData.PortalId; } }
-        public string AppThemeProjectName { get { return AppThemeView.ProjectName; } }
+        public string AppThemeProjectName { get { return ArticleData.ProjectName; } }
         public Dictionary<string, object> DataObjects { get { return _dataObjects; } }
         public RemoteModule RemoteModule { get { return (RemoteModule)GetDataObject("remotemodule"); } }
         public AppThemeSystemLimpet AppThemeSystem { get { return (AppThemeSystemLimpet)GetDataObject("appthemesystem"); } }
@@ -47,7 +48,7 @@ namespace RocketContent.Components
         public PortalLimpet PortalData { get { return (PortalLimpet)GetDataObject("portaldata"); } }
         public SystemLimpet SystemData { get { return (SystemLimpet)GetDataObject("systemdata"); } }
         public AppThemeProjectLimpet AppThemeProjects { get { return (AppThemeProjectLimpet)GetDataObject("appthemeprojects"); } }
-
+        public ArticleLimpet ArticleData { get { return (ArticleLimpet)GetDataObject("articledata"); } }
 
     }
 }

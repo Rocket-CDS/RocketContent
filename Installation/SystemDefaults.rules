@@ -115,7 +115,11 @@
       <cmd>remote_getappthemeversions</cmd>
       <action>false</action>
     </command>
-    
+
+	<command>
+		<cmd>remote_selectappthemeproject</cmd>
+		<action>true</action>
+	</command>	  
 
     <command>
       <cmd>remote_publiclist</cmd>

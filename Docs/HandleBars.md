@@ -201,7 +201,7 @@ In the razor template that calls the handlebars templates (Usually view.cshtml) 
 ```
 AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/");
 AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/");
-AddProcessData("resourcepath", "/DesktopModules/RocketThemes/" + articleData.Organisation + "/" + articleData.AdminAppThemeFolder+ "/" + articleData.AdminAppThemeFolderVersion  + "/resx");
+AddProcessData("resourcepath", "/DesktopModules/RocketThemes/" + articleData.Organisation + "/" + articleData.AppThemeFolder+ "/" + articleData.AdminAppThemeFolderVersion  + "/resx");
     
 hbsDict.Add("resxlist", RenderRazorUtils.GetResxPaths(Processdata));
 ```

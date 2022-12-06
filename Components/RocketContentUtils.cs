@@ -13,15 +13,24 @@ namespace RocketContent.Components
     {
         public const string ControlPath = "/DesktopModules/DNNrocketModules/RocketContent";
         public const string ResourcePath = "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources";
-        public static string DisplayView(int portalId, string moduleRef, string cultureCode = "")
+        public static string DisplayView(int portalId, string moduleRef, string template = "view.cshtml", string cultureCode = "")
         {
             if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
             var dataObject = new DataObjectLimpet(portalId, moduleRef, cultureCode);
-            if (dataObject.AppThemeView == null)
-            {
-                return "loadsettings";
-            }
-            var razorTempl = dataObject.AppThemeView.GetTemplate("view.cshtml");
+            if (dataObject.AppThemeView == null) return "loadsettings";
+
+            var razorTempl = dataObject.AppThemeView.GetTemplate(template);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
+        }
+        public static string DisplaySystemView(int portalId, string moduleRef, string template, string cultureCode = "")
+        {
+            if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, cultureCode);
+            if (dataObject.AppThemeSystem == null) return "No System View";
+
+            var razorTempl = dataObject.AppThemeSystem.GetTemplate(template);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;

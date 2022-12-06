@@ -4,6 +4,7 @@
 @using Simplisity;
 @using RazorEngine.Text;
 @using Rocket.AppThemes.Components;
+@using RocketPortal.Components;
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
@@ -13,116 +14,53 @@
     // NOTE: All field xpath should be "genxml/remote/*"
 
     var sessionParams = Model.SessionParamsData;
-    var appThemeList = (AppThemeDataList)Model.List.First();
+    var appThemeList = (AppThemeDataList)Model.GetDataObject("appthemedatalist");
     var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
     var appThemeData = (AppThemeLimpet)Model.GetDataObject("apptheme");
-    var moduleRef = Model.SessionParamsData.Get("moduleref");
     var remoteData = (RemoteModule)Model.GetDataObject("remotemodule");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
     var info = new SimplisityInfo(remoteData.Record);
-    var orgData = new AppThemeProjectLimpet();
-
-
+    var projectAppThemeData = new AppThemeProjectLimpet();    
 }
 
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script type="text/javascript" src="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/Simplisity/js/simplisity.js"></script>
+<link rel="stylesheet" href="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/css/w3.css">
 
-<style>
-    .select2-container .select2-selection--single {
-        box-sizing: border-box;
-        cursor: pointer;
-        display: block;
-        height: 40px;
-        user-select: none;
-        -webkit-user-select: none;
-    }
-
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        height: 40px;
-        line-height: 40px;
-    }
-</style>
-
-<div id="a-selectapptheme" class="w3-container w3-margin w3-padding">
+<div id="a-datasection" class="w3-container w3-margin w3-padding">
 
     <div class="w3-quarter w3-hide-small">&nbsp;</div>
 
     <div class="w3-half">
 
-                <div class="w3-button w3-green simplisity_click savebutton" s-cmd="remote_settingssave" s-post="#a-selectapptheme" s-fields='{"moduleref":"@(moduleRef)"}' s-reload="true">@ButtonText(ButtonTypes.save)</div>
-
         <div class="w3-row w3-padding">
-            <div class="w3-large">ModuleRef</div>
-            <div class="w3-light-grey w3-border w3-input">@moduleRef</div>
-        </div>
 
-        <div class="w3-row w3-padding">
-            <div class="w3-large">@ResourceKey("RC.name")</div>
-            @TextBox(new SimplisityInfo(remoteData.Record), "genxml/remote/modulename", " class='w3-input w3-border ' ", "")
-        </div>
-
-        <div class="w3-row w3-padding">
-            <div class="w3-large">AppTheme Project</div>
-            @DropDownList(new SimplisityInfo(remoteData.Record), "genxml/remote/projectname", orgData.ActiveList(), " class='w3-input w3-border'")
-        </div>
-        <div id="editapptheme" class="w3-row">
-            <div class="w3-col m10 w3-padding">
-                <div class="w3-large">@ResourceKey("RC.apptheme")</div>
-                <select id="apptheme" s-xpath="genxml/remote/apptheme" class="w3-input" s-update="save" style="width:100%">
-                    <option value="" versionfolder=""></option>
-                    @foreach (var appTheme in appThemeList.List)
+            @if (articleData.ProjectName == "")
+            {
+                foreach (var projectInfo in projectAppThemeData.List)
+                {
+                    <div class="w3-button simplisity_click" s-cmd="remote_selectappthemeproject" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId","projectname":"@projectInfo.GetXmlProperty("genxml/textbox/name")"}'>
+                        @projectInfo.GetXmlProperty("genxml/textbox/name")
+                    </div>
+                }
+            }
+            else
+            {
+                if (remoteData.AppThemeViewFolder == "")
+                {
+                    var lp = 0;
+                    foreach (var appTheme in appThemeList.List)
                     {
-                        var selectedvalue = "";
-                        if (articleData.AdminAppThemeFolder == appTheme.AppThemeFolder)
-                        {
-                            selectedvalue = "selected";
-                        }
-                        <option value="@appTheme.AppThemeFolder" @selectedvalue>@appTheme.Name</option>
+                        <p>
+                            <input class="w3-radio" id="appthemekey_@(lp)" s-xpath="genxml/radio/apptheme" s-update="save" name="appthemekeyradio" type="radio" value="@appTheme.AppThemeFolder">
+                            <label class="w3-large">@appTheme.Name</label>
+                        </p>
+                        lp += 1;
                     }
-                </select>
-            </div>
-            <div class="w3-col m2 w3-padding">
-                <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
-                <div id="appthemeversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-after="popupversionselect" s-cmd='remote_getappthemeversions' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeversion"}'>@(articleData.AdminAppThemeFolderVersion)&nbsp;</div>
-                @HiddenField(articleData.Info, "genxml/remote/appthemeversion", "", articleData.AdminAppThemeFolderVersion)
-            </div>
+                }
+            }
+
+
         </div>
-       
-            <div class="w3-row w3-padding">
-                <div class="w3-large">@ResourceKey("RC.datasource")&nbsp;ModeulRef&nbsp;@ResourceKey("RC.optional")</div>
-                @TextBox(info, "genxml/remote/dataref", " class='w3-input w3-border ' ", "")
-            </div>
-            <div class="w3-row">
-                <div class="w3-col m10 w3-padding">
-                    <div class="w3-large">@ResourceKey("RC.viewapptheme")&nbsp;@ResourceKey("RC.optional")</div>
-                    <select id="appthemeview" s-xpath="genxml/remote/appthemeview" s-update="save" class="w3-input " style="width:100%;">
-                        <option value="" versionfolder=""></option>
-                        @foreach (var appTheme in appThemeList.List)
-                        {
-                            var selectedvalue2 = "";
-                            if (remoteData.AppThemeViewFolder == appTheme.AppThemeFolder)
-                            {
-                                selectedvalue2 = "selected";
-                            }
-                            <option value="@appTheme.AppThemeFolder" @selectedvalue2>@appTheme.Name</option>
-                        }
-                    </select>
-                </div>
-                <div class="w3-col m2 w3-padding">
-                    <div class="w3-large">@ResourceKey("DNNrocket.version")</div>
-                    <div id="appthemeviewversiondisplay" class="w3-input w3-border w3-light-grey simplisity_click" s-before="activateVersionAction" s-after="popupversionselect" s-cmd='remote_getappthemeversions' s-post='#a-selectapptheme' s-return='#versionselectlist' s-fields='{"moduleref":"@(moduleRef)","systemkey":"rocketcontent","ctrl":"appthemeviewversion"}'>@info.GetXmlProperty("genxml/remote/appthemeviewversion")&nbsp;</div>
-                    @HiddenField(info, "genxml/remote/appthemeviewversion")
-                </div>
-            </div>
-
-
-
-        @if (appThemeData != null)
-        {
-            <div class="w3-row">
-                @RenderTemplate("ThemeSettings.cshtml", appThemeData, Model, true)
-            </div>
-        }
 
     </div>
 
@@ -130,64 +68,15 @@
 
 </div>
 
-<div id="versionselect" class="w3-modal">
-    <div class="w3-modal-content w3-animate-zoom w3-card-4" style="width:240px;">
-        <div style="height:40px;">
-            <span onclick="document.getElementById('versionselect').style.display='none'" class="w3-button w3-display-topright">&times;</span>
-        </div>
-        <div id="versionselectlist">
-        </div>
-    </div>
+<div class="w3-row w3-padding w3-tiny">
+    <span>ModuleRef: @remoteData.ModuleRef</span>
 </div>
+
 
 <script>
     $(document).ready(function () {
-        $('#apptheme').select2();
-        $('#appthemeview').select2();
-        activateVersionAction();
-        $('#apptheme').on('change.select2', function (e) {
-            $('#appthemeversion').val('');
-            $('#appthemeversiondisplay').html('&nbsp;');
-            $('#appthemeversiondisplay').trigger('click');
-        });
-        $('#appthemeview').on('change.select2', function (e) {
-            $('#appthemeviewversion').val('');
-            $('#appthemeviewversiondisplay').html('&nbsp;');
-            $('#appthemeviewversiondisplay').trigger('click');
-        });
-
-        $('#org').off("change");
-        $('#org').change(function () {
-            simplisity_setSessionField("org", $(this).val());
-            $('.savebutton').trigger('click');
-            return false;
-        });
-
+        $(document).simplisityStartUp('/Desktopmodules/dnnrocket/api/rocket/action', { systemkey: 'rocketcontent', debug: false });
     });
-
-    function activateVersionAction() {
-        if ($('#apptheme').val() == "") {
-            $('#appthemeversiondisplay').attr('s-stop', 'stop');
-        } else {
-            $('#appthemeversiondisplay').removeAttr("s-stop");
-        }
-        if ($('#appthemeview').val() == "") {
-            $('#appthemeviewversiondisplay').attr('s-stop', 'stop');
-        } else {
-            $('#appthemeviewversiondisplay').removeAttr("s-stop");
-        }
-        if ($('#dataref').val() != '') {
-            // Disable Edit AppTheme to stop confusion and possible incorrect data.
-            // Satelite modules must use the same Edit AppTheme as the Main Module.
-            $('#appthemeversiondisplay').attr('s-stop', 'stop');
-            $('#apptheme').attr('disabled', '');
-        }
-    }
-
-    function popupversionselect() {
-        $('#versionselect').show();
-    }
-
 </script>
 
 
