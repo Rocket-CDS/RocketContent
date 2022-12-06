@@ -1,9 +1,11 @@
 ﻿using DNNrocketAPI.Components;
+using Newtonsoft.Json.Linq;
 using Rocket.AppThemes.Components;
 using RocketPortal.Components;
 using Simplisity;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace RocketContent.Components
@@ -14,18 +16,24 @@ namespace RocketContent.Components
         public DataObjectLimpet(int portalid, string moduleRef, string cultureCode)
         {
             _dataObjects = new Dictionary<string, object>();
-            _dataObjects.Add("remotemodule", new RemoteModule(portalid, moduleRef));
-            _dataObjects.Add("appthemesystem", new AppThemeSystemLimpet(portalid, SystemKey));
-            _dataObjects.Add("portalcontent", new PortalContentLimpet(portalid, cultureCode));
-            _dataObjects.Add("portaldata", new PortalLimpet(portalid));
-            _dataObjects.Add("systemdata", new SystemLimpet(SystemKey));
-            _dataObjects.Add("appthemeprojects", new AppThemeProjectLimpet());
-            _dataObjects.Add("articledata", new ArticleLimpet(portalid, moduleRef, cultureCode));
+            SetDataObject("remotemodule", new RemoteModule(portalid, moduleRef));
+            SetDataObject("appthemesystem", new AppThemeSystemLimpet(portalid, SystemKey));
+            SetDataObject("portalcontent", new PortalContentLimpet(portalid, cultureCode));
+            SetDataObject("portaldata", new PortalLimpet(portalid));
+            SetDataObject("systemdata", new SystemLimpet(SystemKey));
+            SetDataObject("appthemeprojects", new AppThemeProjectLimpet());
+            SetDataObject("articledata", new ArticleLimpet(portalid, moduleRef, cultureCode));
         }
         public void SetDataObject(String key, object value)
         {
             if (_dataObjects.ContainsKey(key)) _dataObjects.Remove(key);
             _dataObjects.Add(key, value);
+            if (key == "articledata")
+            {
+                // reload appthemedatalist
+                var ad = (ArticleLimpet)value;
+                SetDataObject("appthemedatalist", new AppThemeDataList(ad.ProjectName, SystemKey));
+            }
         }
         public object GetDataObject(String key)
         {

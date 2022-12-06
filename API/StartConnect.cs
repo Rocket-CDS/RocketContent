@@ -289,9 +289,8 @@ namespace RocketContent.API
         }
         private string RemoteSettings()
         {
-            var appThemeDataList = new AppThemeDataList(_dataObject.AppThemeProjectName, _dataObject.SystemKey);
             var razorTempl = _dataObject.AppThemeSystem.GetTemplate("RemoteSettings.cshtml"); // only find system template.
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObject.DataObjects, _passSettings,_sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.DataObjects, _passSettings,_sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
