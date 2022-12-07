@@ -16,10 +16,11 @@
     var sessionParams = Model.SessionParamsData;
     var appThemeList = (AppThemeDataList)Model.GetDataObject("appthemedatalist");
     var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
-    var appThemeData = (AppThemeLimpet)Model.GetDataObject("apptheme");
-    var remoteData = (RemoteModule)Model.GetDataObject("remotemodule");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
     var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
-    var info = new SimplisityInfo(remoteData.Record);
+    var info = new SimplisityInfo(moduleData.Record);
     var projectAppThemeData = new AppThemeProjectLimpet();    
 }
 
@@ -28,49 +29,90 @@
 
 <div id="a-datasection" class="w3-container w3-margin w3-padding">
 
-    <div class="w3-quarter w3-hide-small">&nbsp;</div>
-
-    <div class="w3-half">
+    <div class="w3-row">
 
         <div class="w3-row w3-padding">
 
-            @if (articleData.ProjectName == "")
+            @if (moduleData.ProjectName == "")
             {
                 foreach (var projectInfo in projectAppThemeData.List)
                 {
-                    <div class="w3-button simplisity_click" s-cmd="remote_selectappthemeproject" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId","projectname":"@projectInfo.GetXmlProperty("genxml/textbox/name")"}'>
+                    <div class="w3-button simplisity_click" s-cmd="rocketcontent_selectappthemeproject" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","projectname":"@projectInfo.GetXmlProperty("genxml/textbox/name")"}'>
                         @projectInfo.GetXmlProperty("genxml/textbox/name")
                     </div>
                 }
             }
             else
             {
-                if (articleData.AppThemeFolder == "")
+                <h1>TEST - moduleData.AppThemeViewFolder: @moduleData.AppThemeViewFolder</h1>
+                if (moduleData.AppThemeAdminFolder == "" || moduleData.AppThemeViewFolder == "")
                 {
+                    var cmd = "rocketcontent_selectapptheme";
+                    if (moduleData.AppThemeAdminFolder != "")
+                    {
+                        cmd = "rocketcontent_selectappthemeview";
+                    }
                     foreach (var appTheme in appThemeList.List)
                     {
-                        <div class="w3-button simplisity_click" s-cmd="remote_selectapptheme" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId","appthemefolder":"@appTheme.AppThemeFolder"}'>
+                        <div class="w3-button simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolder":"@appTheme.AppThemeFolder"}'>
                             @appTheme.Name
                         </div>
                     }
                 }
                 else
                 {
-                    if (articleData.AppThemeFolderVersion == "")
+                    if (moduleData.AppThemeAdminVersion == "" || moduleData.AppThemeViewVersion == "")
                     {
-                        foreach (var appThemeV in appThemeData.VersionList)
+                        var cmd = "rocketcontent_selectappthemeversion";
+                        if (moduleData.AppThemeAdminVersion != "")
                         {
-                            <div class="w3-button simplisity_click" s-cmd="remote_selectappthemeversion" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId","appthemefolderversion":"@appThemeV"}'>
+                            cmd = "rocketcontent_selectappthemeversionview";
+                        }
+                        foreach (var appThemeV in appThemeView.VersionList)
+                        {
+                            <div class="w3-button simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolderversion":"@appThemeV"}'>
                                 @appThemeV
                             </div>
                         }
                     }
                     else
                     {
-                        <div class="w3-button w3-red simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.delete")?" s-cmd="remote_resetapptheme" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId"}'>
-                            @ResourceKey("DNNrocket.reset")
+                        <div class="w3-row w3-padding">
+                            <div class="w3-quarter">
+                                @CheckBox(info,"genxml/settings/disablecache", ResourceKey("DNNrocket.disablecache").ToString(),"class='w3-check'")
+                            </div>
+                            <div class="w3-quarter">
+                                @CheckBox(info,"genxml/settings/injectjquery", ResourceKey("DNNrocket.injectjquery").ToString(),"class='w3-check'")
+                            </div>
+                            <div class="w3-quarter">
+                                @CheckBox(info,"genxml/settings/disableheader", ResourceKey("DNNrocket.disableheader").ToString(),"class='w3-check'")
+                            </div>
                         </div>
+
+                        <div class="w3-xlarge">AppThemes</div>
+                        <div class="w3-row w3-padding">
+                            <div class="w3-half">
+                                Admin: <span>@appThemeAdmin.Name</span>
+                            </div>
+                            <div class="w3-quarter">
+                                <div class="w3-button  w3-small w3-blue simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.edit")?" s-cmd="rocketcontent_resetapptheme" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'>
+                                    @ResourceKey("DNNrocket.edit")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w3-row w3-padding">
+                            <div class="w3-half">
+                                View: <span>@appThemeView.Name</span>
+                            </div>
+                            <div class="w3-quarter">
+                                <div class="w3-button w3-small w3-blue w3-round simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.edit")?" s-cmd="rocketcontent_resetappthemeview" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'>
+                                    @ResourceKey("DNNrocket.edit")
+                                </div>
+                            </div>
+                        </div>
+
                         <h1>BOO</h1>
+                        @TextBox(info, "genxml/settings/test"," class='w3-input w3-border'", "")
                     }
 
                 }
@@ -81,19 +123,17 @@
 
     </div>
 
-    <div class="w3-quarter w3-hide-small">&nbsp;</div>
-
 </div>
 
 <div class="w3-row w3-padding w3-tiny">
-    <span>ModuleRef: @remoteData.ModuleRef</span>
+    <span>ModuleRef: @moduleData.ModuleRef</span>
 </div>
 
-@if (articleData.AppThemeFolder != "")
+@if (moduleData.AppThemeAdminFolder != "")
 {
     <text>
         <!-- create element to update settings via API when the DNN update is clicked. -->
-        <span class="w3-hide" s-cmd="remote_savesettings" s-post="#a-datasection" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId"}'></span>
+        <span id="postsettings" class="w3-hide" s-cmd="rocketcontent_savesettings" s-post="#a-datasection" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'></span>
     </text>
 }
 
@@ -103,9 +143,10 @@
     $(document).ready(function () {
         $(document).simplisityStartUp('/Desktopmodules/dnnrocket/api/rocket/action', { systemkey: 'rocketcontent', debug: false });
 
-        @if (articleData.AppThemeFolder != "")
+        @if (moduleData.AppThemeAdminFolder != "")
         {
             <text>
+            $('a[id*="_cmdUpdate"]').off("click");
             $('a[id*="_cmdUpdate"]').click(function () {
                 simplisity_callserver($('#postsettings'));
             });

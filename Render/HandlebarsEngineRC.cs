@@ -285,16 +285,9 @@ namespace RocketContent.Components
                     var articleData = GetArticleData(o);
                     var cmd = arguments[1].ToString();
 
-                    switch (cmd)
-                    {
-                        case "name":
-                            dataValue = articleData.Name;
-                            break;
-                        default:
-                            dataValue = articleData.Info.GetXmlProperty(cmd);
-                            if (dataValue == "") dataValue = articleData.Info.GetXmlProperty("genxml/lang/" + cmd);
-                            break;
-                    }
+                    dataValue = articleData.Info.GetXmlProperty(cmd);
+                    if (dataValue == "") dataValue = articleData.Info.GetXmlProperty("genxml/lang/" + cmd);
+
                 }
                 writer.WriteSafeString(dataValue);
             });

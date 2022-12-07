@@ -113,7 +113,7 @@ namespace RocketContent.API
                 var filebase64List = fileuploadbase64.Split('*');
                 var baseFileMapPath = PortalUtils.TempDirectoryMapPath() + "\\" + GeneralUtils.GetGuidKey();
                 var imgsize = _postInfo.GetXmlPropertyInt("genxml/hidden/imageresize");
-                if (imgsize == 0) imgsize = _dataObject.RemoteModule.Record.GetXmlPropertyInt("genxml/settings/imageresize");
+                if (imgsize == 0) imgsize = _dataObject.ModuleSettings.Record.GetXmlPropertyInt("genxml/settings/imageresize");
                 if (imgsize == 0) imgsize = 640;
                 var imgList = ImgUtils.UploadBase64Image(filenameList, filebase64List, baseFileMapPath, _dataObject.PortalContent.ImageFolderMapPath, imgsize);
                 foreach (var imgFileMapPath in imgList)
@@ -200,26 +200,13 @@ namespace RocketContent.API
         }
         public String AdminDetailDisplay(ArticleLimpet articleData)
         {
-            if (articleData.AppThemeFolder == "")
-            {
-                // should not happen, this is a data error.  Delete and Create.
-                articleData.Delete();
-                return AdminSelectAppThemeDisplay();
-            }
-
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
-            var remoteModule = new RemoteModule(_dataObject.PortalId, _moduleRef);
-
             var razorTempl = _dataObject.AppThemeAdmin.GetTemplate("admindetail.cshtml");
-            var dataObjects = new Dictionary<string, object>();
-            dataObjects.Add("articlerow", articleRow);
-            dataObjects.Remove("apptheme"); // AdminAppTheme is defined by article.
-            dataObjects.Add("apptheme", new AppThemeLimpet(_dataObject.PortalId, articleData.AppThemeFolder, articleData.AppThemeFolderVersion, articleData.ProjectName));
-            dataObjects.Add("remotemodule", remoteModule);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, true);
+            _dataObject.SetDataObject("articlerow", articleRow);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -334,31 +321,10 @@ namespace RocketContent.API
 
         private string GetPublicView(string templateName)
         {
-            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCode);
-            var remoteModule = new RemoteModule(_dataObject.PortalId, _moduleRef);
-            //if (remoteModule.SiteKey != "")
-            //{
-            //    var dataClient = new RocketPortal.Components.DataClientLimpet(_dataObject.PortalId, remoteModule.SiteKey);
-            //    if (dataClient.LastAccessDate.Date != DateTime.Now.Date)
-            //    {
-            //        dataClient.LastAccessDate = DateTime.Now;
-            //        dataClient.Update();
-            //    }
-            //}
-            var appThemeFolder = remoteModule.AppThemeViewFolder;
-            if (appThemeFolder == "") appThemeFolder = articleData.AppThemeFolder;
-            var appThemeFolderVersion = remoteModule.AppThemeViewVersion;
-            if (appThemeFolderVersion == "") appThemeFolderVersion = articleData.AppThemeFolderVersion;
-            var viewAppTheme = new AppThemeLimpet(PortalUtils.GetCurrentPortalId(), _dataObject.AppThemeView.AppThemeFolder, _dataObject.AppThemeView.AppVersionFolder, _dataObject.AppThemeProjectName);
-            var razorTempl = viewAppTheme.GetTemplate(templateName, _moduleRef);
+            var razorTempl = _dataObject.AppThemeView.GetTemplate(templateName, _moduleRef);
             if (razorTempl == "") return "";
-            var dataObjects = new Dictionary<string, object>();
-            dataObjects.Remove("apptheme"); // AdminAppTheme is defined by article.
-            dataObjects.Add("apptheme", viewAppTheme);
-            dataObjects.Add("paraminfo", _paramInfo);
-            dataObjects.Add("portalcontent", _dataObject.PortalContent);
-            dataObjects.Add("remotemodule", remoteModule);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, dataObjects, _passSettings, _sessionParams, _dataObject.PortalContent.DebugMode);
+            _dataObject.SetDataObject("paraminfo", _paramInfo);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _passSettings, _sessionParams, _dataObject.PortalContent.DebugMode);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }

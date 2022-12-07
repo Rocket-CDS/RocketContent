@@ -104,11 +104,7 @@
     </command>   
 
     <command>
-      <cmd>remote_settings</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>remote_settingssave</cmd>
+      <cmd>rocketcontent_settings</cmd>
       <action>false</action>
     </command>
     <command>
@@ -116,19 +112,37 @@
       <action>false</action>
     </command>
 
-	  
+
 	  <command>
-		<cmd>remote_selectappthemeproject</cmd>
+		  <cmd>rocketcontent_savesettings</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		<cmd>rocketcontent_selectappthemeproject</cmd>
 		<action>true</action>
 	</command>
 	  <command>
-		  <cmd>remote_selectappthemeversion</cmd>
+		  <cmd>rocketcontent_selectappthemeversion</cmd>
 		  <action>true</action>
 	  </command>
 	  <command>
-		  <cmd>remote_selectapptheme</cmd>
+		  <cmd>rocketcontent_selectapptheme</cmd>
 		  <action>true</action>
 	  </command>
+	  <command>
+		  <cmd>rocketcontent_resetapptheme</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>rocketcontent_selectappthemeview</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>rocketcontent_selectappthemeviewversion</cmd>
+		  <action>true</action>
+	  </command>
+	  
+
 
 	  <command>
       <cmd>remote_publiclist</cmd>

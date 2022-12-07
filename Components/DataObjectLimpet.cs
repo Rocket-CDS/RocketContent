@@ -16,26 +16,27 @@ namespace RocketContent.Components
         public DataObjectLimpet(int portalid, string moduleRef, string cultureCode)
         {
             _dataObjects = new Dictionary<string, object>();
-            SetDataObject("remotemodule", new RemoteModule(portalid, moduleRef));
+            SetDataObject("modulesettings", new ModuleContentLimpet(portalid, moduleRef));
             SetDataObject("appthemesystem", new AppThemeSystemLimpet(portalid, SystemKey));
             SetDataObject("portalcontent", new PortalContentLimpet(portalid, cultureCode));
             SetDataObject("portaldata", new PortalLimpet(portalid));
             SetDataObject("systemdata", new SystemLimpet(SystemKey));
             SetDataObject("appthemeprojects", new AppThemeProjectLimpet());
             SetDataObject("articledata", new ArticleLimpet(portalid, moduleRef, cultureCode));
+
         }
         public void SetDataObject(String key, object value)
         {
             if (_dataObjects.ContainsKey(key)) _dataObjects.Remove(key);
             _dataObjects.Add(key, value);
-            if (key == "articledata")
+            if (key == "modulesettings")
             {
                 // reload appthemedatalist
-                var articleData = (ArticleLimpet)value;
-                SetDataObject("appthemedatalist", new AppThemeDataList(articleData.ProjectName, SystemKey));
-                if (articleData.AppThemeFolder != "")
+                SetDataObject("appthemedatalist", new AppThemeDataList(ModuleSettings.ProjectName, SystemKey));
+                if (ModuleSettings.AppThemeViewFolder != "" && ModuleSettings.ProjectName != "")
                 {
-                    SetDataObject("apptheme", new AppThemeLimpet(articleData.PortalId, articleData.AppThemeFolder, articleData.AppThemeFolderVersion, articleData.ProjectName));
+                    SetDataObject("appthemeview", new AppThemeLimpet(ModuleSettings.PortalId, ModuleSettings.AppThemeViewFolder, ModuleSettings.AppThemeViewVersion, ModuleSettings.ProjectName));
+                    SetDataObject("appthemeadmin", new AppThemeLimpet(ModuleSettings.PortalId, ModuleSettings.AppThemeAdminFolder, ModuleSettings.AppThemeAdminVersion, ModuleSettings.ProjectName));
                 }
             }
         }
@@ -50,9 +51,8 @@ namespace RocketContent.Components
         }
         public string SystemKey { get { return "rocketcontent"; } }
         public int PortalId { get { return PortalData.PortalId; } }
-        public string AppThemeProjectName { get { return ArticleData.ProjectName; } }
         public Dictionary<string, object> DataObjects { get { return _dataObjects; } }
-        public RemoteModule RemoteModule { get { return (RemoteModule)GetDataObject("remotemodule"); } }
+        public ModuleContentLimpet ModuleSettings { get { return (ModuleContentLimpet)GetDataObject("modulesettings"); } }
         public AppThemeSystemLimpet AppThemeSystem { get { return (AppThemeSystemLimpet)GetDataObject("appthemesystem"); } }
         public PortalContentLimpet PortalContent { get { return (PortalContentLimpet)GetDataObject("portalcontent"); } }
         public AppThemeLimpet AppThemeView { get { return (AppThemeLimpet)GetDataObject("apptheme"); } set { SetDataObject("apptheme", value); } }

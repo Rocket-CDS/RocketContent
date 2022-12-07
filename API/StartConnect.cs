@@ -119,29 +119,40 @@ namespace RocketContent.API
                     break;
 
 
-                case "remote_settings":
+                case "rocketcontent_settings":
                     strOut = RemoteSettings();
-                    break;
-                case "remote_settingssave":
-                    strOut = SaveSettings();
                     break;
                 case "remote_getappthemeversions":
                     strOut = AppThemeVersions();
                     break;
 
 
-                case "remote_selectappthemeproject":
+                case "rocketcontent_savesettings":
+                    strOut = SaveSettings();
+                    break;
+                case "rocketcontent_selectappthemeproject":
                     strOut = SelectAppThemeProject();
                     break;
-                case "remote_selectapptheme":
+                case "rocketcontent_selectapptheme":
                     strOut = SelectAppTheme();
                     break;
-                case "remote_selectappthemeversion":
+                case "rocketcontent_selectappthemeview":
+                    strOut = SelectAppThemeView();
+                    break;
+                case "rocketcontent_selectappthemeversion":
                     strOut = SelectAppThemeVersion();
                     break;
-                case "remote_resetapptheme":
+                case "rocketcontent_selectappthemeviewversion":
+                    strOut = SelectAppThemeVersionView();
+                    break;
+                case "rocketcontent_resetapptheme":
                     strOut = ResetAppTheme();
-                    break;                    
+                    break;
+                case "rocketcontent_resetappthemeview":
+                    strOut = ResetAppThemeView();
+                    break;
+
+
 
 
                 case "remote_publiclist":
@@ -171,7 +182,7 @@ namespace RocketContent.API
                 rtnDic.Add("remote-lastheader", GetPublicArticleHeader());
             }
 
-            if (!rtnDic.ContainsKey("remote-settingsxml")) rtnDic.Add("remote-settingsxml", _dataObject.RemoteModule.Record.ToXmlItem());            
+            if (!rtnDic.ContainsKey("remote-settingsxml")) rtnDic.Add("remote-settingsxml", _dataObject.ModuleSettings.Record.ToXmlItem());            
             if (!rtnDic.ContainsKey("outputjson")) rtnDic.Add("outputhtml", strOut);
 
             // tell remote module it can cache the resposne 
@@ -261,68 +272,15 @@ namespace RocketContent.API
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
-        private string SelectAppThemeProject()
-        {
-            var articleData = _dataObject.ArticleData;
-            articleData.ProjectName = _paramInfo.GetXmlProperty("genxml/hidden/projectname");
-            articleData.Update();
-            _dataObject.SetDataObject("articledata", articleData);
-            return RemoteSettings();
-        }
-        private string SelectAppTheme()
-        {
-            var articleData = _dataObject.ArticleData;
-            articleData.AppThemeFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
-            articleData.Update();
-            _dataObject.SetDataObject("articledata", articleData);
-            return RemoteSettings();
-        }
-        private string SelectAppThemeVersion()
-        {
-            var articleData = _dataObject.ArticleData;
-            articleData.AppThemeFolderVersion = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolderversion");
-            _dataObject.SetDataObject("articledata", articleData);
-            articleData.Update();
-            return RemoteSettings();
-        }
-        private string ResetAppTheme()
-        {
-            var articleData = _dataObject.ArticleData;
-            articleData.ProjectName = "";
-            articleData.AppThemeFolder = "";
-            articleData.AppThemeFolderVersion = "";
-            _dataObject.SetDataObject("articledata", articleData);
-            articleData.Update();
-            return RemoteSettings();
-        }
-        private string RemoteSettings()
-        {
-            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("RemoteSettings.cshtml"); // only find system template.
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.DataObjects, _passSettings,_sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
         private string EditContent()
         {
-            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-
-            if (articleData.AppThemeFolder == "")
-            {
-                // should not happen, this is a data error.  Delete and Create.
-                articleData.Delete();
-                return AdminSelectAppThemeDisplay();
-            }
-
-
             // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
-            var articleRow = articleData.GetRow(0);
-            if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
-            if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
-            var razorTempl = GetSystemTemplate("remotedetail.cshtml");
-            _dataObject.DataObjects.Remove("apptheme");
-            _dataObject.DataObjects.Add("apptheme", new AppThemeLimpet(_dataObject.PortalContent.PortalId, articleData.AppThemeFolder, articleData.AppThemeFolderVersion, articleData.ProjectName));
-            _dataObject.DataObjects.Add("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
+            var articleRow = _dataObject.ArticleData.GetRow(0);
+            if (_rowKey != "") articleRow = _dataObject.ArticleData.GetRow(_rowKey);
+            if (articleRow == null) articleRow = _dataObject.ArticleData.GetRow(0);  // row removed and still in sessionparams
+            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("remotedetail.cshtml");
+            _dataObject.SetDataObject("articlerow", articleRow);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -332,37 +290,6 @@ namespace RocketContent.API
             var razorTempl = GetSystemTemplate("MessageDisplay.cshtml");
             _passSettings.Add("msgkey", msgKey);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
-        private string SaveSettings()
-        {
-            if (_moduleRef != "")
-            {
-                var remoteModule = new RemoteModule(_dataObject.PortalContent.PortalId, _moduleRef);
-                remoteModule.Save(_postInfo);
-                // update sitekey after Save(), it replaces all XML.
-                remoteModule.SiteKey = _sessionParams.SiteKey;
-                remoteModule.Update();
-
-                // Make sure we have the correct _org, if changed.
-                _dataObject.SetDataObject("remotemodule", remoteModule);
-
-                // add the appTheme to the DataRecord. This is so we can get AppTheme for View.
-                var articleData = new ArticleLimpet(_dataObject.PortalId, _dataRef, _sessionParams.CultureCodeEdit);
-                articleData.AppThemeFolder = remoteModule.AppThemeFolder;
-                articleData.AppThemeFolderVersion = remoteModule.AppThemeVersion;
-                articleData.ProjectName = _dataObject.AppThemeProjectName;
-                articleData.Update();
-            }
-            return RemoteSettings();
-        }
-        private string AppThemeVersions()
-        {
-            var appTheme = _postInfo.GetXmlProperty("genxml/remote/apptheme");
-            if (_paramInfo.GetXmlProperty("genxml/hidden/ctrl") == "appthemeviewversion") appTheme = _postInfo.GetXmlProperty("genxml/remote/appthemeview");
-            var razorTempl = GetSystemTemplate("RemoteAppThemeVersions.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.AppThemeView, _dataObject.DataObjects,  _passSettings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -401,15 +328,20 @@ namespace RocketContent.API
             // Check if we have an AppTheme
             if (_dataObject.AppThemeView == null)
             {
-                if (paramCmd == "remote_selectappthemeproject" || paramCmd == "remote_selectapptheme") return paramCmd; // Check if we are updating the AppTheme.
-                return "remote_settings";
+                if (paramCmd == "rocketcontent_selectappthemeproject" 
+                    || paramCmd == "rocketcontent_selectapptheme"
+                    || paramCmd == "rocketcontent_selectappthemeview"
+                    || paramCmd == "rocketcontent_selectappthemeversion"
+                    || paramCmd == "rocketcontent_selectappthemeversionview"
+                    || paramCmd == "rocketcontent_resetapptheme" 
+                    || paramCmd == "rocketcontent_resetappthemeview"
+                    ) return paramCmd; // Check if we are updating the AppTheme.
+                return "rocketcontent_settings";
             }
-            _dataObject.AppThemeView = new AppThemeLimpet(portalid, _dataObject.RemoteModule.AppThemeViewFolder, _dataObject.RemoteModule.AppThemeViewVersion, _dataObject.AppThemeProjectName); ;
-            _dataObject.AppThemeAdmin = new AppThemeLimpet(portalid, _dataObject.RemoteModule.AppThemeFolder, _dataObject.RemoteModule.AppThemeFolder, _dataObject.AppThemeProjectName);
 
             if (_dataObject.PortalContent.PortalId != 0 && !_dataObject.PortalContent.Active) return "";
 
-            _dataRef = _dataObject.RemoteModule.DataRef;
+            _dataRef = _dataObject.ModuleSettings.DataRef;
 
             if (_dataRef == "") 
             {

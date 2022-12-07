@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using RocketContent.Components;
 using System.Xml.XPath;
 using System.Xml.Linq;
+using System.Reflection;
 
 namespace RocketContent.Components
 {
@@ -29,13 +30,13 @@ namespace RocketContent.Components
         /// <param name="portalId"></param>
         /// <param name="dataRef"></param>
         /// <param name="langRequired"></param>
-        public ArticleLimpet(int portalId, string dataRef, string langRequired)
+        public ArticleLimpet(int portalId, string dataRef, string langRequired, int moduleid = -1)
         {
             PortalId = portalId;
             _info = new SimplisityInfo();
             _info.ItemID = -1;
             _info.TypeCode = _entityTypeCode;
-            _info.ModuleId = -1;
+            _info.ModuleId = moduleid;
             _info.UserId = -1;
             _info.GUIDKey = dataRef;
             _info.PortalId = PortalId;
@@ -252,10 +253,6 @@ namespace RocketContent.Components
         public string LinkListName { get { return "linklist"; } }
         public string DocumentListName { get { return "documentlist"; } }
         public string ImageListName { get { return "imagelist"; } }
-        public string Name { get { return _info.GetXmlProperty("genxml/data/name"); } set { _info.SetXmlProperty("genxml/data/name", value); } }
-        public string AppThemeFolder { get { return _info.GetXmlProperty("genxml/data/apptheme"); } set { _info.SetXmlProperty("genxml/data/apptheme", value); } }
-        public string AppThemeFolderVersion { get { return _info.GetXmlProperty("genxml/data/appthemeversion"); } set { _info.SetXmlProperty("genxml/data/appthemeversion", value); } }
-        public string ProjectName { get { return _info.GetXmlProperty("genxml/data/projectname"); } set { _info.SetXmlProperty("genxml/data/projectname", value); } }
 
         #endregion
 
