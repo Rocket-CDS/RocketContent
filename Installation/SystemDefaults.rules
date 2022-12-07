@@ -116,12 +116,21 @@
       <action>false</action>
     </command>
 
-	<command>
+	  
+	  <command>
 		<cmd>remote_selectappthemeproject</cmd>
 		<action>true</action>
-	</command>	  
+	</command>
+	  <command>
+		  <cmd>remote_selectappthemeversion</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>remote_selectapptheme</cmd>
+		  <action>true</action>
+	  </command>
 
-    <command>
+	  <command>
       <cmd>remote_publiclist</cmd>
       <action>false</action>
     </command>

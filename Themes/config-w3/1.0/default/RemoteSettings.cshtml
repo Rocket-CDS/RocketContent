@@ -45,17 +45,34 @@
             }
             else
             {
-                if (remoteData.AppThemeViewFolder == "")
+                if (articleData.AppThemeFolder == "")
                 {
-                    var lp = 0;
                     foreach (var appTheme in appThemeList.List)
                     {
-                        <p>
-                            <input class="w3-radio" id="appthemekey_@(lp)" s-xpath="genxml/radio/apptheme" s-update="save" name="appthemekeyradio" type="radio" value="@appTheme.AppThemeFolder">
-                            <label class="w3-large">@appTheme.Name</label>
-                        </p>
-                        lp += 1;
+                        <div class="w3-button simplisity_click" s-cmd="remote_selectapptheme" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId","appthemefolder":"@appTheme.AppThemeFolder"}'>
+                            @appTheme.Name
+                        </div>
                     }
+                }
+                else
+                {
+                    if (articleData.AppThemeFolderVersion == "")
+                    {
+                        foreach (var appThemeV in appThemeData.VersionList)
+                        {
+                            <div class="w3-button simplisity_click" s-cmd="remote_selectappthemeversion" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId","appthemefolderversion":"@appThemeV"}'>
+                                @appThemeV
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="w3-button w3-red simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.delete")?" s-cmd="remote_resetapptheme" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId"}'>
+                            @ResourceKey("DNNrocket.reset")
+                        </div>
+                        <h1>BOO</h1>
+                    }
+
                 }
             }
 
@@ -72,10 +89,29 @@
     <span>ModuleRef: @remoteData.ModuleRef</span>
 </div>
 
+@if (articleData.AppThemeFolder != "")
+{
+    <text>
+        <!-- create element to update settings via API when the DNN update is clicked. -->
+        <span class="w3-hide" s-cmd="remote_savesettings" s-post="#a-datasection" s-fields='{"moduleref":"@remoteData.ModuleRef","moduleid":"@remoteData.ModuleId"}'></span>
+    </text>
+}
+
+
 
 <script>
     $(document).ready(function () {
         $(document).simplisityStartUp('/Desktopmodules/dnnrocket/api/rocket/action', { systemkey: 'rocketcontent', debug: false });
+
+        @if (articleData.AppThemeFolder != "")
+        {
+            <text>
+            $('a[id*="_cmdUpdate"]').click(function () {
+                simplisity_callserver($('#postsettings'));
+            });
+            </text>
+        }
+
     });
 </script>
 

@@ -31,8 +31,12 @@ namespace RocketContent.Components
             if (key == "articledata")
             {
                 // reload appthemedatalist
-                var ad = (ArticleLimpet)value;
-                SetDataObject("appthemedatalist", new AppThemeDataList(ad.ProjectName, SystemKey));
+                var articleData = (ArticleLimpet)value;
+                SetDataObject("appthemedatalist", new AppThemeDataList(articleData.ProjectName, SystemKey));
+                if (articleData.AppThemeFolder != "")
+                {
+                    SetDataObject("apptheme", new AppThemeLimpet(articleData.PortalId, articleData.AppThemeFolder, articleData.AppThemeFolderVersion, articleData.ProjectName));
+                }
             }
         }
         public object GetDataObject(String key)
@@ -51,8 +55,8 @@ namespace RocketContent.Components
         public RemoteModule RemoteModule { get { return (RemoteModule)GetDataObject("remotemodule"); } }
         public AppThemeSystemLimpet AppThemeSystem { get { return (AppThemeSystemLimpet)GetDataObject("appthemesystem"); } }
         public PortalContentLimpet PortalContent { get { return (PortalContentLimpet)GetDataObject("portalcontent"); } }
-        public AppThemeLimpet AppThemeView { get { return (AppThemeLimpet)GetDataObject("apptheme"); } set { _dataObjects.Add("apptheme", value); } }
-        public AppThemeLimpet AppThemeAdmin { get { return (AppThemeLimpet)GetDataObject("appthemeadmin"); } set { _dataObjects.Add("appthemeadmin", value); } }
+        public AppThemeLimpet AppThemeView { get { return (AppThemeLimpet)GetDataObject("apptheme"); } set { SetDataObject("apptheme", value); } }
+        public AppThemeLimpet AppThemeAdmin { get { return (AppThemeLimpet)GetDataObject("appthemeadmin"); } set { SetDataObject("appthemeadmin", value); } }
         public PortalLimpet PortalData { get { return (PortalLimpet)GetDataObject("portaldata"); } }
         public SystemLimpet SystemData { get { return (SystemLimpet)GetDataObject("systemdata"); } }
         public AppThemeProjectLimpet AppThemeProjects { get { return (AppThemeProjectLimpet)GetDataObject("appthemeprojects"); } }
