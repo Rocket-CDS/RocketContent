@@ -1,0 +1,51 @@
+@inherits RocketContent.Components.RocketContentTokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI.Components;
+@using RocketContent.Components;
+@using Simplisity;
+@using RazorEngine.Text;
+@using Rocket.AppThemes.Components;
+@using RocketPortal.Components;
+
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
+
+@{
+
+    // NOTE: All field xpath should be "genxml/remote/*"
+
+    var sessionParams = Model.SessionParamsData;
+    var appThemeList = (AppThemeDataList)Model.GetDataObject("appthemedatalist");
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var info = new SimplisityInfo(moduleData.Record);
+    var projectAppThemeData = new AppThemeProjectLimpet();
+    var cmd = "rocketcontent_selectapptheme" + Model.GetSetting("cmdappendix");
+}
+
+<script type="text/javascript" src="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/Simplisity/js/simplisity.js"></script>
+<link rel="stylesheet" href="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/css/w3.css">
+
+<div id="a-datasection" class="w3-container w3-margin w3-padding">
+    <div class="w3-large w3-margin-bottom">
+        Select AppTheme
+    </div>
+
+    @foreach (var appTheme in appThemeList.List)
+    {
+        <div class="w3-button w3-blue w3-block w3-third simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolder":"@appTheme.AppThemeFolder"}'>
+            @appTheme.Name
+        </div>
+    }
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $(document).simplisityStartUp('/Desktopmodules/dnnrocket/api/rocket/action', { systemkey: 'rocketcontent', debug: false });
+    });
+</script>
+
+

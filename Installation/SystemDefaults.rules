@@ -105,11 +105,7 @@
 
     <command>
       <cmd>rocketcontent_settings</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>remote_getappthemeversions</cmd>
-      <action>false</action>
+      <action>true</action>
     </command>
 
 

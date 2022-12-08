@@ -87,7 +87,6 @@ namespace RocketContent.API
         }
         public string SaveArticleRow()
         {            
-            _passSettings.Add("saved", "true");
             var articleData = GetActiveArticle(_dataRef);
             articleData.UpdateRow(_rowKey, _postInfo);
             CacheUtils.ClearAllCache("article");
@@ -206,7 +205,7 @@ namespace RocketContent.API
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
             var razorTempl = _dataObject.AppThemeAdmin.GetTemplate("admindetail.cshtml");
             _dataObject.SetDataObject("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -224,7 +223,7 @@ namespace RocketContent.API
             var articleDataList = new ArticleLimpetList(_paramInfo, _dataObject.PortalContent, _sessionParams.CultureCodeEdit, true);
             var dataObjects = new Dictionary<string, object>();
             var razorTempl = _dataObject.AppThemeSystem.GetTemplate("adminlist.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleDataList, _dataObject.DataObjects, _passSettings, _sessionParams, _dataObject.PortalContent.DebugMode);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleDataList, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, _dataObject.PortalContent.DebugMode);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -232,7 +231,7 @@ namespace RocketContent.API
         {
             var appThemeDataList = new AppThemeDataList(_dataObject.SystemKey);
             var razorTempl = _dataObject.AppThemeSystem.GetTemplate("SelectAppTheme.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObject.DataObjects, _passSettings, _sessionParams, _dataObject.PortalContent.DebugMode);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, appThemeDataList, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, _dataObject.PortalContent.DebugMode);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -252,12 +251,12 @@ namespace RocketContent.API
                 docList.Add(sInfo);
             }
 
-            _passSettings.Add("uploadcmd", "articleadmin_docupload");
-            _passSettings.Add("deletecmd", "articleadmin_docdelete");
-            _passSettings.Add("articleid", articleid.ToString());
+            _dataObject.SetSetting("uploadcmd", "articleadmin_docupload");
+            _dataObject.SetSetting("deletecmd", "articleadmin_docdelete");
+            _dataObject.SetSetting("articleid", articleid.ToString());
 
             var razorTempl = _dataObject.AppThemeSystem.GetTemplate("DocumentSelect.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, docList, _dataObject.DataObjects, _passSettings, _sessionParams, _dataObject.PortalContent.DebugMode);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, docList, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, _dataObject.PortalContent.DebugMode);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
 
@@ -324,7 +323,7 @@ namespace RocketContent.API
             var razorTempl = _dataObject.AppThemeView.GetTemplate(templateName, _moduleRef);
             if (razorTempl == "") return "";
             _dataObject.SetDataObject("paraminfo", _paramInfo);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _passSettings, _sessionParams, _dataObject.PortalContent.DebugMode);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, _dataObject.PortalContent.DebugMode);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }

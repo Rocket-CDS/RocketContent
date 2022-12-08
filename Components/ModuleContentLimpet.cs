@@ -55,11 +55,16 @@ namespace DNNrocketAPI.Components
         public int PortalId { get { return Record.PortalId; } }
         public bool Exists { get { if (Record.ItemID <= 0) { return false; } else { return true; }; } }
         public string AppThemeAdminFolder { get { return Record.GetXmlProperty("genxml/data/appthemeadminfolder"); } set { Record.SetXmlProperty("genxml/data/appthemeadminfolder", value); } }
+        public bool HasAppThemeAdmin { get { if (Record.GetXmlProperty("genxml/data/appthemeadminfolder") == "") return false; else return true; } }
         public string AppThemeAdminVersion { get { return Record.GetXmlProperty("genxml/data/appthemeadminversion"); } set { Record.SetXmlProperty("genxml/data/appthemeadminversion", value); } }
-        public string AppThemeViewFolder { get { if (Record.GetXmlProperty("genxml/data/appthemeviewfolder") == "") return AppThemeAdminFolder; else return Record.GetXmlProperty("genxml/data/appthemeviewfolder"); } set { Record.SetXmlProperty("genxml/data/appthemeviewfolder", value); } }
-        public string AppThemeViewVersion { get { if (Record.GetXmlProperty("genxml/data/appthemeviewversion") == "") return AppThemeAdminVersion; else return Record.GetXmlProperty("genxml/data/appthemeviewversion"); } set { Record.SetXmlProperty("genxml/data/appthemeviewversion", value); } }
+        public bool HasAppThemeAdminVersion { get { if (Record.GetXmlProperty("genxml/data/appthemeadminversion") == "") return false; else return true; } }
+        public string AppThemeViewFolder { get { return Record.GetXmlProperty("genxml/data/appthemeviewfolder"); } set { Record.SetXmlProperty("genxml/data/appthemeviewfolder", value); } }
+        public bool HasAppThemeView { get { if (Record.GetXmlProperty("genxml/data/appthemeviewfolder") == "") return false; else return true; } }
+        public string AppThemeViewVersion { get { return Record.GetXmlProperty("genxml/data/appthemeviewversion"); } set { Record.SetXmlProperty("genxml/data/appthemeviewversion", value); } }
+        public bool HasAppThemeViewVersion { get { if (Record.GetXmlProperty("genxml/data/appthemeviewversion") == "") return false; else return true; } }
         public string DataRef { get { if (Record.GetXmlProperty("genxml/data/dataref") == "") return ModuleRef; else return Record.GetXmlProperty("genxml/data/dataref"); } set { Record.SetXmlProperty("genxml/data/dataref", value); } }
         public string ProjectName { get { return Record.GetXmlProperty("genxml/data/projectname"); } set { Record.SetXmlProperty("genxml/data/projectname", value); } }
+        public bool HasProject { get { if (Record.GetXmlProperty("genxml/data/projectname") == "") return false; else return true; } }
         public bool InjectJQuery { get { return Record.GetXmlPropertyBool("genxml/settings/injectjquery"); } set { Record.SetXmlProperty("genxml/settings/injectjquery", value.ToString()); } }
         public bool DisableCache { get { return Record.GetXmlPropertyBool("genxml/settings/disablecache"); } set { Record.SetXmlProperty("genxml/settings/disablecache", value.ToString()); } }
         public bool DisableHeader { get { return Record.GetXmlPropertyBool("genxml/settings/disableheader"); } set { Record.SetXmlProperty("genxml/settings/disableheader", value.ToString()); } }

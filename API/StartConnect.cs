@@ -15,7 +15,6 @@ namespace RocketContent.API
         private SimplisityInfo _postInfo;
         private SimplisityInfo _paramInfo;
         private RocketInterface _rocketInterface;
-        private Dictionary<string, string> _passSettings;
         private SessionParams _sessionParams;
         private string _dataRef;
         private string _moduleRef;
@@ -34,7 +33,7 @@ namespace RocketContent.API
             switch (paramCmd)
             {
                 case "rocketcontent_adminpanel":
-                    strOut = AdminPanel();
+                    strOut = RenderSystemTemplate("AdminPanel.cshtml");
                     break;
 
                 case "rocketsystem_edit":
@@ -47,7 +46,7 @@ namespace RocketContent.API
                     strOut = RocketSystemDelete();
                     break;
                 case "rocketsystem_adminpanelheader":
-                    strOut = AdminPanelHeader();
+                    strOut = RenderSystemTemplate("AdminPanelHeader.cshtml.cshtml");
                     break;
                 case "rocketsystem_save":
                     strOut = RocketSystemSave();
@@ -59,7 +58,7 @@ namespace RocketContent.API
 
 
                 case "dashboard_get":
-                    strOut = GetDashboard();
+                    strOut = RenderSystemTemplate("Dashboard.cshtml");
                     break;
 
                     
@@ -120,13 +119,8 @@ namespace RocketContent.API
 
 
                 case "rocketcontent_settings":
-                    strOut = RemoteSettings();
+                    strOut = DisplaySettings();
                     break;
-                case "remote_getappthemeversions":
-                    strOut = AppThemeVersions();
-                    break;
-
-
                 case "rocketcontent_savesettings":
                     strOut = SaveSettings();
                     break;
@@ -191,15 +185,14 @@ namespace RocketContent.API
             return rtnDic;
 
         }
-        /// <summary>
-        /// We may have a wrapper system, so check both systems for the template 
-        /// </summary>
-        /// <param name="templateName"></param>
-        /// <returns></returns>
-        private string GetSystemTemplate(string templateName)
+        private string RenderSystemTemplate(string templateName)
         {
-            return _dataObject.AppThemeSystem.GetTemplate(templateName);
+            var razorTempl = _dataObject.AppThemeSystem.GetTemplate(templateName);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
+            if (pr.StatusCode != "00") return pr.ErrorMsg;
+            return pr.RenderedText;
         }
+
         private string RocketSystemSave()
         {
             var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid"); // we may have passed selection
@@ -214,10 +207,7 @@ namespace RocketContent.API
         }
         private String RocketSystem()
         {
-            var razorTempl = GetSystemTemplate("RocketSystem.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
+            return RenderSystemTemplate("RocketSystem.cshtml");
         }
         private String RocketSystemInit()
         {
@@ -240,20 +230,6 @@ namespace RocketContent.API
             }
             return "";
         }
-        private string AdminPanel()
-        {
-            var razorTempl = GetSystemTemplate("AdminPanel.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
-        private string AdminPanelHeader()
-        {
-            var razorTempl = GetSystemTemplate("AdminPanelHeader.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
         private string ReloadPage()
         {
             // user does not have access, logoff
@@ -261,14 +237,7 @@ namespace RocketContent.API
 
             var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
             var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObject.DataObjects, _passSettings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
-        private string GetDashboard()
-        {
-            var razorTempl = GetSystemTemplate("Dashboard.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.PortalContent, _dataObject.DataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -280,18 +249,14 @@ namespace RocketContent.API
             if (articleRow == null) articleRow = _dataObject.ArticleData.GetRow(0);  // row removed and still in sessionparams
             var razorTempl = _dataObject.AppThemeSystem.GetTemplate("remotedetail.cshtml");
             _dataObject.SetDataObject("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
         private string MessageDisplay(string msgKey)
         {
-            var articleData = GetActiveArticle(_dataRef, _sessionParams.CultureCodeEdit);
-            var razorTempl = GetSystemTemplate("MessageDisplay.cshtml");
-            _passSettings.Add("msgkey", msgKey);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _passSettings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
+            _dataObject.SetSetting("msgkey", msgKey);
+            return RenderSystemTemplate("MessageDisplay.cshtml");
         }
         public string InitCmd(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -303,7 +268,6 @@ namespace RocketContent.API
 
             _rocketInterface = new RocketInterface(interfaceInfo);
             _sessionParams = new SessionParams(_paramInfo);
-            _passSettings = new Dictionary<string, string>();
 
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
             if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
