@@ -10,8 +10,6 @@
     var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
     var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
 }
-<script type="text/javascript" src="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/Simplisity/js/simplisity.js"></script>
-
 <!-- create element to load settings. -->
 <span id="loadsettings" class="w3-hide" s-cmd="rocketcontent_settings" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'></span>
 

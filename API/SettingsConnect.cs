@@ -20,41 +20,29 @@ namespace RocketContent.API
             moduleData.Update();
             return RenderSystemTemplate("SelectAppTheme.cshtml");
         }
-        private string SelectAppTheme()
+        private string SelectAppTheme(string cmdappendix)
         {
-            _dataObject.SetSetting("cmdappendix", "");
+            _dataObject.SetSetting("cmdappendix", cmdappendix);
             var moduleData = _dataObject.ModuleSettings;
-            moduleData.AppThemeAdminFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
+            if (cmdappendix == "")
+                moduleData.AppThemeAdminFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
+            else
+                moduleData.AppThemeViewFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
             _dataObject.SetDataObject("modulesettings", moduleData);
             moduleData.Update();
             return RenderSystemTemplate("SelectAppThemeVersion.cshtml");
         }
-        private string SelectAppThemeView()
+        private string SelectAppThemeVersion(string cmdappendix)
         {
-            _dataObject.SetSetting("cmdappendix", "view");
+            _dataObject.SetSetting("cmdappendix", cmdappendix);
             var moduleData = _dataObject.ModuleSettings;
-            moduleData.AppThemeViewFolder = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolder");
+            if (cmdappendix == "")
+                moduleData.AppThemeAdminVersion = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolderversion");
+            else
+                moduleData.AppThemeViewVersion = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolderversion");
             _dataObject.SetDataObject("modulesettings", moduleData);
             moduleData.Update();
-            return RenderSystemTemplate("SelectAppThemeVersion.cshtml");
-        }
-        private string SelectAppThemeVersion()
-        {
-            _dataObject.SetSetting("cmdappendix", "");
-            var moduleData = _dataObject.ModuleSettings;
-            moduleData.AppThemeAdminVersion = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolderversion");
-            _dataObject.SetDataObject("modulesettings", moduleData);
-            moduleData.Update();
-            return RenderSystemTemplate("RemoteSettings.cshtml");
-        }
-        private string SelectAppThemeVersionView()
-        {
-            _dataObject.SetSetting("cmdappendix", "view");
-            var moduleData = _dataObject.ModuleSettings;
-            moduleData.AppThemeViewVersion = _paramInfo.GetXmlProperty("genxml/hidden/appthemefolderversion");
-            _dataObject.SetDataObject("modulesettings", moduleData);
-            moduleData.Update();
-            return RenderSystemTemplate("RemoteSettings.cshtml");
+            return RenderSystemTemplate("ModuleSettings.cshtml");
         }
         private string ResetAppTheme()
         {
@@ -63,8 +51,8 @@ namespace RocketContent.API
             moduleData.ProjectName = "";
             moduleData.AppThemeAdminFolder = "";
             moduleData.AppThemeAdminVersion = "";
-            _dataObject.SetDataObject("modulesettings", moduleData);
             moduleData.Update();
+            _dataObject.SetDataObject("modulesettings", moduleData);
             return RenderSystemTemplate("SelectProject.cshtml");
         }
         private string ResetAppThemeView()
@@ -73,8 +61,8 @@ namespace RocketContent.API
             var moduleData = _dataObject.ModuleSettings;
             moduleData.AppThemeViewFolder = "";
             moduleData.AppThemeViewVersion = "";
-            _dataObject.SetDataObject("modulesettings", moduleData);
             moduleData.Update();
+            _dataObject.SetDataObject("modulesettings", moduleData);
             return RenderSystemTemplate("SelectAppTheme.cshtml");
         }
         private string SaveSettings()

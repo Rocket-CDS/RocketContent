@@ -118,7 +118,11 @@
 		<action>true</action>
 	</command>
 	  <command>
-		  <cmd>rocketcontent_selectappthemeversion</cmd>
+		  <cmd>rocketcontent_resetapptheme</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>rocketcontent_resetappthemeview</cmd>
 		  <action>true</action>
 	  </command>
 	  <command>
@@ -126,18 +130,17 @@
 		  <action>true</action>
 	  </command>
 	  <command>
-		  <cmd>rocketcontent_resetapptheme</cmd>
-		  <action>true</action>
-	  </command>
-	  <command>
 		  <cmd>rocketcontent_selectappthemeview</cmd>
 		  <action>true</action>
 	  </command>
 	  <command>
-		  <cmd>rocketcontent_selectappthemeviewversion</cmd>
+		  <cmd>rocketcontent_selectappthemeversion</cmd>
 		  <action>true</action>
 	  </command>
-	  
+	  <command>
+		  <cmd>rocketcontent_selectappthemeversionview</cmd>
+		  <action>true</action>
+	  </command>
 
 
 	  <command>

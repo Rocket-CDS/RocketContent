@@ -9,7 +9,7 @@
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
 
 @{
-    var articleData = (ArticleLimpet)Model.List.First();
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
     var articleRowData = (ArticleRowLimpet)Model.GetDataObject("articlerow");
     var imgLP = 0;
 

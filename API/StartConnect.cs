@@ -128,16 +128,16 @@ namespace RocketContent.API
                     strOut = SelectAppThemeProject();
                     break;
                 case "rocketcontent_selectapptheme":
-                    strOut = SelectAppTheme();
+                    strOut = SelectAppTheme("");
                     break;
                 case "rocketcontent_selectappthemeview":
-                    strOut = SelectAppThemeView();
+                    strOut = SelectAppTheme("view");
                     break;
                 case "rocketcontent_selectappthemeversion":
-                    strOut = SelectAppThemeVersion();
+                    strOut = SelectAppThemeVersion("");
                     break;
-                case "rocketcontent_selectappthemeviewversion":
-                    strOut = SelectAppThemeVersionView();
+                case "rocketcontent_selectappthemeversionview":
+                    strOut = SelectAppThemeVersion("view");
                     break;
                 case "rocketcontent_resetapptheme":
                     strOut = ResetAppTheme();
@@ -288,7 +288,7 @@ namespace RocketContent.API
             DNNrocketUtils.SetCurrentCulture(_sessionParams.CultureCode);
             DNNrocketUtils.SetEditCulture(_sessionParams.CultureCodeEdit);
 
-            _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _sessionParams.CultureCodeEdit);
+            _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _rowKey, _sessionParams.CultureCodeEdit);
             // Check if we have an AppTheme
             if (_dataObject.AppThemeView == null)
             {
