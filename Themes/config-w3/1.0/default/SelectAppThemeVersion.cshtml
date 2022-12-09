@@ -27,13 +27,15 @@
 
 <div id="a-datasection" class="w3-container w3-margin w3-padding">
     <div class="w3-large w3-margin-bottom">
-        Select AppTheme Version
+        @ResourceKey("RC.selectversion")
     </div>
     @foreach (var appThemeV in appThemeView.VersionList)
     {
-    <div class="w3-button  w3-blue w3-block  w3-margin w3-col m2 simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolderversion":"@appThemeV"}'>
-        @appThemeV
-    </div>
+        <div class="w3-padding w3-col m2">
+            <div class="w3-button w3-theme w3-round-xxlarge w3-large simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolderversion":"@appThemeV"}'>
+                @appThemeV
+            </div>
+        </div>
     }
 </div>
 

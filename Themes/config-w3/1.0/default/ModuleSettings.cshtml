@@ -38,24 +38,18 @@
 
         <div class="w3-xlarge">AppThemes</div>
         <div class="w3-row w3-padding">
-            <div class="w3-half">
-            Admin: <span>@appThemeAdmin.Name &nbsp; @moduleData.AppThemeAdminVersion</span>
-            </div>
-            <div class="w3-quarter">
-                <div class="w3-button  w3-small w3-blue simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.edit")?" s-cmd="rocketcontent_resetapptheme" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'>
-                    @ResourceKey("DNNrocket.edit")
-                </div>
-            </div>
+            <span class="w3-button w3-theme w3-round-xxlarge simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.edit")?" s-cmd="rocketcontent_resetapptheme" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'>
+                @ButtonIcon(ButtonTypes.edit)
+            </span>
+            &nbsp;
+            <span><b>@appThemeAdmin.Name &nbsp; @moduleData.AppThemeAdminVersion &nbsp; [@ResourceKey("DNNrocket.admin")]</b></span>
         </div>
         <div class="w3-row w3-padding">
-            <div class="w3-half">
-            View: <span>@appThemeView.Name &nbsp; @moduleData.AppThemeViewVersion</span>
-            </div>
-            <div class="w3-quarter">
-                <div class="w3-button w3-small w3-blue w3-round simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.edit")?" s-cmd="rocketcontent_resetappthemeview" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'>
-                    @ResourceKey("DNNrocket.edit")
-                </div>
-            </div>
+            <span class="w3-button w3-theme w3-round-xxlarge simplisity_confirmclick" s-confirm="@ResourceKey("DNNrocket.edit")?" s-cmd="rocketcontent_resetappthemeview" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}'>
+                @ButtonIcon(ButtonTypes.edit)
+            </span>
+            &nbsp;
+            <span><b>@appThemeView.Name &nbsp; @moduleData.AppThemeViewVersion &nbsp; [@ResourceKey("DNNrocket.view")]</b></span>
         </div>
 
         <hr/>

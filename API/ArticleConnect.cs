@@ -23,7 +23,7 @@ namespace RocketContent.API
             var articleData = GetActiveArticle(_dataRef);
             _rowKey = articleData.AddRow();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            return AdminDetailDisplay();
         }
         public string SortRows()
         {
@@ -71,7 +71,8 @@ namespace RocketContent.API
 
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             var articleData2 = GetActiveArticle(_dataRef);
-            return AdminDetailDisplay(articleData2);
+            _dataObject.SetDataObject("articledata", articleData2);
+            return AdminDetailDisplay();
         }
         public string RemoveRow()
         {
@@ -83,15 +84,14 @@ namespace RocketContent.API
 
             _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            return AdminDetailDisplay();
         }
         public string SaveArticleRow()
-        {            
-            var articleData = GetActiveArticle(_dataRef);
+        {
+            var articleData = _dataObject.ArticleData;
             articleData.UpdateRow(_rowKey, _postInfo);
-            CacheUtils.ClearAllCache("article");
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            _dataObject.SetDataObject("articledata", articleData);
+            return AdminDetailDisplay();
         }
         public void DeleteArticle()
         {
@@ -127,7 +127,7 @@ namespace RocketContent.API
             }
 
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            return AdminDetailDisplay();
         }
         public string AddArticleDoc()
         {
@@ -155,7 +155,7 @@ namespace RocketContent.API
             }
 
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            return AdminDetailDisplay();
         }
         public string AddArticleListItem()
         {
@@ -170,7 +170,7 @@ namespace RocketContent.API
                 articleData.UpdateRow(_rowKey, articleRow.Info);
             }
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
+            return AdminDetailDisplay();
         }
         public string AddArticleLink()
         {
@@ -184,12 +184,7 @@ namespace RocketContent.API
                 articleData.UpdateRow(_rowKey, articleRow.Info);
             }
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            return AdminDetailDisplay(articleData);
-        }
-        public String GetAdminArticle()
-        {
-            var articleData = GetActiveArticle(_dataRef);
-            return AdminDetailDisplay(articleData);
+            return AdminDetailDisplay();
         }
         public String GetAdminDeleteArticle()
         {
@@ -197,13 +192,14 @@ namespace RocketContent.API
             articleData.Delete();
             return AdminListDisplay();
         }
-        public String AdminDetailDisplay(ArticleLimpet articleData)
+        public String AdminDetailDisplay()
         {
-            // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
+            // rowKey can come from the sessionParams or paramInfo.  (Because of no rowkey on the language change)
+            var articleData = _dataObject.ArticleData;
             var articleRow = articleData.GetRow(0);
             if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
             if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
-            var razorTempl = _dataObject.AppThemeAdmin.GetTemplate("admindetail.cshtml");
+            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("admindetail.cshtml");
             _dataObject.SetDataObject("articlerow", articleRow);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
@@ -216,7 +212,7 @@ namespace RocketContent.API
 
             _moduleRef = GeneralUtils.GetGuidKey();
 
-            return GetAdminArticle();
+            return AdminDetailDisplay();
         }
         public String AdminListDisplay()
         {

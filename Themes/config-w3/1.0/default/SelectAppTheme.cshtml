@@ -27,13 +27,14 @@
 
 <div id="a-datasection" class="w3-container w3-margin w3-padding">
     <div class="w3-large w3-margin-bottom">
-        Select AppTheme
+        @ResourceKey("RC.selectapptheme")
     </div>
-
     @foreach (var appTheme in appThemeList.List)
     {
-        <div class="w3-button w3-blue w3-block w3-third simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolder":"@appTheme.AppThemeFolder"}'>
-            @appTheme.Name
+        <div class="w3-padding w3-third">
+            <div class="w3-button w3-theme w3-round-xxlarge w3-large simplisity_click" s-cmd="@cmd" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","appthemefolder":"@appTheme.AppThemeFolder"}'>
+                @appTheme.Name
+            </div>
         </div>
     }
 </div>

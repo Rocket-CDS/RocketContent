@@ -150,11 +150,11 @@
   <data name="maxarticles.Text" xml:space="preserve">
     <value>Article Limit</value>
   </data>
+  <data name="modulesettings.Text" xml:space="preserve">
+    <value>Module Configuration</value>
+  </data>
   <data name="name.Text" xml:space="preserve">
     <value>Name</value>
-  </data>
-  <data name="noapptheme.Text" xml:space="preserve">
-    <value>No AppTheme Selected.  Edit module settings.</value>
   </data>
   <data name="optional.Text" xml:space="preserve">
     <value>(Optional)</value>
@@ -163,10 +163,16 @@
     <value>Remove Row ?</value>
   </data>
   <data name="selectapptheme.Text" xml:space="preserve">
-    <value>Select View AppTheme</value>
+    <value>Select AppTheme</value>
   </data>
   <data name="selectdataitem.Text" xml:space="preserve">
     <value>Select DataItem</value>
+  </data>
+  <data name="selectproject.Text" xml:space="preserve">
+    <value>Select AppTheme Project</value>
+  </data>
+  <data name="selectversion.Text" xml:space="preserve">
+    <value>Select Version</value>
   </data>
   <data name="viewapptheme.Text" xml:space="preserve">
     <value>Display AppTheme</value>

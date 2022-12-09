@@ -61,7 +61,10 @@ namespace RocketContent.API
                     strOut = RenderSystemTemplate("Dashboard.cshtml");
                     break;
 
-                    
+
+                case "article_admindetail":
+                    strOut = AdminDetailDisplay();
+                    break;
                 case "article_admincreate":
                     strOut = AdminCreateArticle();
                     break;
@@ -71,9 +74,6 @@ namespace RocketContent.API
                 case "article_selectapptheme":
                     strOut = AdminSelectAppThemeDisplay();
                     break;
-                case "article_admindetail":
-                    strOut = GetAdminArticle();
-                    break;
                 case "article_adminsave":
                     strOut = SaveArticleRow();
                     break;
@@ -82,7 +82,9 @@ namespace RocketContent.API
                     break;
 
 
-                    
+
+
+
                 case "remote_sortrows":
                     strOut = SortRows();
                     break;
@@ -109,7 +111,7 @@ namespace RocketContent.API
                     break;
                 case "remote_edit":
                     if (_sessionParams.Get("remoteedit") == "false")
-                        strOut = AdminDetailDisplay(GetActiveArticle(_dataRef));
+                        strOut = AdminDetailDisplay();
                     else
                         strOut = EditContent();
                     break;
@@ -289,21 +291,28 @@ namespace RocketContent.API
             DNNrocketUtils.SetEditCulture(_sessionParams.CultureCodeEdit);
 
             _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _rowKey, _sessionParams.CultureCodeEdit);
-            // Check if we have an AppTheme
-            if (_dataObject.AppThemeView == null)
-            {
-                if (paramCmd == "rocketcontent_selectappthemeproject" 
-                    || paramCmd == "rocketcontent_selectapptheme"
-                    || paramCmd == "rocketcontent_selectappthemeview"
-                    || paramCmd == "rocketcontent_selectappthemeversion"
-                    || paramCmd == "rocketcontent_selectappthemeversionview"
-                    || paramCmd == "rocketcontent_resetapptheme" 
-                    || paramCmd == "rocketcontent_resetappthemeview"
-                    ) return paramCmd; // Check if we are updating the AppTheme.
-                return "rocketcontent_settings";
-            }
 
             if (_dataObject.PortalContent.PortalId != 0 && !_dataObject.PortalContent.Active) return "";
+
+            if (paramCmd.StartsWith("article"))
+            {
+                if (!UserUtils.IsEditor()) return "";
+            }
+            else
+            {
+                if (!_dataObject.ModuleSettings.HasAppThemeView) // setup module.
+                {
+                    if (paramCmd == "rocketcontent_selectappthemeproject"
+                        || paramCmd == "rocketcontent_selectapptheme"
+                        || paramCmd == "rocketcontent_selectappthemeview"
+                        || paramCmd == "rocketcontent_selectappthemeversion"
+                        || paramCmd == "rocketcontent_selectappthemeversionview"
+                        || paramCmd == "rocketcontent_resetapptheme"
+                        || paramCmd == "rocketcontent_resetappthemeview"
+                        ) return paramCmd; // Check if we are updating the AppTheme.
+                    return "rocketcontent_settings";
+                }
+            }
 
             _dataRef = _dataObject.ModuleSettings.DataRef;
 

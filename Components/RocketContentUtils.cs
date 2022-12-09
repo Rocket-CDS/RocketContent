@@ -17,7 +17,7 @@ namespace RocketContent.Components
         {
             if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
             var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, cultureCode);
-            if (dataObject.AppThemeView == null) return "loadsettings";
+            if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeView.GetTemplate(template);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);
@@ -28,7 +28,7 @@ namespace RocketContent.Components
         {
             if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
             var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, cultureCode);
-            if (dataObject.AppThemeAdmin == null) return "loadsettings";
+            if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);

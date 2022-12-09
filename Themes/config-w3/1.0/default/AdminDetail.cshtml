@@ -9,51 +9,64 @@
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/RocketPortal/App_LocalResources/")
 
 @{
-    var articleData = (ArticleLimpet)Model.List.First();
-    var systemData = new SystemLimpet("rocketcontent");
-    var appThemeSystem = new AppThemeSystemLimpet(systemData.SystemKey);
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var articleRowData = (ArticleRowLimpet)Model.GetDataObject("articlerow");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var appThemeSystem = (AppThemeSystemLimpet)Model.GetDataObject("appthemesystem");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var globalSettings = new SystemGlobalData();
     var info = articleData.Info;
-    var appTheme = (AppThemeLimpet)Model.GetDataObject("apptheme");
+    var enabledlanguages = DNNrocketUtils.GetCultureCodeList();
     var sessionParams = Model.SessionParamsData;
-    var portalData = new PortalLimpet(PortalUtils.GetCurrentPortalId());
 }
 
-<link rel="stylesheet" href="@(portalData.EngineUrlWithProtocol)/DesktopModules/DNNrocket/API/Themes/config-w3/1.0/css/@(portalData.ColorAdminTheme)">
+<div class="w3-row">
+    @foreach (var l in enabledlanguages)
+    {
+        var selectedcolor = "";
+        if (sessionParams.CultureCodeEdit == l)
+        {
+            selectedcolor = "w3-border";
+        }
+        <div class="w3-button w3-padding-small w3-round @(selectedcolor) changeeditlanguage" s-cmd="article_admindetail" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId"}' language="@(l)"><img src="/DesktopModules/DNNrocket/API/images/flags/24/@(l).png" class="w3-round" /></div>
+    }
+</div>
 
-@RenderLanguageSelector("article_admindetail", "{\"dataref\":\"" + articleData.DataRef + "\"}", appThemeSystem, Model)
+<div id="a-articledata" class=" w3-padding">
 
-<div style="padding-top:48px;">
-
-    <div id="a-articledata" class=" w3-padding">
-
-        <div class=" w3-margin-bottom">
-            <div class="w3-bar w3-padding">
-                <span class="w3-button simplisity_click" s-cmd="article_adminlist">@ButtonIcon(ButtonTypes.back)</span>
-                <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
-                <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
-            </div>
-            <div class="w3-row">
-                <div class="w3-half">
-                    <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
-                </div>
+    <div class=" w3-margin-bottom">
+        <div class="w3-bar w3-padding">
+            <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
+            <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
+        </div>
+        <div class="w3-row">
+            <div class="w3-half">
+                <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
             </div>
         </div>
-
-        @RenderTemplate("AdminDetail.cshtml", appTheme, Model)
-
-        @RenderXml(info)
-
     </div>
 
-    <div class="w3-row w3-tiny w3-padding">
-        <span>Id: @articleData.ArticleId</span>
-        <span class="w3-right">AppThemeView: @articleData.AppThemeFolder  v@(articleData.AdminAppThemeFolderVersion)</span>
-    </div>
+    @RenderTemplate("AdminDetail.cshtml", appThemeAdmin, Model)
 
+    @RenderXml(info)
+
+</div>
+
+<div class="w3-row w3-tiny w3-padding">
+    <span>Id: @articleData.ArticleId</span>
 </div>
 
 <script>
     $(document).ready(function () {
-        simplisity_setParamField("remoteedit", 'false');
+        $(document).simplisityStartUp('/Desktopmodules/dnnrocket/api/rocket/action', { systemkey: 'rocketcontent', debug: false });
+
+        $(".changeeditlanguage").click(function () {
+            var l = $(this).attr('language');
+            simplisity_setSessionField('culturecodeedit', l);
+            simplisity_callserver(this);
+        });
+
     });
 </script>
