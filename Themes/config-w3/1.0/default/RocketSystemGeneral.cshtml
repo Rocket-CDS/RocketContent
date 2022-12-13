@@ -2,41 +2,38 @@
 @using RocketContent.Components;
 @using Simplisity;
 @using DNNrocketAPI.Components;
+@using RocketPortal.Components;
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/AppThemes/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
 
 @{
-    var portalContent = (PortalContentLimpet)Model.List.First();
+    var sessionParams = Model.SessionParamsData;
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var systemData = (SystemLimpet)Model.GetDataObject("systemdata");
+    var portalContent = (PortalContentLimpet)Model.GetDataObject("portalcontent");
     var info = portalContent.Info;
-    var systemData = new SystemLimpet("rocketcontent");
 }
 
 <div id="generaldata" class="w3-container">
 
     <div class="w3-row">
-        <div class="w3-half">
-            <div class="w3-half">
-                <div class="w3-row w3-padding">
-                    <label class="">@ResourceKey("RC.maxarticles")</label>
-                    @TextBox(info, "genxml/maxarticles", "class='w3-input w3-border' style='width:120px;' ", "100", false)
-                </div>
-            </div>
-            <div class="w3-half">
-                <div class="w3-row w3-padding">
-                    <label class="">@ResourceKey("DNNrocket.active")</label>
-                    @CheckBox(info, "genxml/active", "", "class='w3-input w3-border w3-check'", true)
-                </div>
-                <div class="w3-row w3-padding">
-                    <label class="">@ResourceKey("DNNrocket.emailon")</label>
-                    @CheckBox(info, "genxml/emailon", "", "class='w3-input w3-border w3-check'", true)
-                </div>
-                <div class="w3-row w3-padding">
-                    <label class="">Debug Mode</label>
-                    @CheckBox(info, "genxml/debugmode", "", "class='w3-input w3-border w3-check'", false)
-                </div>
-            </div>
+        <div class="w3-row w3-padding">
+            <label class="">@ResourceKey("DNNrocket.active")</label>
+            @CheckBox(info, "genxml/active", "", "class='w3-input w3-border w3-check'", true)
+        </div>
+        <div class="w3-row w3-padding">
+            <label class="">@ResourceKey("DNNrocket.emailon")</label>
+            @CheckBox(info, "genxml/emailon", "", "class='w3-input w3-border w3-check'", true)
+        </div>
+        <div class="w3-row w3-padding">
+            <label class="">Debug Mode</label>
+            @CheckBox(info, "genxml/debugmode", "", "class='w3-input w3-border w3-check'", false)
         </div>
     </div>
 

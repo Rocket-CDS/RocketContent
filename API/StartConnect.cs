@@ -61,10 +61,7 @@ namespace RocketContent.API
                     strOut = RenderSystemTemplate("Dashboard.cshtml");
                     break;
 
-
-                case "article_admindetail":
-                    strOut = AdminDetailDisplay();
-                    break;
+                    
                 case "article_admincreate":
                     strOut = AdminCreateArticle();
                     break;
@@ -74,6 +71,9 @@ namespace RocketContent.API
                 case "article_selectapptheme":
                     strOut = AdminSelectAppThemeDisplay();
                     break;
+                case "article_admindetail":
+                    strOut = GetAdminArticle();
+                    break;
                 case "article_adminsave":
                     strOut = SaveArticleRow();
                     break;
@@ -82,9 +82,7 @@ namespace RocketContent.API
                     break;
 
 
-
-
-
+                    
                 case "remote_sortrows":
                     strOut = SortRows();
                     break;
@@ -111,7 +109,7 @@ namespace RocketContent.API
                     break;
                 case "remote_edit":
                     if (_sessionParams.Get("remoteedit") == "false")
-                        strOut = AdminDetailDisplay();
+                        strOut = AdminDetailDisplay(GetActiveArticle(_dataRef));
                     else
                         strOut = EditContent();
                     break;
@@ -293,52 +291,27 @@ namespace RocketContent.API
             _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _rowKey, _sessionParams.CultureCodeEdit);
 
             if (_dataObject.PortalContent.PortalId != 0 && !_dataObject.PortalContent.Active) return "";
-
-            if (paramCmd.StartsWith("article"))
-            {
-                if (!UserUtils.IsEditor()) return "";
-            }
-            else
-            {
-                if (!_dataObject.ModuleSettings.HasAppThemeView) // setup module.
-                {
-                    if (paramCmd == "rocketcontent_selectappthemeproject"
-                        || paramCmd == "rocketcontent_selectapptheme"
-                        || paramCmd == "rocketcontent_selectappthemeview"
-                        || paramCmd == "rocketcontent_selectappthemeversion"
-                        || paramCmd == "rocketcontent_selectappthemeversionview"
-                        || paramCmd == "rocketcontent_resetapptheme"
-                        || paramCmd == "rocketcontent_resetappthemeview"
-                        ) return paramCmd; // Check if we are updating the AppTheme.
-                    return "rocketcontent_settings";
-                }
-            }
-
             _dataRef = _dataObject.ModuleSettings.DataRef;
 
-            if (_dataRef == "") 
+            if (paramCmd.StartsWith("remote_public")) return paramCmd;
+
+            // Check if we have an AppTheme
+            if (_dataObject.AppThemeView == null)
             {
-                // If we are editing from the AdminPanel, we will not have a moduleRef, only a dataref.
-                _dataRef = _paramInfo.GetXmlProperty("genxml/hidden/dataref");
-                if (_dataRef == "") _dataRef = _paramInfo.GetXmlProperty("genxml/remote/dataref");
+                if (paramCmd == "rocketcontent_selectappthemeproject" 
+                    || paramCmd == "rocketcontent_selectapptheme"
+                    || paramCmd == "rocketcontent_selectappthemeview"
+                    || paramCmd == "rocketcontent_selectappthemeversion"
+                    || paramCmd == "rocketcontent_selectappthemeversionview"
+                    || paramCmd == "rocketcontent_resetapptheme" 
+                    || paramCmd == "rocketcontent_resetappthemeview"
+                    || paramCmd.StartsWith("rocketsystem_")
+                    ) return paramCmd; // Check if we are updating the AppTheme.
+                return "rocketcontent_settings";
             }
 
             var securityData = new SecurityLimpet(_dataObject.PortalId, _dataObject.SystemKey, _rocketInterface, -1, -1);
-
-            if (!paramCmd.StartsWith("remote_public"))
-            {
-                if (paramCmd.StartsWith("remote_"))
-                {
-                    var sk = _paramInfo.GetXmlProperty("genxml/remote/securitykeyedit");
-                    if (!UserUtils.IsEditor() && _dataObject.PortalData.SecurityKeyEdit != sk) paramCmd = "";
-                }
-                else
-                {
-                    paramCmd = securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
-                }
-            }
-
-            return paramCmd;
+            return securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
         }
     }
 

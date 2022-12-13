@@ -9,17 +9,16 @@
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketCatalog/App_LocalResources/")
 
 @{
-    var portalContent = (PortalContentLimpet)Model.List.First();
-    var info = portalContent.Info;
+    var sessionParams = Model.SessionParamsData;
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeSystem = (AppThemeSystemLimpet)Model.GetDataObject("appthemesystem");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
     var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
     var systemData = (SystemLimpet)Model.GetDataObject("systemdata");
-    var appThemeSystem = (AppThemeSystemLimpet)Model.GetDataObject("appthemesystem");
-    var appThemeContent = (AppThemeSystemLimpet)Model.GetDataObject("appthemecontent");
-    DNNrocketUtils.SetCurrentCulture(DNNrocketUtils.GetEditCulture());
-    var enabledlanguages = DNNrocketUtils.GetCultureCodeList();
-
-    var defaultsData = new DefaultsLimpet();
-
+    var portalContent = (PortalContentLimpet)Model.GetDataObject("portalcontent");
+    var info = portalContent.Info;
 }
 
 <div id="a-setupbuttons" class="w3-bar" style="display:none;">
@@ -32,7 +31,7 @@
 </div>
 
 <div id="servicesettings" class="w3-row w3-margin-top">
-    @RenderTemplate("RocketSystemGeneral.cshtml", appThemeContent, Model, true)
+    @RenderTemplate("RocketSystemGeneral.cshtml", appThemeSystem, Model, true)
 </div>
 
 
