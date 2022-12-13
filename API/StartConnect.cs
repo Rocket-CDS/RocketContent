@@ -61,7 +61,10 @@ namespace RocketContent.API
                     strOut = RenderSystemTemplate("Dashboard.cshtml");
                     break;
 
-                    
+
+                case "article_admindetail":
+                    strOut = AdminDetailDisplay();
+                    break;
                 case "article_admincreate":
                     strOut = AdminCreateArticle();
                     break;
@@ -70,9 +73,6 @@ namespace RocketContent.API
                     break;
                 case "article_selectapptheme":
                     strOut = AdminSelectAppThemeDisplay();
-                    break;
-                case "article_admindetail":
-                    strOut = GetAdminArticle();
                     break;
                 case "article_adminsave":
                     strOut = SaveArticleRow();
@@ -109,7 +109,7 @@ namespace RocketContent.API
                     break;
                 case "remote_edit":
                     if (_sessionParams.Get("remoteedit") == "false")
-                        strOut = AdminDetailDisplay(GetActiveArticle(_dataRef));
+                        strOut = AdminDetailDisplay();
                     else
                         strOut = EditContent();
                     break;

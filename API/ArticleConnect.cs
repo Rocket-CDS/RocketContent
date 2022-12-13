@@ -44,7 +44,7 @@ namespace RocketContent.API
 
                 // Build new sorted list
                 var rowInfoDict = new Dictionary<string, SimplisityInfo>();
-                foreach (var r in articleData.GetRowList()) 
+                foreach (var r in articleData.GetRowList())
                 {
                     var key = r.GetXmlProperty("genxml/config/rowkey");
                     rowInfoDict.Add(key, r);
@@ -296,7 +296,7 @@ namespace RocketContent.API
                 }
             }
 
-        }        
+        }
         public String GetAppThemeList()
         {
             return "GetAppThemeList()";
