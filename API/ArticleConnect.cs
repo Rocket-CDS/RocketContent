@@ -23,7 +23,6 @@ namespace RocketContent.API
         {
             var articleData = _dataObject.ArticleData;
             _rowKey = articleData.AddRow();
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
         }
         public string SortRows()
@@ -69,8 +68,6 @@ namespace RocketContent.API
                 //a.RebuildLangIndex(); // rebuild the index record [Essential to get the correct sort order]
             }
 
-
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             var articleData2 = GetActiveArticle(_moduleRef);
             _dataObject.SetDataObject("articledata", articleData2);
             return AdminDetailDisplay();
@@ -85,7 +82,6 @@ namespace RocketContent.API
             _dataObject.SetDataObject("articledata", articleData2);
 
             _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
         }
         public string SaveArticleRow()
@@ -128,7 +124,6 @@ namespace RocketContent.API
                 }
             }
 
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
         }
         public string AddArticleDoc()
@@ -156,7 +151,6 @@ namespace RocketContent.API
                 }
             }
 
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
         }
         public string AddArticleListItem()
@@ -171,7 +165,6 @@ namespace RocketContent.API
                 articleRow.Info.AddListItem(listName, new SimplisityInfo());
                 articleData.UpdateRow(_rowKey, articleRow.Info);
             }
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
         }
         public string AddArticleLink()
@@ -185,7 +178,6 @@ namespace RocketContent.API
                 articleRow.AddLink();
                 articleData.UpdateRow(_rowKey, articleRow.Info);
             }
-            if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
         }
         public String GetAdminDeleteArticle()
@@ -196,14 +188,14 @@ namespace RocketContent.API
         }
         public String AdminDetailDisplay()
         {
-            // rowKey can come from the sessionParams or paramInfo.  (Because of no rowkey on the language change)
-            var articleData = _dataObject.ArticleData;
-            var articleRow = articleData.GetRow(0);
-            if (_rowKey != "") articleRow = articleData.GetRow(_rowKey);
-            if (articleRow == null) articleRow = articleData.GetRow(0);  // row removed and still in sessionparams
+            // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
+            var articleRow = _dataObject.ArticleData.GetRow(0);
+            if (_rowKey != "") articleRow = _dataObject.ArticleData.GetRow(_rowKey);
+            if (articleRow == null) articleRow = _dataObject.ArticleData.GetRow(0);  // row removed and still in sessionparams
+
             var razorTempl = _dataObject.AppThemeSystem.GetTemplate("admindetail.cshtml");
             _dataObject.SetDataObject("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }

@@ -70,18 +70,6 @@ namespace RocketContent.API
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
-        private string EditContent()
-        {
-            // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
-            var articleRow = _dataObject.ArticleData.GetRow(0);
-            if (_rowKey != "") articleRow = _dataObject.ArticleData.GetRow(_rowKey);
-            if (articleRow == null) articleRow = _dataObject.ArticleData.GetRow(0);  // row removed and still in sessionparams
-            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("remotedetail.cshtml");
-            _dataObject.SetDataObject("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
         private string MessageDisplay(string msgKey)
         {
             _dataObject.SetSetting("msgkey", msgKey);

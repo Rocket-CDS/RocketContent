@@ -79,29 +79,26 @@ namespace RocketContent.API
                 case "article_addlink":
                     strOut = AddArticleLink();
                     break;
+                case "article_addrow":
+                    strOut = AddRow();
+                    break;
+                case "article_editrow":
+                    strOut = AdminDetailDisplay();
+                    break;
+                case "article_removerow":
+                    strOut = RemoveRow();
+                    break;
 
 
 
                 case "remote_sortrows":
                     strOut = SortRows();
                     break;
-                case "remote_removerow":
-                    strOut = RemoveRow();
-                    break;
-                case "remote_addrow":
-                    strOut = AddRow();
-                    break;
                 case "remote_addlistitem":
                     strOut = AddArticleListItem();
                     break;
                 case "remote_editoption":
                     strOut = "true";
-                    break;
-                case "remote_edit":
-                    if (_sessionParams.Get("remoteedit") == "false")
-                        strOut = AdminDetailDisplay();
-                    else
-                        strOut = EditContent();
                     break;
                 case "remote_editsave":
                     strOut = SaveArticleRow();

@@ -51,54 +51,52 @@
     </command>
 	  <command>
 		  <cmd>article_addimage</cmd>
-		  <action>false</action>
+		  <action>true</action>
 	  </command>
 	  <command>
 		  <cmd>article_adddoc</cmd>
-		  <action>false</action>
+		  <action>true</action>
 	  </command>
 	  <command>
 		  <cmd>article_addlink</cmd>
-		  <action>false</action>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>article_addrow</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>article_editrow</cmd>
+		  <action>true</action>
+	  </command>
+	  <command>
+		  <cmd>article_removerow</cmd>
+		  <action>true</action>
 	  </command>
 
 
 
 	  <command>
       <cmd>remote_addlistitem</cmd>
-      <action>false</action>
+      <action>true</action>
     </command>
     <command>
       <cmd>remote_sortrows</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>remote_removerow</cmd>
-      <action>false</action>
-    </command>    
-    <command>
-      <cmd>remote_addrow</cmd>
-      <action>false</action>
+      <action>true</action>
     </command>
     <command>
       <cmd>remote_editoption</cmd>
-      <action>false</action>
+      <action>true</action>
     </command>    
     <command>
-      <cmd>remote_edit</cmd>
-      <action>false</action>
-    </command>
-    <command>
       <cmd>remote_editsave</cmd>
-      <action>false</action>
+      <action>true</action>
     </command>   
 
     <command>
       <cmd>rocketcontent_settings</cmd>
       <action>true</action>
     </command>
-
-
 	  <command>
 		  <cmd>rocketcontent_savesettings</cmd>
 		  <action>true</action>
