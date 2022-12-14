@@ -14,12 +14,20 @@ namespace RocketContent.Components
     {
         private Dictionary<string, object> _dataObjects;
         private Dictionary<string, string> _passSettings;
-        public DataObjectLimpet(int portalid, string moduleRef, string rowKey, string cultureCode)
+        public DataObjectLimpet(int portalid, string moduleRef, string rowKey, SessionParams sessionParams)
+        {
+            Populate(portalid, moduleRef, rowKey, sessionParams.CultureCode, sessionParams.ModuleId, sessionParams.TabId);
+        }
+        public DataObjectLimpet(int portalid, string moduleRef, string rowKey, string cultureCode, int moduleId, int tabId)
+        {
+            Populate(portalid, moduleRef, rowKey, cultureCode, moduleId, tabId);
+        }
+        public void Populate(int portalid, string moduleRef, string rowKey, string cultureCode, int moduleId, int tabId)
         {
             _passSettings = new Dictionary<string, string>();
             _dataObjects = new Dictionary<string, object>();
             var articleData = new ArticleLimpet(portalid, moduleRef, cultureCode);
-            SetDataObject("modulesettings", new ModuleContentLimpet(portalid, moduleRef));
+            SetDataObject("modulesettings", new ModuleContentLimpet(portalid, moduleRef, moduleId, tabId));
             SetDataObject("appthemesystem", new AppThemeSystemLimpet(portalid, SystemKey));
             SetDataObject("portalcontent", new PortalContentLimpet(portalid, cultureCode));
             SetDataObject("portaldata", new PortalLimpet(portalid));

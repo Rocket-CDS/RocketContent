@@ -16,10 +16,11 @@ namespace RocketContent.API
         private SimplisityInfo _paramInfo;
         private RocketInterface _rocketInterface;
         private SessionParams _sessionParams;
-        private string _dataRef;
         private string _moduleRef;
         private string _rowKey;
         private DataObjectLimpet _dataObject;
+        private int _moduleId;
+        private int _tabId;
 
         public override Dictionary<string, object> ProcessCommand(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
@@ -32,9 +33,6 @@ namespace RocketContent.API
 
             switch (paramCmd)
             {
-                case "rocketcontent_adminpanel":
-                    strOut = RenderSystemTemplate("AdminPanel.cshtml");
-                    break;
 
                 case "rocketsystem_edit":
                     strOut = RocketSystem();
@@ -45,9 +43,6 @@ namespace RocketContent.API
                 case "rocketsystem_delete":
                     strOut = RocketSystemDelete();
                     break;
-                case "rocketsystem_adminpanelheader":
-                    strOut = RenderSystemTemplate("AdminPanelHeader.cshtml.cshtml");
-                    break;
                 case "rocketsystem_save":
                     strOut = RocketSystemSave();
                     break;
@@ -55,11 +50,6 @@ namespace RocketContent.API
                     strOut = ReloadPage();
                     break;
                 
-
-
-                case "dashboard_get":
-                    strOut = RenderSystemTemplate("Dashboard.cshtml");
-                    break;
 
 
                 case "article_admindetail":
@@ -170,7 +160,7 @@ namespace RocketContent.API
                     break;
 
             }
-            if (paramCmd == "remote_publicview" || paramCmd == "remote_publicmenu")
+            if (paramCmd == "remote_publicview")
             {
                 rtnDic.Add("remote-firstheader", GetPublicArticleBeforeHeader());
                 rtnDic.Add("remote-lastheader", GetPublicArticleHeader());
@@ -185,79 +175,6 @@ namespace RocketContent.API
             return rtnDic;
 
         }
-        private string RenderSystemTemplate(string templateName)
-        {
-            var razorTempl = _dataObject.AppThemeSystem.GetTemplate(templateName);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
-
-        private string RocketSystemSave()
-        {
-            var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid"); // we may have passed selection
-            if (portalId >= 0)
-            {
-                _dataObject.PortalContent.Save(_postInfo);
-                _dataObject.PortalData.Record.SetXmlProperty("genxml/systems/" + _dataObject.SystemKey + "setup", "True");
-                _dataObject.PortalData.Update();
-                return RocketSystem();
-            }
-            return "Invalid PortalId";
-        }
-        private String RocketSystem()
-        {
-            return RenderSystemTemplate("RocketSystem.cshtml");
-        }
-        private String RocketSystemInit()
-        {
-            var newportalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/newportalid");
-            if (newportalId > 0)
-            {
-                var portalContent = new PortalContentLimpet(newportalId, _sessionParams.CultureCodeEdit);
-                portalContent.Validate();
-                portalContent.Update();
-                _dataObject.SetDataObject("portalcontent", portalContent);
-            }
-            return "";
-        }
-        private String RocketSystemDelete()
-        {
-            var portalId = _paramInfo.GetXmlPropertyInt("genxml/hidden/portalid");
-            if (portalId > 0)
-            {
-                _dataObject.PortalContent.Delete();
-            }
-            return "";
-        }
-        private string ReloadPage()
-        {
-            // user does not have access, logoff
-            UserUtils.SignOut();
-
-            var portalAppThemeSystem = new AppThemeDNNrocketLimpet("rocketportal");
-            var razorTempl = portalAppThemeSystem.GetTemplate("Reload.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, null, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
-        private string EditContent()
-        {
-            // rowKey can come from the sessionParams or paramInfo.  (Because on no rowkey on the language change)
-            var articleRow = _dataObject.ArticleData.GetRow(0);
-            if (_rowKey != "") articleRow = _dataObject.ArticleData.GetRow(_rowKey);
-            if (articleRow == null) articleRow = _dataObject.ArticleData.GetRow(0);  // row removed and still in sessionparams
-            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("remotedetail.cshtml");
-            _dataObject.SetDataObject("articlerow", articleRow);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, _dataObject.ArticleData, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, true);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
-        }
-        private string MessageDisplay(string msgKey)
-        {
-            _dataObject.SetSetting("msgkey", msgKey);
-            return RenderSystemTemplate("MessageDisplay.cshtml");
-        }
         public string InitCmd(string paramCmd, SimplisityInfo systemInfo, SimplisityInfo interfaceInfo, SimplisityInfo postInfo, SimplisityInfo paramInfo, string langRequired = "")
         {
             _postInfo = postInfo;
@@ -270,10 +187,13 @@ namespace RocketContent.API
             _sessionParams = new SessionParams(_paramInfo);
 
             _moduleRef = _paramInfo.GetXmlProperty("genxml/hidden/moduleref");
-            if (_moduleRef == "") _moduleRef = _paramInfo.GetXmlProperty("genxml/remote/moduleref");
+            _tabId = _paramInfo.GetXmlPropertyInt("genxml/hidden/tabid");
+            _moduleId = _paramInfo.GetXmlPropertyInt("genxml/hidden/moduleid");
             _rowKey = _postInfo.GetXmlProperty("genxml/config/rowkey");
             if (_rowKey == "") _rowKey = _paramInfo.GetXmlProperty("genxml/hidden/rowkey");
             _sessionParams.ModuleRef = _moduleRef; // we need this on the module view template, to stop clashes in modules that use the same dataref. 
+            _sessionParams.TabId = _tabId;
+            _sessionParams.ModuleId = _moduleId;
 
             // use a selectkey.  the selectkey is the same as the rowkey.
             // we can not duplicate ID on simplisity_click in the s-fields, when the id is on the form. 
@@ -288,29 +208,19 @@ namespace RocketContent.API
             DNNrocketUtils.SetCurrentCulture(_sessionParams.CultureCode);
             DNNrocketUtils.SetEditCulture(_sessionParams.CultureCodeEdit);
 
-            _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _rowKey, _sessionParams.CultureCodeEdit);
+            _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _rowKey, _sessionParams);
 
             if (_dataObject.PortalContent.PortalId != 0 && !_dataObject.PortalContent.Active) return "";
-            _dataRef = _dataObject.ModuleSettings.DataRef;
 
             if (paramCmd.StartsWith("remote_public")) return paramCmd;
-
-            // Check if we have an AppTheme
-            if (_dataObject.AppThemeView == null)
+            
+            if (!_dataObject.ModuleSettings.HasAppThemeAdmin) // Check if we have an AppTheme
             {
-                if (paramCmd == "rocketcontent_selectappthemeproject" 
-                    || paramCmd == "rocketcontent_selectapptheme"
-                    || paramCmd == "rocketcontent_selectappthemeview"
-                    || paramCmd == "rocketcontent_selectappthemeversion"
-                    || paramCmd == "rocketcontent_selectappthemeversionview"
-                    || paramCmd == "rocketcontent_resetapptheme" 
-                    || paramCmd == "rocketcontent_resetappthemeview"
-                    || paramCmd.StartsWith("rocketsystem_")
-                    ) return paramCmd; // Check if we are updating the AppTheme.
+                if (paramCmd.StartsWith("rocketcontent_") || paramCmd.StartsWith("rocketsystem_")) return paramCmd;
                 return "rocketcontent_settings";
             }
 
-            var securityData = new SecurityLimpet(_dataObject.PortalId, _dataObject.SystemKey, _rocketInterface, -1, -1);
+            var securityData = new SecurityLimpet(_dataObject.PortalId, _dataObject.SystemKey, _rocketInterface, _sessionParams.TabId, _sessionParams.ModuleId);
             return securityData.HasSecurityAccess(paramCmd, "rocketsystem_login");
         }
     }

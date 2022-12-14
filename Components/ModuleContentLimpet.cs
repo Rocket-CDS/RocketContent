@@ -14,7 +14,7 @@ namespace DNNrocketAPI.Components
         private DNNrocketController _objCtrl;
         private const string _tableName = "RocketContent";
         private const string _entityTypeCode = "RMODSETTINGS";
-        public ModuleContentLimpet(int portalId, string moduleRef, int moduleid = -1)
+        public ModuleContentLimpet(int portalId, string moduleRef, int moduleid = -1, int tabid = -1)
         {
             _objCtrl = new DNNrocketController();
 
@@ -24,10 +24,11 @@ namespace DNNrocketAPI.Components
                 Record = new SimplisityRecord();
                 Record.PortalId = portalId;
                 Record.GUIDKey = moduleRef;
-                Record.ModuleId = moduleid;
                 Record.TypeCode = _entityTypeCode;
             }
-
+            // Outside initial setup, incase of changes in the CMS.
+            Record.ModuleId = moduleid;
+            TabId = tabid;
         }
         public int Save(SimplisityInfo paramInfo)
         {
@@ -54,6 +55,7 @@ namespace DNNrocketAPI.Components
         public int SortOrder { get { return Record.SortOrder; } set { Record.SortOrder = value; } }
         public int PortalId { get { return Record.PortalId; } }
         public bool Exists { get { if (Record.ItemID <= 0) { return false; } else { return true; }; } }
+        public int TabId { get { return Record.GetXmlPropertyInt("genxml/data/tabid"); } set { Record.SetXmlProperty("genxml/data/tabid", value.ToString()); } }
         public string AppThemeAdminFolder { get { return Record.GetXmlProperty("genxml/data/appthemeadminfolder"); } set { Record.SetXmlProperty("genxml/data/appthemeadminfolder", value); } }
         public bool HasAppThemeAdmin { get { if (Record.GetXmlProperty("genxml/data/appthemeadminfolder") == "") return false; else return true; } }
         public string AppThemeAdminVersion { get { return Record.GetXmlProperty("genxml/data/appthemeadminversion"); } set { Record.SetXmlProperty("genxml/data/appthemeadminversion", value); } }

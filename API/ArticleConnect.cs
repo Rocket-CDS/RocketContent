@@ -20,7 +20,7 @@ namespace RocketContent.API
         }
         public string AddRow()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             _rowKey = articleData.AddRow();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
@@ -40,7 +40,7 @@ namespace RocketContent.API
             // we need to sort ALL langauges. 
             foreach (var cultureCode in DNNrocketUtils.GetCultureCodeList(_dataObject.PortalId))
             {
-                var articleData = new ArticleLimpet(_dataObject.PortalId, _dataRef, cultureCode);
+                var articleData = new ArticleLimpet(_dataObject.PortalId, _moduleRef, cultureCode);
 
                 // Build new sorted list
                 var rowInfoDict = new Dictionary<string, SimplisityInfo>();
@@ -70,17 +70,17 @@ namespace RocketContent.API
 
 
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
-            var articleData2 = GetActiveArticle(_dataRef);
+            var articleData2 = GetActiveArticle(_moduleRef);
             _dataObject.SetDataObject("articledata", articleData2);
             return AdminDetailDisplay();
         }
         public string RemoveRow()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.RemoveRow(_rowKey);
 
             // reload so we always have 1 row.
-            articleData = GetActiveArticle(_dataRef);
+            articleData = GetActiveArticle(_moduleRef);
 
             _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
@@ -96,11 +96,11 @@ namespace RocketContent.API
         public void DeleteArticle()
         {
             CacheUtils.ClearAllCache("article");
-            GetActiveArticle(_dataRef).Delete();
+            GetActiveArticle(_moduleRef).Delete();
         }
         public string AddArticleImage()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
@@ -131,7 +131,7 @@ namespace RocketContent.API
         }
         public string AddArticleDoc()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
@@ -159,7 +159,7 @@ namespace RocketContent.API
         }
         public string AddArticleListItem()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             var articleRow = articleData.GetRow(_rowKey);
@@ -174,7 +174,7 @@ namespace RocketContent.API
         }
         public string AddArticleLink()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.UpdateRow(_rowKey, _postInfo);
 
             var articleRow = articleData.GetRow(_rowKey);
@@ -188,7 +188,7 @@ namespace RocketContent.API
         }
         public String GetAdminDeleteArticle()
         {
-            var articleData = GetActiveArticle(_dataRef);
+            var articleData = GetActiveArticle(_moduleRef);
             articleData.Delete();
             return AdminListDisplay();
         }

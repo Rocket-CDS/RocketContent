@@ -20,6 +20,7 @@
     var info = articleData.Info;
     var enabledlanguages = DNNrocketUtils.GetCultureCodeList();
     var sessionParams = Model.SessionParamsData;
+    var rtnUrl = DNNrocketUtils.NavigateURL(sessionParams.TabId,  new string[0]);
 }
 
 <div class="w3-row">
@@ -38,8 +39,30 @@
 
     <div class=" w3-margin-bottom">
         <div class="w3-bar w3-padding">
-            <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.save)</span>
-            <span class="w3-padding w3-button w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"dataref":"@(articleData.DataRef)"}'>@ButtonText(ButtonTypes.delete)</span>
+            <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","tabid":"@moduleData.TabId"}'>
+                <span class="w3-hide-small">
+                    @ButtonText(ButtonTypes.save)
+                </span>
+                <span class="w3-hide-medium w3-hide-large">
+                    @ButtonIcon(ButtonTypes.save)
+                </span>
+            </span>
+            <span class="w3-padding w3-button w3-margin-left w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","tabid":"@moduleData.TabId"'>
+                <span class="w3-hide-small">
+                    @ButtonText(ButtonTypes.delete)
+                </span>
+                <span class="w3-hide-medium w3-hide-large">
+                    @ButtonIcon(ButtonTypes.delete)
+                </span>
+            </span>
+            <a href="@rtnUrl" class="w3-padding w3-margin-left w3-button w3-black w3-right" style="text-decoration:none;">
+                <span class="w3-hide-small">
+                    @ButtonText(ButtonTypes.cancel)
+                </span>
+                <span class="w3-hide-medium w3-hide-large">
+                    @ButtonIcon(ButtonTypes.cancel)
+                </span>                
+            </a>
         </div>
         <div class="w3-row">
             <div class="w3-half">

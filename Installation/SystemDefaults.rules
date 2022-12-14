@@ -2,17 +2,11 @@
 <root>
 
   <commands>
-
+   
     <command>
-      <cmd>rocketcontent_adminpanel</cmd>
-      <action>true</action>
-    </command>
-
-    
-    <command>
-		  <cmd>rocketsystem_edit</cmd>
-		  <action>true</action>
-	  </command>
+        <cmd>rocketsystem_edit</cmd>
+        <action>true</action>
+	</command>
     <command>
       <cmd>rocketsystem_init</cmd>
       <action>true</action>
@@ -30,10 +24,6 @@
       <action>false</action>
     </command>
 
-    <command>
-      <cmd>dashboard_get</cmd>
-      <action>true</action>
-    </command>
 
     <command>
       <cmd>article_adminlist</cmd>

@@ -13,10 +13,9 @@ namespace RocketContent.Components
     {
         public const string ControlPath = "/DesktopModules/DNNrocketModules/RocketContent";
         public const string ResourcePath = "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources";
-        public static string DisplayView(int portalId, string moduleRef, string rowKey, string template = "view.cshtml", string cultureCode = "")
+        public static string DisplayView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "view.cshtml")
         {
-            if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, cultureCode);
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam);
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeView.GetTemplate(template);
@@ -24,10 +23,9 @@ namespace RocketContent.Components
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
-        public static string DisplayAdminView(int portalId, string moduleRef, string rowKey, string template = "AdminDetail.cshtml", string cultureCode = "")
+        public static string DisplayAdminView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "AdminDetail.cshtml")
         {
-            if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, cultureCode);
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam);
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template);
@@ -35,10 +33,9 @@ namespace RocketContent.Components
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
-        public static string DisplaySystemView(int portalId, string moduleRef, string template, string cultureCode = "")
+        public static string DisplaySystemView(int portalId, string moduleRef, SessionParams sessionParam, string template)
         {
-            if (cultureCode == "") cultureCode = DNNrocketUtils.GetCurrentCulture();
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, "", cultureCode);
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, "", sessionParam);
             if (dataObject.AppThemeSystem == null) return "No System View";
 
             var razorTempl = dataObject.AppThemeSystem.GetTemplate(template);
