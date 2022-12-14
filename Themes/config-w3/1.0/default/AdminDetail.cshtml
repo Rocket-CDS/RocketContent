@@ -64,21 +64,22 @@
                 </span>                
             </a>
         </div>
-        <div class="w3-row">
-            <div class="w3-half">
-                <span class="w3-right w3-padding w3-light-grey w3-border">@articleData.DataRef</span>
-            </div>
-        </div>
     </div>
 
     @RenderTemplate("AdminDetail.cshtml", appThemeAdmin, Model)
 
-    @RenderXml(info)
+    @if (UserUtils.IsAdministrator())
+    {
+        @RenderXml(info)
+    }
 
 </div>
 
 <div class="w3-row w3-tiny w3-padding">
     <span>Id: @articleData.ArticleId</span>
+    <span>ModuleId: @moduleData.ModuleId</span>
+    <span>TabId: @moduleData.TabId</span>
+    <span>Ref: @articleData.DataRef</span>
 </div>
 
 <script>

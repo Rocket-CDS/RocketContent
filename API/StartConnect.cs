@@ -70,9 +70,18 @@ namespace RocketContent.API
                 case "article_admindelete":
                     strOut = GetAdminDeleteArticle();
                     break;
+                case "article_addimage":
+                    strOut = AddArticleImage();
+                    break;
+                case "article_adddoc":
+                    strOut = AddArticleDoc();
+                    break;
+                case "article_addlink":
+                    strOut = AddArticleLink();
+                    break;
 
 
-                    
+
                 case "remote_sortrows":
                     strOut = SortRows();
                     break;
@@ -84,15 +93,6 @@ namespace RocketContent.API
                     break;
                 case "remote_addlistitem":
                     strOut = AddArticleListItem();
-                    break;
-                case "remote_addlink":
-                    strOut = AddArticleLink();
-                    break;
-                case "remote_adddoc":
-                    strOut = AddArticleDoc();
-                    break;
-                case "remote_addimage":
-                    strOut = AddArticleImage();
                     break;
                 case "remote_editoption":
                     strOut = "true";

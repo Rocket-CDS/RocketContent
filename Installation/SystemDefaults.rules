@@ -48,11 +48,23 @@
     <command>
       <cmd>article_admindelete</cmd>
       <action>true</action>
-    </command>    
+    </command>
+	  <command>
+		  <cmd>article_addimage</cmd>
+		  <action>false</action>
+	  </command>
+	  <command>
+		  <cmd>article_adddoc</cmd>
+		  <action>false</action>
+	  </command>
+	  <command>
+		  <cmd>article_addlink</cmd>
+		  <action>false</action>
+	  </command>
 
 
 
-    <command>
+	  <command>
       <cmd>remote_addlistitem</cmd>
       <action>false</action>
     </command>
@@ -66,18 +78,6 @@
     </command>    
     <command>
       <cmd>remote_addrow</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>remote_addlink</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>remote_adddoc</cmd>
-      <action>false</action>
-    </command>
-    <command>
-      <cmd>remote_addimage</cmd>
       <action>false</action>
     </command>
     <command>

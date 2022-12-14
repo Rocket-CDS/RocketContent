@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace RocketContent.API
@@ -20,7 +21,7 @@ namespace RocketContent.API
         }
         public string AddRow()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             _rowKey = articleData.AddRow();
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
             return AdminDetailDisplay();
@@ -76,11 +77,12 @@ namespace RocketContent.API
         }
         public string RemoveRow()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             articleData.RemoveRow(_rowKey);
 
             // reload so we always have 1 row.
-            articleData = GetActiveArticle(_moduleRef);
+            var articleData2 = GetActiveArticle(_moduleRef);
+            _dataObject.SetDataObject("articledata", articleData2);
 
             _rowKey = articleData.GetRow(0).Info.GetXmlProperty("genxml/config/rowkey");
             if (_sessionParams.Get("remoteedit") == "true") return EditContent();
@@ -96,11 +98,11 @@ namespace RocketContent.API
         public void DeleteArticle()
         {
             CacheUtils.ClearAllCache("article");
-            GetActiveArticle(_moduleRef).Delete();
+            _dataObject.ArticleData.Delete();
         }
         public string AddArticleImage()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
@@ -131,7 +133,7 @@ namespace RocketContent.API
         }
         public string AddArticleDoc()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             articleData.UpdateRow(_rowKey, _postInfo);
 
             // Add new image if found in postInfo
@@ -159,7 +161,7 @@ namespace RocketContent.API
         }
         public string AddArticleListItem()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             articleData.UpdateRow(_rowKey, _postInfo);
 
             var articleRow = articleData.GetRow(_rowKey);
@@ -174,7 +176,7 @@ namespace RocketContent.API
         }
         public string AddArticleLink()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             articleData.UpdateRow(_rowKey, _postInfo);
 
             var articleRow = articleData.GetRow(_rowKey);
@@ -188,7 +190,7 @@ namespace RocketContent.API
         }
         public String GetAdminDeleteArticle()
         {
-            var articleData = GetActiveArticle(_moduleRef);
+            var articleData = _dataObject.ArticleData;
             articleData.Delete();
             return AdminListDisplay();
         }
