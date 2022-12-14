@@ -153,6 +153,10 @@ namespace RocketContent.API
 
             return AdminDetailDisplay();
         }
+        /// <summary>
+        /// Add a listitem to a row item.
+        /// </summary>
+        /// <returns></returns>
         public string AddArticleListItem()
         {
             var articleData = _dataObject.ArticleData;

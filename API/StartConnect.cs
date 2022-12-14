@@ -88,20 +88,11 @@ namespace RocketContent.API
                 case "article_removerow":
                     strOut = RemoveRow();
                     break;
-
-
-
-                case "remote_sortrows":
+                case "article_sortrows":
                     strOut = SortRows();
                     break;
-                case "remote_addlistitem":
+                case "article_addlistitem":
                     strOut = AddArticleListItem();
-                    break;
-                case "remote_editoption":
-                    strOut = "true";
-                    break;
-                case "remote_editsave":
-                    strOut = SaveArticleRow();
                     break;
 
 

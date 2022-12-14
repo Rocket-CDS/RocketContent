@@ -15,7 +15,7 @@ namespace RocketContent.Components
         public const string ResourcePath = "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources";
         public static string DisplayView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "view.cshtml")
         {
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam);
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, false);
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeView.GetTemplate(template);
@@ -25,7 +25,7 @@ namespace RocketContent.Components
         }
         public static string DisplayAdminView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "AdminDetail.cshtml")
         {
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam);
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, true);
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template);
@@ -33,9 +33,9 @@ namespace RocketContent.Components
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
-        public static string DisplaySystemView(int portalId, string moduleRef, SessionParams sessionParam, string template)
+        public static string DisplaySystemView(int portalId, string moduleRef, SessionParams sessionParam, string template, bool editMode = true)
         {
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, "", sessionParam);
+            var dataObject = new DataObjectLimpet(portalId, moduleRef, "", sessionParam, editMode);
             if (dataObject.AppThemeSystem == null) return "No System View";
 
             var razorTempl = dataObject.AppThemeSystem.GetTemplate(template);

@@ -14,9 +14,11 @@ namespace RocketContent.Components
     {
         private Dictionary<string, object> _dataObjects;
         private Dictionary<string, string> _passSettings;
-        public DataObjectLimpet(int portalid, string moduleRef, string rowKey, SessionParams sessionParams)
+        public DataObjectLimpet(int portalid, string moduleRef, string rowKey, SessionParams sessionParams, bool editMode = true)
         {
-            Populate(portalid, moduleRef, rowKey, sessionParams.CultureCode, sessionParams.ModuleId, sessionParams.TabId);
+            var cultureCode = sessionParams.CultureCodeEdit;
+            if (!editMode) cultureCode = sessionParams.CultureCode;
+            Populate(portalid, moduleRef, rowKey, cultureCode, sessionParams.ModuleId, sessionParams.TabId);
         }
         public DataObjectLimpet(int portalid, string moduleRef, string rowKey, string cultureCode, int moduleId, int tabId)
         {

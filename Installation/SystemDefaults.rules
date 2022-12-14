@@ -73,25 +73,14 @@
 		  <cmd>article_removerow</cmd>
 		  <action>true</action>
 	  </command>
-
-
-
 	  <command>
-      <cmd>remote_addlistitem</cmd>
+		  <cmd>article_sortrows</cmd>
+		  <action>true</action>
+	  </command>
+    <command>
+      <cmd>article_addlistitem</cmd>
       <action>true</action>
     </command>
-    <command>
-      <cmd>remote_sortrows</cmd>
-      <action>true</action>
-    </command>
-    <command>
-      <cmd>remote_editoption</cmd>
-      <action>true</action>
-    </command>    
-    <command>
-      <cmd>remote_editsave</cmd>
-      <action>true</action>
-    </command>   
 
     <command>
       <cmd>rocketcontent_settings</cmd>
