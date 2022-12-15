@@ -38,13 +38,13 @@ namespace RocketContent.Components
                     Record.ModuleId = -1;
                     Record.TypeCode = EntityTypeCode;
                     Record.Lang = cultureCode;
-                }
 
-                if (PortalUtils.PortalExists(portalId)) // check we have a portal, could be deleted
-                {
                     // create folder on first load.
                     PortalUtils.CreateRocketDirectories(PortalId);
 
+                }
+                if (PortalUtils.PortalExists(portalId)) // check we have a portal, could be deleted
+                {
                     if (!Directory.Exists(PortalUtils.HomeDNNrocketDirectoryMapPath(PortalId))) Directory.CreateDirectory(PortalUtils.HomeDNNrocketDirectoryMapPath(PortalId));
                     ContentFolderRel = PortalUtils.HomeDNNrocketDirectoryRel(PortalId).TrimEnd('/') + "/rocketcontent";
                     ContentFolderMapPath = DNNrocketUtils.MapPath(ContentFolderRel);
@@ -57,9 +57,7 @@ namespace RocketContent.Components
                     DocFolderRel = PortalUtils.HomeDNNrocketDirectoryRel(PortalId).TrimEnd('/') + "/rocketcontent/docs";
                     DocFolderMapPath = DNNrocketUtils.MapPath(DocFolderRel);
                     if (!Directory.Exists(DocFolderMapPath)) Directory.CreateDirectory(DocFolderMapPath);
-
                 }
-
             }
         }
 
@@ -101,12 +99,12 @@ namespace RocketContent.Components
         public SimplisityInfo Info { get { return new SimplisityInfo(Record); } }
         public SimplisityRecord Record { get; set; }
         public int PortalId { get { return Record.PortalId; } }
-        public string ContentFolderRel { get; set; }
-        public string ContentFolderMapPath { get; set; }
-        public string ImageFolderRel { get; set; }
-        public string ImageFolderMapPath { get; set; }
-        public string DocFolderRel { get; set; }
-        public string DocFolderMapPath { get; set; }
+        public string ContentFolderRel { get { return Record.GetXmlProperty("genxml/contentfolderrel"); } set { Record.SetXmlProperty("genxml/contentfolderrel", value); } }
+        public string ContentFolderMapPath { get { return Record.GetXmlProperty("genxml/contentfoldermappath"); } set { Record.SetXmlProperty("genxml/contentfoldermappath", value); } }
+        public string ImageFolderRel { get { return Record.GetXmlProperty("genxml/imagefolderrel"); } set { Record.SetXmlProperty("genxml/imagefolderrel", value); } }
+        public string ImageFolderMapPath { get { return Record.GetXmlProperty("genxml/imagefoldermappath"); } set { Record.SetXmlProperty("genxml/imagefoldermappath", value); } }
+        public string DocFolderRel { get { return Record.GetXmlProperty("genxml/docfolderrel"); } set { Record.SetXmlProperty("genxml/docfolderrel", value); } }
+        public string DocFolderMapPath { get { return Record.GetXmlProperty("genxml/docfoldermappath"); } set { Record.SetXmlProperty("genxml/docfoldermappath", value); } }
         public bool Active { get { return Record.GetXmlPropertyBool("genxml/active"); } set { Record.SetXmlProperty("genxml/active", value.ToString()); } }
         public bool Valid { get { if (Record.GetXmlProperty("genxml/active") != "") return true; else return false; } }
         public string SystemKey { get { return "rocketcontent"; } }
