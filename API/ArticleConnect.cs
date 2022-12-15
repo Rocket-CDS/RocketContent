@@ -188,7 +188,9 @@ namespace RocketContent.API
         {
             var articleData = _dataObject.ArticleData;
             articleData.Delete();
-            return AdminListDisplay();
+            var articleData2 = GetActiveArticle(_moduleRef);
+            _dataObject.SetDataObject("articledata", articleData2);
+            return AdminDetailDisplay();
         }
         public String AdminDetailDisplay()
         {
@@ -211,15 +213,6 @@ namespace RocketContent.API
             _moduleRef = GeneralUtils.GetGuidKey();
 
             return AdminDetailDisplay();
-        }
-        public String AdminListDisplay()
-        {
-            var articleDataList = new ArticleLimpetList(_paramInfo, _dataObject.PortalContent, _sessionParams.CultureCodeEdit, true);
-            var dataObjects = new Dictionary<string, object>();
-            var razorTempl = _dataObject.AppThemeSystem.GetTemplate("adminlist.cshtml");
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, articleDataList, _dataObject.DataObjects, _dataObject.Settings, _sessionParams, _dataObject.PortalContent.DebugMode);
-            if (pr.StatusCode != "00") return pr.ErrorMsg;
-            return pr.RenderedText;
         }
         public String AdminSelectAppThemeDisplay()
         {

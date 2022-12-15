@@ -49,7 +49,7 @@ namespace RocketContent.Components
         /// <param name="articleData"></param>
         public ArticleLimpet(ArticleLimpet articleData)
         {
-            _info = articleData._info;
+            _info = articleData.Info;
             _articleId = articleData.ArticleId;
             CultureCode = articleData.CultureCode;
             PortalId = _info.PortalId;
@@ -90,7 +90,7 @@ namespace RocketContent.Components
             {
                 foreach (XmlNode nod in textList)
                 {
-                    Info.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, SecurityInput.RemoveScripts(nod.InnerText));
+                    newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, SecurityInput.RemoveScripts(nod.InnerText));
                 }
             }
             return newInfo;
@@ -145,8 +145,8 @@ namespace RocketContent.Components
             var newArticleRows = new List<SimplisityInfo>();
             var articleRows = GetRowList();
 
-            _info = ReplaceInfoFields(_info, postInfo, "genxml/data/*");
-            _info = ReplaceInfoFields(_info, postInfo, "genxml/lang/genxml/data/*");
+            //_info = ReplaceInfoFields(_info, postInfo, "genxml/data/*");
+            //_info = ReplaceInfoFields(_info, postInfo, "genxml/lang/genxml/data/*");
 
             foreach (var sInfo in articleRows)
             {                
@@ -155,8 +155,11 @@ namespace RocketContent.Components
                     var newInfo = ReplaceInfoFields(new SimplisityInfo(), postInfo, "genxml/textbox/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/textbox/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/checkbox/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/checkbox/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/select/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/select/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/radio/*");
+                    newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/radio/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/config/*");
                     newInfo = ReplaceInfoFields(newInfo, postInfo, "genxml/lang/genxml/config/*");
 

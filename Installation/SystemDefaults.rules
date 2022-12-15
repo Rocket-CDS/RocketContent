@@ -26,10 +26,6 @@
 
 
     <command>
-      <cmd>article_adminlist</cmd>
-      <action>true</action>
-    </command>
-    <command>
       <cmd>article_selectapptheme</cmd>
       <action>true</action>
     </command>    

@@ -19,7 +19,7 @@ namespace RocketContent.Components
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeView.GetTemplate(template);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -29,7 +29,7 @@ namespace RocketContent.Components
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
 
             var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
@@ -39,7 +39,7 @@ namespace RocketContent.Components
             if (dataObject.AppThemeSystem == null) return "No System View";
 
             var razorTempl = dataObject.AppThemeSystem.GetTemplate(template);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, null, true);
+            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }

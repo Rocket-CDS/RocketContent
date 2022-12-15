@@ -58,9 +58,6 @@ namespace RocketContent.API
                 case "article_admincreate":
                     strOut = AdminCreateArticle();
                     break;
-                case "article_adminlist":
-                    strOut = AdminListDisplay();
-                    break;
                 case "article_selectapptheme":
                     strOut = AdminSelectAppThemeDisplay();
                     break;

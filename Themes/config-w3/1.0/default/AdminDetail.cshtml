@@ -39,6 +39,14 @@
 
     <div class=" w3-margin-bottom w3-border-bottom">
         <div class="w3-bar w3-padding">
+            <a href="@rtnUrl" class="w3-padding w3-button w3-black " style="text-decoration:none;" onclick="$('.simplisity_loader').show();">
+                <span class="w3-hide-small">
+                    @ButtonText(ButtonTypes.back)
+                </span>
+                <span class="w3-hide-medium w3-hide-large">
+                    @ButtonIcon(ButtonTypes.back)
+                </span>
+            </a>
             <span class="w3-padding w3-button w3-theme-action a-savebutton simplisity_click" s-cmd="article_adminsave" s-post="#a-articledata" s-list=".@articleData.ImageListName,.@articleData.DocumentListName,.@articleData.LinkListName" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","tabid":"@moduleData.TabId"}'>
                 <span class="w3-hide-small">
                     @ButtonText(ButtonTypes.save)
@@ -47,7 +55,7 @@
                     @ButtonIcon(ButtonTypes.save)
                 </span>
             </span>
-            <span class="w3-padding w3-button w3-margin-left w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","tabid":"@moduleData.TabId"'>
+            <span class="w3-padding w3-button w3-margin-left w3-red w3-right simplisity_confirmclick" s-cmd="article_admindelete" s-confirm="@ResourceKey("DNNrocket.delete") ?" s-fields='{"moduleref":"@moduleData.ModuleRef","moduleid":"@moduleData.ModuleId","tabid":"@moduleData.TabId"}'>
                 <span class="w3-hide-small">
                     @ButtonText(ButtonTypes.delete)
                 </span>
@@ -55,14 +63,6 @@
                     @ButtonIcon(ButtonTypes.delete)
                 </span>
             </span>
-            <a href="@rtnUrl" class="w3-padding w3-margin-left w3-button w3-black w3-right" style="text-decoration:none;" onclick="$('.simplisity_loader').show();">
-                <span class="w3-hide-small">
-                    @ButtonText(ButtonTypes.cancel)
-                </span>
-                <span class="w3-hide-medium w3-hide-large">
-                    @ButtonIcon(ButtonTypes.cancel)
-                </span>                
-            </a>
         </div>
     </div>
 
