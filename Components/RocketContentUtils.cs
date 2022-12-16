@@ -4,6 +4,7 @@ using Simplisity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
@@ -15,11 +16,16 @@ namespace RocketContent.Components
         public const string ResourcePath = "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources";
         public static string DisplayView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "view.cshtml")
         {
-            var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, false);
-            if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
-
-            var razorTempl = dataObject.AppThemeView.GetTemplate(template);
-            var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
+            var moduleSettings = new ModuleContentLimpet(portalId, moduleRef, sessionParam.ModuleId, sessionParam.TabId);
+            var pr = (RazorProcessResult)CacheUtils.GetCache(moduleRef + template, moduleRef);
+            if (moduleSettings.DisableCache || pr == null)
+            {
+                var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, false);
+                if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
+                var razorTempl = dataObject.AppThemeView.GetTemplate(template);
+                pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
+                CacheUtils.SetCache(moduleRef + template, pr, moduleRef);
+            }
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }

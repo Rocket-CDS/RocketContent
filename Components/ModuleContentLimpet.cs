@@ -17,14 +17,17 @@ namespace DNNrocketAPI.Components
         public ModuleContentLimpet(int portalId, string moduleRef, int moduleid = -1, int tabid = -1)
         {
             _objCtrl = new DNNrocketController();
-
-            Record = _objCtrl.GetRecordByGuidKey(portalId, -1, _entityTypeCode, moduleRef, "", _tableName);
+            Record = (SimplisityRecord)CacheUtils.GetCache(moduleRef + _entityTypeCode, moduleRef);
             if (Record == null)
             {
-                Record = new SimplisityRecord();
-                Record.PortalId = portalId;
-                Record.GUIDKey = moduleRef;
-                Record.TypeCode = _entityTypeCode;
+                Record = _objCtrl.GetRecordByGuidKey(portalId, -1, _entityTypeCode, moduleRef, "", _tableName);
+                if (Record == null)
+                {
+                    Record = new SimplisityRecord();
+                    Record.PortalId = portalId;
+                    Record.GUIDKey = moduleRef;
+                    Record.TypeCode = _entityTypeCode;
+                }
             }
             // Outside initial setup, incase of changes in the CMS.
             Record.ModuleId = moduleid;
@@ -39,6 +42,7 @@ namespace DNNrocketAPI.Components
         public int Update()
         {
             Record = _objCtrl.SaveRecord(Record, _tableName);
+            CacheUtils.SetCache(ModuleRef + _entityTypeCode, Record, ModuleRef);
             return Record.ItemID;
         }
 
