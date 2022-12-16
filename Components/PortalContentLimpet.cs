@@ -43,17 +43,24 @@ namespace RocketContent.Components
                     PortalUtils.CreateRocketDirectories(PortalId);
 
                 }
-                if (PortalUtils.PortalExists(portalId)) // check we have a portal, could be deleted
+            }
+            if (PortalUtils.PortalExists(portalId)) // check we have a portal, could be deleted
+            {
+                if (ContentFolderRel == "")
                 {
                     if (!Directory.Exists(PortalUtils.HomeDNNrocketDirectoryMapPath(PortalId))) Directory.CreateDirectory(PortalUtils.HomeDNNrocketDirectoryMapPath(PortalId));
                     ContentFolderRel = PortalUtils.HomeDNNrocketDirectoryRel(PortalId).TrimEnd('/') + "/rocketcontent";
                     ContentFolderMapPath = DNNrocketUtils.MapPath(ContentFolderRel);
                     if (!Directory.Exists(ContentFolderMapPath)) Directory.CreateDirectory(ContentFolderMapPath);
-
+                }
+                if (ImageFolderRel == "")
+                {
                     ImageFolderRel = PortalUtils.HomeDNNrocketDirectoryRel(PortalId).TrimEnd('/') + "/rocketcontent/images";
                     ImageFolderMapPath = DNNrocketUtils.MapPath(ImageFolderRel);
                     if (!Directory.Exists(ImageFolderMapPath)) Directory.CreateDirectory(ImageFolderMapPath);
-
+                }
+                if (DocFolderRel == "")
+                {
                     DocFolderRel = PortalUtils.HomeDNNrocketDirectoryRel(PortalId).TrimEnd('/') + "/rocketcontent/docs";
                     DocFolderMapPath = DNNrocketUtils.MapPath(DocFolderRel);
                     if (!Directory.Exists(DocFolderMapPath)) Directory.CreateDirectory(DocFolderMapPath);
