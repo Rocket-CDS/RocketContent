@@ -5,6 +5,7 @@
 @using RazorEngine.Text;
 @using Rocket.AppThemes.Components;
 @using RocketPortal.Components;
+@using System.Web;
 
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
 @AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
@@ -20,16 +21,71 @@
     var info = new SimplisityInfo(moduleData.Record);
     var projectAppThemeData = new AppThemeProjectLimpet();
 }
+<style>
+    .small-button {
+    border: none;
+    display: inline-block;
+    padding: 4px 8px;
+    vertical-align: top;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background-color: inherit;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap
+}
+
+</style>
 
 <div id="a-editbuttons-@(moduleData.ModuleId)" class=" " style="display: none; position: absolute; top: 0px; left:0px;">
     <div class="w3-container">
-        <span class="w3-button w3-round-xxlarge w3-theme-action">
+        <span class="w3-button w3-round w3-theme-action">
             <a href="@sessionParams.Get("editurl")" class="">
                 <span class="material-icons ">
                     edit
                 </span>
             </a>
         </span>
+        @if (UserUtils.IsAdministrator())
+        {
+
+            <span class="small-button w3-round w3-pale-green">
+                <a href="?cmd=clearcache" class="">
+                    <span class="material-icons  w3-small">
+                        sync
+                    </span>
+                </a>
+            </span>
+            <span class="small-button w3-round w3-pale-green">
+                <a href="/SysAdmin/rocketapptheme?moduleref=@(moduleData.ModuleRef)&appthemefolder=@(moduleData.AppThemeAdminFolder)&appversionfolder=@(moduleData.AppThemeAdminVersion)&project=@(moduleData.ProjectName)&rtn=@sessionParams.Get("returnurl")" class="">
+                    <span class="material-icons  w3-small">
+                        movie_edit
+                    </span>
+                </a>
+            </span>
+
+            var editappthemeview = false;
+            if (moduleData.HasAppThemeView)
+            {
+                if (moduleData.AppThemeAdminFolder != moduleData.AppThemeViewFolder || moduleData.AppThemeAdminVersion != moduleData.AppThemeViewVersion)
+                {
+                    editappthemeview = true;
+                }
+            }
+            if (editappthemeview)
+            {
+                <span class="small-button w3-round w3-pale-green">
+                    <a href="/SysAdmin/rocketapptheme?moduleref=@(moduleData.ModuleRef)&appthemefolder=@(moduleData.AppThemeViewFolder)&appversionfolder=@(moduleData.AppThemeViewVersion)&project=@(moduleData.ProjectName)&rtn=@sessionParams.Get("returnurl")" class="">
+                        <span class="material-icons  w3-small">
+                            movie
+                        </span>
+                    </a>
+                </span>
+            }
+        }
+
+
     </div>
 </div>
 
