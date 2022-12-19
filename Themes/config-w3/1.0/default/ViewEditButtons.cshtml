@@ -1,0 +1,42 @@
+@inherits RocketContent.Components.RocketContentTokens<Simplisity.SimplisityRazor>
+@using DNNrocketAPI.Components;
+@using RocketContent.Components;
+@using Simplisity;
+@using RazorEngine.Text;
+@using Rocket.AppThemes.Components;
+@using RocketPortal.Components;
+
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
+@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
+
+@{
+    var sessionParams = Model.SessionParamsData;
+    var appThemeList = (AppThemeDataList)Model.GetDataObject("appthemedatalist");
+    var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var info = new SimplisityInfo(moduleData.Record);
+    var projectAppThemeData = new AppThemeProjectLimpet();
+}
+
+<div id="a-editbuttons-@(moduleData.ModuleId)" class=" " style="display: none; position: absolute; top: 0px; left:0px;">
+    <div class="w3-container">
+        <span class="w3-button w3-round-xxlarge w3-theme-action">
+            <a href="@sessionParams.Get("editurl")" class="">
+                <span class="material-icons ">
+                    edit
+                </span>
+            </a>
+        </span>
+    </div>
+</div>
+
+<script>
+    $(".DnnModule-@(moduleData.ModuleId)").hover(function(){
+          $("#a-editbuttons-@(moduleData.ModuleId)").show();
+      }, function(){
+          $("#a-editbuttons-@(moduleData.ModuleId)").hide();
+    });
+</script>
