@@ -129,6 +129,9 @@
   <data name="articlesimagelimit.Text" xml:space="preserve">
     <value>Image Limit</value>
   </data>
+  <data name="clearcache.Text" xml:space="preserve">
+    <value>Clear Cache</value>
+  </data>
   <data name="datasource.Text" xml:space="preserve">
     <value>Data Source</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="editapptheme.Text" xml:space="preserve">
     <value>Edit AppTheme</value>
+  </data>
+  <data name="editappthemeview.Text" xml:space="preserve">
+    <value>Edit View AppTheme</value>
   </data>
   <data name="invalidcatalog.Text" xml:space="preserve">
     <value>Setup has not been completed.  </value>

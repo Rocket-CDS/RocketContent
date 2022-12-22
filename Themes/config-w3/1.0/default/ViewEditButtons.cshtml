@@ -40,9 +40,9 @@
 
 <div id="a-editbuttons-@(moduleData.ModuleId)" class=" " style="display: none; position: absolute; top: 0px; left:0px;">
     <div class="w3-container">
-        <span class="w3-button w3-round w3-theme-action">
+        <span class="small-button w3-round w3-theme-action" title="@ResourceKey("DNNrocket.edit")">
             <a href="@sessionParams.Get("editurl")" class="">
-                <span class="material-icons ">
+                <span class="material-icons  w3-small">
                     edit
                 </span>
             </a>
@@ -50,14 +50,14 @@
         @if (UserUtils.IsAdministrator())
         {
 
-            <span class="small-button w3-round w3-pale-green">
+            <span class="small-button w3-round w3-pale-green" title="@ResourceKey("RC.clearcache")">
                 <a href="?cmd=clearcache" class="">
                     <span class="material-icons  w3-small">
                         sync
                     </span>
                 </a>
             </span>
-            <span class="small-button w3-round w3-pale-green">
+            <span class="small-button w3-round w3-pale-green" title="@ResourceKey("RC.editapptheme")">
                 <a href="/SysAdmin/rocketapptheme?moduleref=@(moduleData.ModuleRef)&appthemefolder=@(moduleData.AppThemeAdminFolder)&appversionfolder=@(moduleData.AppThemeAdminVersion)&project=@(moduleData.ProjectName)&rtn=@sessionParams.Get("returnurl")" class="">
                     <span class="material-icons  w3-small">
                         movie_edit
@@ -75,7 +75,7 @@
             }
             if (editappthemeview)
             {
-                <span class="small-button w3-round w3-pale-green">
+                <span class="small-button w3-round w3-pale-green" title="@ResourceKey("RC.editappthemeview")">
                     <a href="/SysAdmin/rocketapptheme?moduleref=@(moduleData.ModuleRef)&appthemefolder=@(moduleData.AppThemeViewFolder)&appversionfolder=@(moduleData.AppThemeViewVersion)&project=@(moduleData.ProjectName)&rtn=@sessionParams.Get("returnurl")" class="">
                         <span class="material-icons  w3-small">
                             movie
