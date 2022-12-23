@@ -15,14 +15,14 @@ namespace RocketContent.Components
     {
         public const string ControlPath = "/DesktopModules/DNNrocketModules/RocketContent";
         public const string ResourcePath = "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources";
-        public static string DisplayView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "view.cshtml")
+        public static string DisplayView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "view.cshtml", string noAppThemeReturn= "")
         {
             var moduleSettings = new ModuleContentLimpet(portalId, moduleRef, sessionParam.ModuleId, sessionParam.TabId);
             var pr = (RazorProcessResult)CacheUtils.GetCache(moduleRef + template, moduleRef);
             if (moduleSettings.DisableCache || pr == null)
             {
                 var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, false);
-                if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
+                if (!dataObject.ModuleSettings.HasAppThemeAdmin) return noAppThemeReturn;
                 var razorTempl = dataObject.AppThemeView.GetTemplate(template);
                 pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
                 CacheUtils.SetCache(moduleRef + template, pr, moduleRef);
@@ -30,10 +30,10 @@ namespace RocketContent.Components
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
         }
-        public static string DisplayAdminView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "AdminDetail.cshtml")
+        public static string DisplayAdminView(int portalId, string moduleRef, string rowKey, SessionParams sessionParam, string template = "AdminDetail.cshtml", string noAppThemeReturn = "")
         {
             var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, true);
-            if (!dataObject.ModuleSettings.HasAppThemeAdmin) return "loadsettings";
+            if (!dataObject.ModuleSettings.HasAppThemeAdmin) return noAppThemeReturn;
 
             var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
