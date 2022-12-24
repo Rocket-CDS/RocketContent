@@ -3,19 +3,29 @@
 @using DNNrocketAPI.Components;
 @using Simplisity;
 @using RocketContent.Components;
-
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocket/api/App_LocalResources/")
-@AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/")
+@using RocketPortal.Components;
 
 @{
-    var info = new SimplisityInfo();
-    var globalSettings = new SystemGlobalData();
     var articleData = (ArticleLimpet)Model.GetDataObject("articledata");
-    if (articleData.Info != null)
-    {
-        info = articleData.Info;
-    }
+    var articleRowData = (ArticleRowLimpet)Model.GetDataObject("articlerow");
+    var appThemeView = (AppThemeLimpet)Model.GetDataObject("appthemeview");
+    var appThemeAdmin = (AppThemeLimpet)Model.GetDataObject("appthemeadmin");
+    var appThemeSystem = (AppThemeSystemLimpet)Model.GetDataObject("appthemesystem");
     var moduleData = (ModuleContentLimpet)Model.GetDataObject("modulesettings");
+    var portalData = (PortalLimpet)Model.GetDataObject("portaldata");
+    var globalSettings = new SystemGlobalData();
+    var datalist = articleRowData.GetImageList();
+    var sessionParams = Model.SessionParamsData;
+    var imgLP = 0;
+
+    var info = new SimplisityInfo();
+    if (articleRowData != null && articleRowData.Info != null)
+    {
+        info = articleRowData.Info;
+    }
+    AddProcessDataResx(appThemeView, true);
+    AddProcessData("resourcepath", "/DesktopModules/DNNrocketModules/RocketContent/App_LocalResources/");
+    AddProcessData("resourcepath", "/DesktopModules/DNNrocket/Images/App_LocalResources/");
 }
 
 <div id="articleimageselect" class="w3-modal">

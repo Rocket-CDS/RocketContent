@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    @RenderTemplate("AdminDetail.cshtml", appThemeAdmin, Model)
+    @RenderTemplate("AdminDetail.cshtml", appThemeAdmin, Model, true)
 
     @if (UserUtils.IsAdministrator())
     {
