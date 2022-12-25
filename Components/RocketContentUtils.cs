@@ -23,7 +23,7 @@ namespace RocketContent.Components
             {
                 var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, false);
                 if (!dataObject.ModuleSettings.HasAppThemeAdmin) return noAppThemeReturn;
-                var razorTempl = dataObject.AppThemeView.GetTemplate(template);
+                var razorTempl = dataObject.AppThemeView.GetTemplate(template, moduleRef);
                 pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
                 CacheUtils.SetCache(moduleRef + template, pr, moduleRef);
             }
@@ -35,7 +35,7 @@ namespace RocketContent.Components
             var dataObject = new DataObjectLimpet(portalId, moduleRef, rowKey, sessionParam, true);
             if (!dataObject.ModuleSettings.HasAppThemeAdmin) return noAppThemeReturn;
 
-            var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template);
+            var razorTempl = dataObject.AppThemeAdmin.GetTemplate(template, moduleRef);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
@@ -45,7 +45,7 @@ namespace RocketContent.Components
             var dataObject = new DataObjectLimpet(portalId, moduleRef, "", sessionParam, editMode);
             if (dataObject.AppThemeSystem == null) return "No System View";
 
-            var razorTempl = dataObject.AppThemeSystem.GetTemplate(template);
+            var razorTempl = dataObject.AppThemeSystem.GetTemplate(template, moduleRef);
             var pr = RenderRazorUtils.RazorProcessData(razorTempl, dataObject.DataObjects, null, sessionParam, true);
             if (pr.StatusCode != "00") return pr.ErrorMsg;
             return pr.RenderedText;
