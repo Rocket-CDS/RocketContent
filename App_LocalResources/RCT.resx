@@ -168,6 +168,9 @@
   <data name="removerow.Text" xml:space="preserve">
     <value>Remove Row ?</value>
   </data>
+  <data name="securesave.Text" xml:space="preserve">
+    <value>Secure Save</value>
+  </data>
   <data name="selectapptheme.Text" xml:space="preserve">
     <value>Select AppTheme</value>
   </data>

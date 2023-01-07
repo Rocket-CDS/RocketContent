@@ -87,7 +87,7 @@ namespace RocketContent.API
         public string SaveArticleRow()
         {
             var articleData = _dataObject.ArticleData;
-            articleData.UpdateRow(_rowKey, _postInfo);
+            articleData.UpdateRow(_rowKey, _postInfo, _dataObject.ModuleSettings.SecureSave);
             _dataObject.SetDataObject("articledata", articleData);
             return AdminDetailDisplay();
         }
@@ -139,7 +139,7 @@ namespace RocketContent.API
                 var filenameList = fileuploadlist.Split('*');
                 var filebase64List = fileuploadbase64.Split('*');
                 var fileList = DocUtils.UploadBase64file(filenameList, filebase64List, _dataObject.PortalContent.DocFolderMapPath);
-                if (fileList.Count == 0) return MessageDisplay("RC.invalidfile");
+                if (fileList.Count == 0) return MessageDisplay("RCT.invalidfile");
                 foreach (var docFileMapPath in fileList)
                 {
                     var articleRow = articleData.GetRow(_rowKey);

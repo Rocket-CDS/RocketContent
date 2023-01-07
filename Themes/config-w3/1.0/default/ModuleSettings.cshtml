@@ -24,17 +24,20 @@
 
 <div id="a-datasection" class="w3-container w3-margin w3-padding">
 
-        <div class="w3-row w3-padding">
-            <div class="w3-quarter">
-                @CheckBox(info,"genxml/settings/disablecache", ResourceKey("DNNrocket.disablecache").ToString(),"class='w3-check'")
-            </div>
-            <div class="w3-quarter">
-                @CheckBox(info,"genxml/settings/injectjquery", ResourceKey("DNNrocket.injectjquery").ToString(),"class='w3-check'")
-            </div>
-            <div class="w3-quarter">
-                @CheckBox(info,"genxml/settings/disableheader", ResourceKey("DNNrocket.disableheader").ToString(),"class='w3-check'")
-            </div>
+    <div class="w3-row w3-padding">
+        <div class="w3-quarter">
+            @CheckBox(info,"genxml/settings/disablecache", ResourceKey("DNNrocket.disablecache").ToString(),"class='w3-check'")
         </div>
+        <div class="w3-quarter">
+            @CheckBox(info,"genxml/settings/injectjquery", ResourceKey("DNNrocket.injectjquery").ToString(),"class='w3-check'")
+        </div>
+        <div class="w3-quarter">
+            @CheckBox(info,"genxml/settings/disableheader", ResourceKey("DNNrocket.disableheader").ToString(),"class='w3-check'")
+        </div>
+       <div class="w3-quarter">
+            @CheckBox(info,"genxml/settings/securesave", ResourceKey("RCT.securesave").ToString(),"class='w3-check'", true)
+        </div>
+    </div>
 
         <div class="w3-xlarge">AppThemes</div>
         <div class="w3-row w3-padding">

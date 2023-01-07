@@ -41,6 +41,8 @@ namespace RocketContent.Components
             _info.GUIDKey = dataRef;
             _info.PortalId = PortalId;
 
+            SecureSave = true;
+
             Populate(langRequired);
         }
         /// <summary>
@@ -82,15 +84,10 @@ namespace RocketContent.Components
             {
                 foreach (XmlNode nod in textList)
                 {
-                    newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, nod.InnerText);
-                }
-            }
-            textList = postInfo.XMLDoc.SelectNodes(xpathListSelect);
-            if (textList != null)
-            {
-                foreach (XmlNode nod in textList)
-                {
-                    newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, SecurityInput.RemoveScripts(nod.InnerText));
+                    if (UserUtils.IsSuperUser() || !SecureSave)
+                        newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, nod.InnerText);
+                    else
+                        newInfo.SetXmlProperty(xpathListSelect.Replace("*", "") + nod.Name, SecurityInput.RemoveScripts(nod.InnerText));
                 }
             }
             return newInfo;
@@ -140,8 +137,9 @@ namespace RocketContent.Components
         }
 
         #region "rows"
-        public void UpdateRow(string rowKey, SimplisityInfo postInfo)
+        public void UpdateRow(string rowKey, SimplisityInfo postInfo, bool secureSave = true)
         {
+            SecureSave = secureSave;
             var newArticleRows = new List<SimplisityInfo>();
             var articleRows = GetRowList();
 
@@ -241,6 +239,7 @@ namespace RocketContent.Components
         #region "properties"
 
         public string CultureCode { get; private set; }
+        public bool SecureSave { get; private set; }
         public string EntityTypeCode { get { return _entityTypeCode; } }
         public SimplisityInfo Info { get { return _info; } }
         public int ModuleId { get { return _info.ModuleId; } set { _info.ModuleId = value; } }
