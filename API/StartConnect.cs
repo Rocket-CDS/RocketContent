@@ -195,8 +195,6 @@ namespace RocketContent.API
 
             _dataObject = new DataObjectLimpet(portalid, _sessionParams.ModuleRef, _rowKey, _sessionParams);
 
-            if (_dataObject.PortalContent.PortalId != 0 && !_dataObject.PortalContent.Active) return "";
-
             if (paramCmd.StartsWith("remote_public")) return paramCmd;
             
             if (!_dataObject.ModuleSettings.HasAppThemeAdmin) // Check if we have an AppTheme
