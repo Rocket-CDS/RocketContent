@@ -29,14 +29,19 @@
                     edit
                 </span>
         </a>
+        <a href="?action=clearcache" class="w3-button w3-round w3-white w3-border w3-text-black" title="@ResourceKey("RCT.clearcache")">
+            <span class="material-icons ">
+                sync
+            </span>
+        </a>
         @if (UserUtils.IsAdministrator())
         {
 
-            <a href="?action=clearcache" class="w3-button w3-round w3-white w3-border w3-text-black" title="@ResourceKey("RCT.clearcache")">
+            <a href="@sessionParams.Get("settingsurl")" class="w3-button w3-round w3-white w3-border w3-text-black" title="@ResourceKey("DNNrocket.settings")">
                 <span class="material-icons ">
-                    sync
+                    settings
                 </span>
-           </a>
+            </a>
             <a href="/SysAdmin/rocketapptheme?moduleref=@(moduleData.ModuleRef)&appthemefolder=@(moduleData.AppThemeAdminFolder)&appversionfolder=@(moduleData.AppThemeAdminVersion)&project=@(moduleData.ProjectName)&rtn=@sessionParams.Get("returnurl")" class="w3-button w3-round w3-white w3-border w3-text-black" title="@ResourceKey("RCT.editapptheme")">
                 <span class="material-icons ">
                     movie_edit
@@ -60,8 +65,6 @@
                 </a>
             }
         }
-
-
     </div>
 </div>
 
